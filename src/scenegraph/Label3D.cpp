@@ -1,12 +1,16 @@
-// Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "Label3D.h"
 #include "NodeVisitor.h"
+
 #include "graphics/RenderState.h"
 #include "graphics/Renderer.h"
+#include "graphics/Types.h"
 #include "graphics/VertexArray.h"
 #include "graphics/VertexBuffer.h"
+
+#include "profiler/Profiler.h"
 
 namespace SceneGraph {
 
@@ -21,9 +25,10 @@ namespace SceneGraph {
 
 		Graphics::RenderStateDesc rsd;
 		rsd.depthWrite = false;
+		rsd.blendMode = Graphics::BLEND_ALPHA;
 
 		m_geometry.reset(font->CreateVertexArray());
-		m_material.Reset(r->CreateMaterial("multi", matdesc, rsd));
+		m_material.Reset(r->CreateMaterial("label", matdesc, rsd));
 		m_material->SetTexture("texture0"_hash, font->GetTexture());
 		m_material->diffuse = Color::WHITE;
 		m_material->emissive = Color(38, 38, 38);

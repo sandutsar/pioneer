@@ -65,15 +65,15 @@
   },
   "BONUS_2": {
     "description": "",
-    "message": "Доволни сме от свършеното! Ще Ви дадем {cash} допълнително."
+    "message": "Доволни сме от свършеното! Ще Ви платим {cash} допълнително."
   },
   "BONUS_3": {
     "description": "",
-    "message": " Много впечатляващо! Упълномощен съм да Ви дам {cash} допълнително."
+    "message": " Много впечатляващо! Упълномощен съм да Ви платя {cash} допълнително."
   },
   "BONUS_4": {
     "description": "",
-    "message": "Много съм доволен от свършената работа! Преведох допълнителни {cash} по сметката Ви."
+    "message": "Много съм доволен от свършената работа! Преведох допълнителни {cash} по Вашата сметка."
   },
   "COMBAT": {
     "description": "Name of mission type",
@@ -131,6 +131,10 @@
     "description": "Distance in space, between two locations",
     "message": "Разстояние:"
   },
+  "DO_I_NEED_SPECIAL_EQUIPMENT": {
+    "description": "",
+    "message": "Трябва ли ми някакво специално оборудване?"
+  },
   "FAILUREMSG_1": {
     "description": "",
     "message": "Срамота. Изчезвайте от тук."
@@ -181,7 +185,7 @@
   },
   "HARVESTING_IT_MUST_BE_COMPLETED_BY": {
     "description": "",
-    "message": "Мисията трябва да се изпълни до {date}. Нека информацията за тази операция да остане в тайна."
+    "message": "Мисията трябва да се завърши преди {date}. Нека информацията за тази операция да остане в тайна."
   },
   "HARVESTING_LAND_THERE": {
     "description": "",
@@ -237,7 +241,7 @@
   },
   "MINING_IT_MUST_BE_COMPLETED_BY": {
     "description": "",
-    "message": "Има конвой на път за {area}. Мисията трябва да се изпълни до {date}."
+    "message": "Има конвой на път за {area}. Мисията трябва да се завърши преди {date}."
   },
   "MINING_LAND_THERE": {
     "description": "",
@@ -253,7 +257,7 @@
   },
   "MISSION_INFO": {
     "description": "Message from the ship computer",
-    "message": "Районът е достигнат. Записване на данните. Прогнозираното време за изпълнение на мисията е {duration}."
+    "message": "Целта е достигната. Записване на данните. Прогнозираното време за изпълнение на мисията е {duration}."
   },
   "MISSION_TYPE_1": {
     "description": "Name of mission type",
@@ -269,7 +273,7 @@
   },
   "MISSION_WARNING": {
     "description": "Message from the ship computer",
-    "message": "Районът все още не е достигнат. Записването на данните не може да започне."
+    "message": "Целта все още не е достигната. Записването на данните не може да започне."
   },
   "OBJECTIVE_1": {
     "description": "",
@@ -289,7 +293,7 @@
   },
   "PAYMENT_LOCATION": {
     "description": "",
-    "message": "Място за плащане:"
+    "message": "Заплащане:"
   },
   "PLEASE_REPEAT_THE_MISSION_DETAILS": {
     "description": "",
@@ -309,7 +313,7 @@
   },
   "POLICE_IT_MUST_BE_COMPLETED_BY": {
     "description": "",
-    "message": "Мисията трябва да се изпълни до {date}, защото се задават още вражески кораби."
+    "message": "Мисията трябва да се завърши преди {date}, защото се задават още вражески кораби."
   },
   "POLICE_LAND_THERE": {
     "description": "",
@@ -345,7 +349,7 @@
   },
   "SUCCESSMSG_2": {
     "description": "",
-    "message": "Благодаря Ви, че го направихте. Преведох кредитите по сметката Ви."
+    "message": "Благодаря Ви, че го направихте. Преведох кредитите по Вашата сметка."
   },
   "SUCCESSMSG_3": {
     "description": "",
@@ -359,16 +363,24 @@
     "description": "",
     "message": "Система:"
   },
+  "TARGET_AREA_REACHED": {
+    "description": "",
+    "message": "Целта е достигната. Записване на данните."
+  },
   "TIME_LIMIT": {
     "description": "",
     "message": "Времеви лимит:"
   },
   "WHAT_ARE_THE_MISSION_OBJECTIVES": {
     "description": "",
-    "message": "Какви са целите на тази мисия?"
+    "message": "Какви са целите на мисията?"
   },
   "WILL_I_BE_IN_TROUBLE": {
     "description": "",
     "message": "Ще имам ли неприятности?"
+  },
+  "YOU_NEED_A_RADAR": {
+    "description": "",
+    "message": "Да, имате нужда от радар! Ако се съгласите, ще програмирам компютъра на Вашия кораб да записва данните от радара. Те ще бъдат прехвърлени към мен, когато се върнете."
   }
 }

@@ -1,4 +1,4 @@
-// Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef _LUAREF_H
@@ -14,7 +14,7 @@ public:
 	LuaRef() :
 		m_lua(0),
 		m_id(LUA_NOREF),
-		m_copycount(new int(0)) {}
+		m_copycount(nullptr) {}
 	LuaRef(lua_State *l, int index);
 	LuaRef(const LuaRef &ref);
 	~LuaRef();

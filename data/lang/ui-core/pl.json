@@ -19,6 +19,10 @@
     "description": "",
     "message": "Przynależność:"
   },
+  "ALL_PARAMETERS_WERE_RECOVERED_SUCCESSFULLY": {
+    "description": "Message when restoring savegame",
+    "message": "Wszystkie parametry poprawnie przywrócone"
+  },
   "ALL_UP_WEIGHT": {
     "description": "",
     "message": "Masa całkowita"
@@ -46,6 +50,10 @@
   "ATMO_PRESS_LIMIT": {
     "description": "Base external pressure limit of a ship (without atmo shield)",
     "message": "Limit ciśnienia atm."
+  },
+  "ATTEMPTING_TO_RECOVER_GAME_PROGRESS_FROM_SAVE_X": {
+    "description": "Message when restoring savegame",
+    "message": "Próba odzyskania postępu z pliku zapisu: {save}"
   },
   "ATTEMPT_TO_REPAIR_HULL": {
     "description": "",
@@ -99,6 +107,14 @@
     "description": "",
     "message": "Nie można tego kupić"
   },
+  "CANT_FIND_PATH": {
+    "description": "Message when restoring savegame, file path",
+    "message": "Nie można odnaleźć scieżki: %s"
+  },
+  "CANT_FIND_PLAYERS_SHIP_IN_SPACE": {
+    "description": "Message when restoring savegame",
+    "message": "Nie można znaleźć statku gracza w przestrzeni"
+  },
   "CAPACITY": {
     "description": "Capacity of ship to fit more equipment",
     "message": "Udźwig"
@@ -110,6 +126,10 @@
   "CARGO": {
     "description": "",
     "message": "Ładownia"
+  },
+  "CARGO_CAPACITY": {
+    "description": "Label to show a ship's total cargo space.",
+    "message": "Dostępna ładowność "
   },
   "CARGO_SPACE": {
     "description": "",
@@ -126,6 +146,10 @@
   "CARGO_T_USED": {
     "description": "t for tonne",
     "message": "{amount}t użyte"
+  },
+  "CASE_SENSITIVE": {
+    "description": "",
+    "message": "Uwzględniaj wielkość znaków"
   },
   "CASH": {
     "description": "",
@@ -146,6 +170,22 @@
   "CHANGE_BINDING": {
     "description": "Key binding option",
     "message": "Zmień przypisany klawisz"
+  },
+  "CHANGE_COLOR": {
+    "description": "Paintshop button",
+    "message": "Zmień kolor"
+  },
+  "CHANGE_PATTERN": {
+    "description": "Paintshop button",
+    "message": "Zmień wzór"
+  },
+  "CHARACTER": {
+    "description": "",
+    "message": "Postać"
+  },
+  "CHARISMA": {
+    "description": "Character parameter",
+    "message": "Charyzma"
   },
   "CHIEF_MECHANIC": {
     "description": "",
@@ -179,6 +219,10 @@
     "description": "",
     "message": "Zamknij"
   },
+  "COLOR": {
+    "description": "",
+    "message": "Kolor"
+  },
   "COMBAT": {
     "description": "Headline for kills and combat rating",
     "message": "Status bojowy"
@@ -194,10 +238,6 @@
   "COMMODITY_TRADE_ANALYSIS": {
     "description": "",
     "message": "Analiza dóbr handlowych systemu:"
-  },
-  "COMPACT_RADAR": {
-    "description": "Game settings option",
-    "message": "Radar kompaktowy"
   },
   "COMPETENT": {
     "description": "Combat rating",
@@ -239,9 +279,21 @@
     "description": "",
     "message": "Opcje sterowania"
   },
+  "COULD_NOT_DELETE_SAVE": {
+    "description": "",
+    "message": "Nie można było usunąć zapisu gry"
+  },
+  "COULD_NOT_FIND_SYSTEM_BODY_FOR_FRAME": {
+    "description": "Message when restoring savegame",
+    "message": "Could not find system body for frame"
+  },
   "COULD_NOT_LOAD_GAME": {
     "description": "",
     "message": "Nie można wczytać gry: "
+  },
+  "COULD_NOT_READ_THE_SAVE_VERSION": {
+    "description": "Message when restoring savegame",
+    "message": "Could not read the save version"
   },
   "CREDIBLE": {
     "description": "For player reputation",
@@ -250,6 +302,10 @@
   "CREDITS": {
     "description": "in game currency",
     "message": "Uznania"
+  },
+  "CREW": {
+    "description": "Tab item in the start game menu",
+    "message": "Załoga"
   },
   "CREW_CABINS": {
     "description": "",
@@ -271,6 +327,14 @@
     "description": "For hyperjump planner",
     "message": "Stan paliwa:"
   },
+  "CURRENT_SAVEGAME_VERSION": {
+    "description": "Message when restoring savegame",
+    "message": "Current savegame version: %s"
+  },
+  "CURRENT_SHIP": {
+    "description": "For tooltip comparing current ship specs to one in the shipyard",
+    "message": "Aktualny statek"
+  },
   "CURRENT_SYSTEM": {
     "description": "For hyperjump planner",
     "message": "Aktualny system"
@@ -291,6 +355,14 @@
     "description": "Decrease something.",
     "message": "Zmniejsz"
   },
+  "DELETE": {
+    "description": "",
+    "message": "Usuń"
+  },
+  "DELETE_SAVE_CONFIRMATION": {
+    "description": "",
+    "message": "Czy na pewno chcesz usunąć ten zapis gry?"
+  },
   "DELTA_V": {
     "description": "",
     "message": "Delta-v"
@@ -307,13 +379,17 @@
     "description": "Delta-v capacity of a ship with cargo bay fully loaded with propellant",
     "message": "Delta-v (maks.)"
   },
+  "DEMAND": {
+    "description": "Column label for commodity demand at a market.",
+    "message": "Popyt"
+  },
   "DEPARTURE_DATE": {
     "description": "Time of departure, used in flight log",
     "message": "Czas odlotu"
   },
-  "DESCENT_TO_GROUND_SPEED": {
-    "description": "",
-    "message": "Prędkość graniczna:"
+  "DESCRIPTION": {
+    "description": "Start game parameter, e.g. 'This is an easy start from Cydonia'",
+    "message": "Opis"
   },
   "DESTROY_ENEMY_SHIP": {
     "description": "",
@@ -332,7 +408,7 @@
     "message": "Ukryj wszystkie wyświetlane informacje, włącznie z współrzędnymi systemu, podczas trybu zrzutu ekranu (przełącz tryb interfejsu)"
   },
   "DISMISS": {
-    "description": "Terminate crew memeber's contract",
+    "description": "Terminate crew member's contract",
     "message": "Zwolnij"
   },
   "DISPLAY_HUD_TRAILS": {
@@ -362,6 +438,10 @@
   "DOCKED_AT": {
     "description": "",
     "message": "Zadokowany w"
+  },
+  "DOCKED_TO_A_BODY_THAT_IS_NOT_A_STATION": {
+    "description": "Message when restoring savegame",
+    "message": "Docked to a body that is not a station"
   },
   "DOCK_AT_CURRENT_TARGET": {
     "description": "",
@@ -433,7 +513,7 @@
   },
   "ENGINEERING": {
     "description": "Engineering skills of crew",
-    "message": "Naprawa:"
+    "message": "Inżynieria"
   },
   "ENTRY": {
     "description": "A note/entry/record into the flight log",
@@ -455,6 +535,10 @@
     "description": "",
     "message": "Błąd"
   },
+  "ERROR_APPLYING_PATCH": {
+    "description": "Message when restoring savegame",
+    "message": "Error applying patch"
+  },
   "ERROR_LANDING_GEAR_DOWN": {
     "description": "",
     "message": "Nie można inicjować hiperskoku: wysunięte podwozie!"
@@ -470,6 +554,10 @@
   "EXPERIENCED": {
     "description": "For player reputation",
     "message": "Doświadczony"
+  },
+  "EXPERIMENTAL": {
+    "description": "Indicates feature/option is experimental",
+    "message": "Eksperymentalne"
   },
   "EXPERT": {
     "description": "For player reputation",
@@ -530,6 +618,10 @@
   "FEMALE": {
     "description": "",
     "message": "Kobieta"
+  },
+  "FILE_SAVEGAME_VERSION": {
+    "description": "Message when restoring savegame",
+    "message": "File savegame version: %s"
   },
   "FINAL_TARGET": {
     "description": "Hyperjump planner, referring to star system target",
@@ -594,10 +686,6 @@
   "FORWARD_ACCEL_FULL": {
     "description": "",
     "message": "Ciąg w przód (pełny)"
-  },
-  "FRACTAL_DETAIL": {
-    "description": "",
-    "message": "Dokładność fraktali"
   },
   "FREE": {
     "description": "Used in Ship Information view as in Capacity: 10t (5t free)",
@@ -727,6 +815,30 @@
     "description": "Tooltip: Blastoff",
     "message": "Wystrzelenie"
   },
+  "HUD_BUTTON_CRUISE_FORWARD": {
+    "description": "Tooltip for button",
+    "message": "Przyśpiesz tempomat"
+  },
+  "HUD_BUTTON_CRUISE_UP": {
+    "description": "Tooltip for button",
+    "message": "Tempomat podnoszenia"
+  },
+  "HUD_BUTTON_DISABLE_AUTOPILOT": {
+    "description": "Tooltip for button",
+    "message": "Wyłącz autopilot"
+  },
+  "HUD_BUTTON_DISABLE_CRUISE": {
+    "description": "Tooltip for button",
+    "message": "Wyłącz tempomat"
+  },
+  "HUD_BUTTON_DISABLE_FIXHEADING": {
+    "description": "Tooltip for button",
+    "message": "Wyłącz tryb stałego kursu"
+  },
+  "HUD_BUTTON_DISABLE_FOLLOW_MODE": {
+    "description": "Tooltip for button",
+    "message": "Wyłącz tryb śledzenia"
+  },
   "HUD_BUTTON_EQUIPMENT": {
     "description": "Tooltip: Equipment",
     "message": "Wyposażenie"
@@ -807,10 +919,6 @@
     "description": "Tooltip: Rotation damping is on",
     "message": "Tłumienie rotacji włączone"
   },
-  "HUD_BUTTON_SCANNER": {
-    "description": "Tooltip: Scanner",
-    "message": "Skaner"
-  },
   "HUD_BUTTON_SET_SPEED": {
     "description": "Tooltip: set speed",
     "message": "Ustaw prędkość"
@@ -854,6 +962,10 @@
   "HUD_CARGO_MASS": {
     "description": "Cargo Mass",
     "message": "Masa ładunku"
+  },
+  "HUD_CRUISE_SPEED": {
+    "description": "Tooltip for cruise speed indicator",
+    "message": "Prędkość tempomatu"
   },
   "HUD_CURRENT_COMBAT_TARGET": {
     "description": "Tooltip: The current combat target.",
@@ -906,6 +1018,34 @@
   "HUD_DURATION_UNTIL_MANEUVER_BURN": {
     "description": "Tooltip: The duration until the middle of the maneuver burn.",
     "message": "Czas do wykonania połowy manewru"
+  },
+  "HUD_FOLLOW_ORIENTATION": {
+    "description": "Tooltip for follow mode 'orientation' button",
+    "message": "{targetname}: Podążaj kierunkiem"
+  },
+  "HUD_FOLLOW_ORIENTATION_NOT_AVAILABLE": {
+    "description": "Tooltip for follow mode 'orientation' button, when it's not available for the current object.",
+    "message": "{targetname}: Podążanie nie jest dostępne."
+  },
+  "HUD_FOLLOW_ORIENTATION_NOT_AVAILABLE_TOO_FAR": {
+    "description": "Tooltip for follow mode 'orientation' button, when it's not available for the current object, because it's too far.",
+    "message": "{targetname}: Podążanie nie jest dostępne. Cel jest za daleko."
+  },
+  "HUD_FOLLOW_POSITION": {
+    "description": "Tooltip for follow mode 'position' button",
+    "message": "{targetname}: Kieruj się za celem"
+  },
+  "HUD_FOLLOW_POSITION_NOT_AVAILABLE": {
+    "description": "Tooltip for follow mode 'position' button, when it's not available for the current object.",
+    "message": "{targetname}: Kierowanie do pozycji jest niemożliwe."
+  },
+  "HUD_FOLLOW_POSITION_NOT_AVAILABLE_TOO_FAR": {
+    "description": "Tooltip for follow mode 'position' button, when it's not available for the current object, because it's too far.",
+    "message": "{targetname}: Kierowanie do pozycji jest niemożliwe - poza zasięgiem. "
+  },
+  "HUD_FOLLOW_TARGET": {
+    "description": "Tooltip for followed target's name in reticule",
+    "message": "Śledź cel"
   },
   "HUD_FORWARD_GUN_TEMPERATURE": {
     "description": "Tooltip: Forward Gun Temperature.",
@@ -990,6 +1130,10 @@
   "HUD_SHOW_NAV_TARGET": {
     "description": "Tooltip: Show current navigational target.",
     "message": "Pokaż aktualny cel nawigacyjny."
+  },
+  "HUD_SPEED_LIMITER_ACTIVE": {
+    "description": "Tooltip for the icon in the reticule that appears if the speed limiter is active",
+    "message": "Ogranicznik prędkości jest aktywny"
   },
   "HUD_SPEED_OF_APPROACH_TO_FRAME": {
     "description": "Tooltip: The speed of approach towards the frame of reference.",
@@ -1091,6 +1235,14 @@
     "description": "",
     "message": "Za mało pieniędzy."
   },
+  "INTELLIGENCE": {
+    "description": "Character parameter",
+    "message": "Inteligencja"
+  },
+  "INTERSTELLAR_TRADE_AVG": {
+    "description": "Label displaying commodity flow at a per-system level",
+    "message": "Handel międzygwiezdny:"
+  },
   "INVERT_MOUSE_Y": {
     "description": "",
     "message": "Odwróć oś Y"
@@ -1118,6 +1270,10 @@
   "JETTISON": {
     "description": "",
     "message": "Wystrzel"
+  },
+  "JETTISON_MODE": {
+    "description": "",
+    "message": "Tryb zrzutu ładunku"
   },
   "JUMPING": {
     "description": "Flight State",
@@ -1158,6 +1314,10 @@
   "LAUNCH_PERMISSION_GRANTED_WATCH_TRAFFIC": {
     "description": "",
     "message": "Udzielono pozwolenia. Uważaj na ruch podczas odlotu."
+  },
+  "LAWFULNESS": {
+    "description": "Character parameter",
+    "message": "Praworządność"
   },
   "LEGAL_STATUS": {
     "description": "",
@@ -1215,6 +1375,18 @@
     "description": "Label tab for showing custom logged events",
     "message": "Dziennik własny"
   },
+  "LOG_EARLIEST_FIRST": {
+    "description": "Show the log entries in chronological order, earliest first",
+    "message": "Według najstarszego"
+  },
+  "LOG_EXPORT": {
+    "description": "Export the log",
+    "message": "Eksportuj"
+  },
+  "LOG_HTML": {
+    "description": "Export the log as HTML or not",
+    "message": "HTML"
+  },
   "LOG_NEW": {
     "description": "Indicate to make an entry into flight log system",
     "message": "Nowy wpis"
@@ -1231,6 +1403,10 @@
     "description": "",
     "message": "Mała"
   },
+  "LUCK": {
+    "description": "Character parameter",
+    "message": "Szczęście"
+  },
   "LY": {
     "description": "Light year",
     "message": "lś"
@@ -1239,16 +1415,8 @@
     "description": "For displaying commodity information",
     "message": "Główny eksport"
   },
-  "MAJOR_EXPORTS_ITEM": {
-    "description": "",
-    "message": "Główny eksport"
-  },
   "MAJOR_IMPORT": {
     "description": "For displaying commodity information",
-    "message": "Główny import"
-  },
-  "MAJOR_IMPORTS_ITEM": {
-    "description": "",
     "message": "Główny import"
   },
   "MAKE_NEW_FACE": {
@@ -1335,16 +1503,8 @@
     "description": "For displaying commodity information",
     "message": "Poboczny eksport"
   },
-  "MINOR_EXPORTS_ITEM": {
-    "description": "",
-    "message": "Poboczny eksport"
-  },
   "MINOR_IMPORT": {
     "description": "For displaying commodity information",
-    "message": "Poboczny import"
-  },
-  "MINOR_IMPORTS_ITEM": {
-    "description": "",
     "message": "Poboczny import"
   },
   "MISSILE_MOUNTS": {
@@ -1359,9 +1519,21 @@
     "description": "",
     "message": "Szczegóły misji"
   },
+  "MODEL": {
+    "description": "3d model of the ship",
+    "message": "Model"
+  },
+  "MONEY": {
+    "description": "",
+    "message": "Pieniądze"
+  },
   "MORE_INFO": {
     "description": "",
     "message": "Więcej..."
+  },
+  "MORE_THAN_ONE_PLAYERS_SHIP_FOUND_IN_SPACE": {
+    "description": "Message when restoring savegame",
+    "message": "More than one player's ship found in space"
   },
   "MOSTLY_HARMLESS": {
     "description": "",
@@ -1404,8 +1576,8 @@
     "message": "Nazwisko"
   },
   "NAVIGATION": {
-    "description": "",
-    "message": "Nawigacja:"
+    "description": "Crew skill",
+    "message": "Nawigacja"
   },
   "NAVIGATOR": {
     "description": "",
@@ -1414,6 +1586,14 @@
   "NEGOTIATE": {
     "description": "",
     "message": "Negocjacje"
+  },
+  "NEW_GAME": {
+    "description": "Main menu item",
+    "message": "Nowa gra"
+  },
+  "NEW_PAINTJOB_APPLIED": {
+    "description": "Paintshop popup",
+    "message": "Twój statek został pomalowany."
   },
   "NEXT_FACE_FEATURE": {
     "description": "Face feature switch button for FaceGenerator in the PersonalInfo view",
@@ -1447,6 +1627,10 @@
     "description": "",
     "message": "Uwagi:"
   },
+  "NOTORIETY": {
+    "description": "Character parameter",
+    "message": "Zła sława"
+  },
   "NOT_ENOUGH_ALLOY_TO_ATTEMPT_A_REPAIR": {
     "description": "",
     "message": "{alloy} - jest zbyt mało by rozpocząć naprawę."
@@ -1454,6 +1638,14 @@
   "NOT_SUPPORTED_ON_THIS_SHIP": {
     "description": "",
     "message": "{equipment} - nie można zainstalować w tym modelu statku"
+  },
+  "NO_AVAILABLE_DATA": {
+    "description": "Message displaying no stored data available",
+    "message": "Brak dostępnych danych"
+  },
+  "NO_CARGO": {
+    "description": "Message displayed when the player has no cargo in their hold.",
+    "message": "BRAK ŁADUNKÓW "
   },
   "NO_DRIVE": {
     "description": "Ship jump status",
@@ -1515,14 +1707,6 @@
     "description": "",
     "message": "Orbita"
   },
-  "ORBITAL_ANALYSIS": {
-    "description": "",
-    "message": "Analiza Orbity"
-  },
-  "ORBITAL_ANALYSIS_NOTES": {
-    "description": "",
-    "message": "Prędkość orbitalna to stała prędkość z jaką powinien poruszać się statek pod kątem 90° względem osi statek/{name}.\n\nPrędkość graniczna, jest minimalną prędkością przy której statek pozostaje na orbicie.  Przy mniejszej prędkości lub kącie, rozpocznie się opadanie ku powierzchni {name}.\n\nPrędkość ucieczki teoretycznie powoduje opuszczenie orbity, jeśli tylko statek nie jest na kursie kolizyjnym z {name}.\n\t\t"
-  },
   "ORBIT_APOAPSIS": {
     "description": "Label for the point of an orbit furthest from the orbited body",
     "message": "Apocentrum"
@@ -1555,6 +1739,46 @@
     "description": "Player owing money to crew members",
     "message": "Zalegasz"
   },
+  "PAINTSHOP": {
+    "description": "Station tab title",
+    "message": "Lakiernia"
+  },
+  "PAINTSHOP_NOT_AVAILABLE": {
+    "description": "",
+    "message": "Lakiernia nie jest dostępna na tej stacji."
+  },
+  "PAINTSHOP_WELCOME_0": {
+    "description": "Welcome message to the paintshop.",
+    "message": "Witamy! Twój statek będzie pięknie pomalowany!"
+  },
+  "PAINTSHOP_WELCOME_1": {
+    "description": "Welcome message to the paintshop.",
+    "message": "Siemanko! Szukasz nowego stylu?"
+  },
+  "PAINTSHOP_WELCOME_2": {
+    "description": "Welcome message to the paintshop.",
+    "message": "Nie spowodujemy ze Twój statek będzie szybki, ale za to w jakim stylu!"
+  },
+  "PAINTSHOP_WELCOME_3": {
+    "description": "Welcome message to the paintshop.",
+    "message": "Witaj podróżniku. Nie śpiesz się i pozwól działać swojej kreatywności."
+  },
+  "PAINTSHOP_WELCOME_4": {
+    "description": "Welcome message to the paintshop.",
+    "message": "Najlepszy wygląd w galaktyce, nie był nigdy łatwiejszy!"
+  },
+  "PASSENGER_CABIN_CAPACITY": {
+    "description": "Entry for ship info",
+    "message": "Pojemność kabiny pasażerskie"
+  },
+  "PATH_FOUND_BUT_VERIFICATION_FAILED": {
+    "description": "Message when restoring savegame",
+    "message": "Path found but verification failed: %s"
+  },
+  "PATTERN": {
+    "description": "Ship painting pattern.",
+    "message": "Wzór"
+  },
   "PAY": {
     "description": "Pay for a transaction of services, e.g. for paying fines, (or repairs)",
     "message": "Zapłać"
@@ -1576,8 +1800,8 @@
     "message": "Pilot"
   },
   "PILOTING": {
-    "description": "",
-    "message": "Pilotaż:"
+    "description": "Crew skill",
+    "message": "Pilotaż"
   },
   "PILOT_SEAT_IS_NOW_OCCUPIED_BY_NAME": {
     "description": "",
@@ -1594,6 +1818,10 @@
   "PLANET_TEXTURES": {
     "description": "",
     "message": "Tekstury planet"
+  },
+  "PLEASE_DESIGN_NEW_PAINTJOB": {
+    "description": "",
+    "message": "Proszę stwórz swoje nowe malowanie:"
   },
   "PLEASE_REPORT_THIS_ERROR": {
     "description": "Informational text mentioning the error and asking the player to report it.",
@@ -1635,6 +1863,10 @@
     "description": "Drain the fuel tank",
     "message": "Wypompuj"
   },
+  "PURCHASE_PAINTJOB": {
+    "description": "Paintshop button",
+    "message": "Kup malowanie"
+  },
   "QUALIFICATION_SCORES": {
     "description": "",
     "message": "Posiadane kwalifikacje"
@@ -1659,9 +1891,37 @@
     "description": "",
     "message": "Klasyfikacja:"
   },
+  "RAYLEIGH_ACCURATE": {
+    "description": "",
+    "message": "Rayleigh/Mie (accurate, per-pixel)"
+  },
+  "RAYLEIGH_FAST": {
+    "description": "",
+    "message": "Rayleigh/Mie (fast, per-vertex)"
+  },
+  "REALISTIC_SCATTERING": {
+    "description": "",
+    "message": "Scattering"
+  },
+  "REALISTIC_SCATTERING_DESC": {
+    "description": "",
+    "message": "Select scattering when rendering atmospheres. (Rayleigh/Mie is not recommended for low-end PCs)"
+  },
   "REAR_WEAPON": {
     "description": "",
     "message": "Tylna broń"
+  },
+  "RECOVER": {
+    "description": "Saveload menu button",
+    "message": "Recover"
+  },
+  "RECOVERED_BUT_NOT_VALID": {
+    "description": "Message when restoring savegame",
+    "message": "Recovered but not valid"
+  },
+  "RECOVER_SAVEGAME": {
+    "description": "",
+    "message": "Recover savegame"
   },
   "REFUEL": {
     "description": "",
@@ -1719,6 +1979,10 @@
     "description": "",
     "message": "Reset orientacji i zbliżenia"
   },
+  "RESET_PREVIEW": {
+    "description": "Paintshop button",
+    "message": "Resetuj podgląd"
+  },
   "RETURN_TO_GAME": {
     "description": "",
     "message": "Powrót do gry"
@@ -1763,6 +2027,14 @@
     "description": "",
     "message": "Zapisz"
   },
+  "SAVE_DELETED_SUCCESSFULLY": {
+    "description": "",
+    "message": "Zapis gry usunięty pomyślnie"
+  },
+  "SCATTERING_OLD": {
+    "description": "",
+    "message": "Spadek"
+  },
   "SCOOP_MOUNTS": {
     "description": "How many slots or mounts exist on the ship for fitting SCOOPS (e.g. cargo scoop, fuel scoop, multi-scoop) ",
     "message": "Mocowania czerpaków"
@@ -1774,6 +2046,14 @@
   "SELECT": {
     "description": "",
     "message": "Wybierz"
+  },
+  "SELECTED_SAVE_DOESNT_EXISTS": {
+    "description": "",
+    "message": "Wybrany zapis gry nie istnieje"
+  },
+  "SELECTED_SAVE_IS_NOT_A_VALID_SAVE": {
+    "description": "",
+    "message": "Wybrany zapis gry nie jest nieprawidłowym zapisem gry"
   },
   "SELECT_A_FILE_TO_SAVE_TO_OR_ENTER_A_NEW_FILENAME": {
     "description": "",
@@ -1787,6 +2067,10 @@
     "description": "",
     "message": "Wybierz zapis do wczytania..."
   },
+  "SELECT_START_PROFILE": {
+    "description": "Combo box for selecting the starting position",
+    "message": "Wybierz profil startowy:"
+  },
   "SELL": {
     "description": "Commodities and equipment prices",
     "message": "Sprzedaż"
@@ -1796,8 +2080,8 @@
     "message": "Sprzedaj posiadany"
   },
   "SENSORS": {
-    "description": "",
-    "message": "Sensory:"
+    "description": "Crew skill",
+    "message": "Sensory"
   },
   "SENSORS_AND_DEFENCE": {
     "description": "",
@@ -1814,6 +2098,18 @@
   "SET_RETURN_ROUTE": {
     "description": "",
     "message": "Ustaw drogę powrotną."
+  },
+  "SET_TO_45PERCENT_OF_DELTAV": {
+    "description": "For the speed limiter button",
+    "message": "Ustaw 45% pozostałego delta-v"
+  },
+  "SET_TO_CURRENT_VELOCITY": {
+    "description": "For the speed limiter button",
+    "message": "Ustaw aktualną prędkość"
+  },
+  "SET_TO_ZERO": {
+    "description": "For the speed limiter button",
+    "message": "Ustaw zero"
   },
   "SHIP": {
     "description": "",
@@ -1843,25 +2139,37 @@
     "description": "",
     "message": "Giełda statków"
   },
-  "SHIP_REPAIRS": {
+  "SHIP_NAME": {
     "description": "",
-    "message": "Naprawa statków"
+    "message": "Nazwa statku"
+  },
+  "SHIP_PARAMETERS": {
+    "description": "",
+    "message": "Parametry statku"
+  },
+  "SHIP_REPAIRS": {
+    "description": "Station tab name",
+    "message": "Warsztat i lakiernia"
   },
   "SHIP_TYPE": {
     "description": "",
     "message": "Rodzaj statku"
   },
-  "SHIP_VIEWING_WAS_SOLD": {
-    "description": "",
-    "message": "Statek który oglądasz został sprzedany"
-  },
   "SIMULATING_UNIVERSE_EVOLUTION_N_BYEARS": {
     "description": "",
     "message": "Symulacja ewolucji wszechświata: {age} miliardów lat ;-)"
   },
+  "SOME_PARAMETERS_ARE_NOT_OK": {
+    "description": "Diagnostics at game start",
+    "message": "Niektóre parametry są niewłaściwe:"
+  },
   "SOUND": {
     "description": "",
     "message": "Dźwięk"
+  },
+  "STANDARD_GAME_START_TIME": {
+    "description": "Standard game start time, current moment + 1200 years",
+    "message": "Standardowy czas rozpoczęcia gry"
   },
   "START_AT_BARNARDS_STAR": {
     "description": "",
@@ -1870,14 +2178,6 @@
   "START_AT_BARNARDS_STAR_DESC": {
     "description": "",
     "message": "Jest to trudny start ze stacji więziennej System Administration Resting."
-  },
-  "START_AT_EARTH": {
-    "description": "",
-    "message": "Rozpocznij na Ziemi"
-  },
-  "START_AT_EARTH_DESC": {
-    "description": "",
-    "message": "Jest to łatwy start z Londynu na Ziemi w układzie Słońca."
   },
   "START_AT_MARS": {
     "description": "",
@@ -1894,6 +2194,10 @@
   "START_AT_NEW_HOPE_DESC": {
     "description": "",
     "message": "Jest to umiarkowany start z Itzalean na New Hope w układzie Epsilon Eridani."
+  },
+  "START_GAME": {
+    "description": "Button",
+    "message": "Start gry"
   },
   "START_LOG_ENTRY_1": {
     "description": "First custom log message when starting a new game, giving backstory to the character. Importantly we here hint at what actions the player is best to take: buy fuel, get reputation, ask for take off clearance.",
@@ -1947,6 +2251,14 @@
     "description": "",
     "message": "Status"
   },
+  "SUMMARY": {
+    "description": "Tab item in the start game menu",
+    "message": "Podsumowanie"
+  },
+  "SYSTEM_BODY_INDEX_IS_OUT_OF_RANGE": {
+    "description": "Message when restoring savegame",
+    "message": "System body index is out of range"
+  },
   "TECH_CERTIFIED": {
     "description": "Lobby screen shows the tech level (an integer number) of the station",
     "message": "Ta stacja posiada certyfikat technologiczny {tech_level}. poziomu."
@@ -1954,6 +2266,10 @@
   "TECH_CERTIFIED_MILITARY": {
     "description": "Lobby screen shows the tech level of the station",
     "message": "Na tej stacji oficjalnie dostępna jest technologia militarna."
+  },
+  "TECH_LEVEL": {
+    "description": "System view label for technology level",
+    "message": "Poziom technologiczny"
   },
   "TEXTURE_COMPRESSION": {
     "description": "",
@@ -1967,6 +2283,10 @@
     "description": "",
     "message": "Na pokładzie nie ma już nikogo zdolnego do pilotowania tego statku."
   },
+  "THERE_WERE_ERRORS_IN_RECOVERY": {
+    "description": "Message when restoring savegame",
+    "message": "There were errors in recovery:"
+  },
   "THE_SHIP_IS_UNDER_STATION_CONTROL_COMMANDER": {
     "description": "",
     "message": "Kapitanie, statek jest pod kontrolą stacji."
@@ -1978,6 +2298,10 @@
   "THREE_KPC_ARM": {
     "description": "Arm of the Milky Way galaxy",
     "message": "Ramię Trzech Kiloparseków"
+  },
+  "TOGGLE_CARGO_WINDOW": {
+    "description": "Label for a button toggling the cargo display window.",
+    "message": "Przełącz okno ładunków "
   },
   "TOGGLE_FULL_COMMS_WINDOW": {
     "description": "on world view / main screen",
@@ -2027,6 +2351,10 @@
     "description": "",
     "message": "Masa łączna"
   },
+  "TRADING_AT": {
+    "description": "Indicates the current system for inspecting commodities.",
+    "message": "W {system}:"
+  },
   "TRADING_FROM": {
     "description": "Indicates the source system of a commodity trade.",
     "message": "Z {system}:"
@@ -2043,9 +2371,33 @@
     "description": "For player reputation",
     "message": "Godny zaufania"
   },
+  "TURN_OFF": {
+    "description": "",
+    "message": "Wyłącz"
+  },
   "TYPE": {
     "description": "",
     "message": "Typ"
+  },
+  "UNKNOWN_CUSTOM_LOG_ENTRY_FORMAT": {
+    "description": "Message when restoring savegame",
+    "message": "Unknown custom log entry format"
+  },
+  "UNKNOWN_FACTION": {
+    "description": "For entry in the flight log",
+    "message": "Unknown faction"
+  },
+  "UNKNOWN_LOCATION_IN_SECTOR_X": {
+    "description": "For entry in the flight log",
+    "message": "Unknown location in sector {sector}"
+  },
+  "UNKNOWN_STATION_LOG_ENTRY_FORMAT": {
+    "description": "Message when restoring savegame",
+    "message": "Unknown station log entry format"
+  },
+  "UNKNOWN_SYSTEM_LOG_ENTRY_FORMAT": {
+    "description": "Message when restoring savegame",
+    "message": "Unknown system log entry format"
   },
   "UNLAWFUL_WEAPONS_DISCHARGE": {
     "description": "",
@@ -2062,6 +2414,10 @@
   "UNRELIABLE": {
     "description": "",
     "message": "Nierzetelny"
+  },
+  "UNSUCCESSFULLY_RECOVERED_PARAMETERS_ARE_NOW_UNLOCKED_PLEASE_SET_THEM_MANUALLY": {
+    "description": "Message when restoring savegame",
+    "message": "Unsuccessfully recovered parameters are now unlocked, please set them manually."
   },
   "UP_ACCEL": {
     "description": "",
@@ -2098,6 +2454,14 @@
   "VIDEO_RESOLUTION_DESC": {
     "description": "Tooltip for video mode/resultion setting",
     "message": "Wyższe rozdzielczości pokazują więcej informacji przy mniejszych rozmiarach i mogą zmniejszyć wydajność."
+  },
+  "VISIT_PAINTSHOP": {
+    "description": "Ship Repair tab button.",
+    "message": "Odwiedź lakiernię"
+  },
+  "VISIT_REPAIR_SERVICES": {
+    "description": "Ship Repair tab button.",
+    "message": "Odwiedź mechanika"
   },
   "VSYNC": {
     "description": "For the checkbox in settings window",

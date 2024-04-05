@@ -33,11 +33,11 @@
   },
   "FLAVOUR_2_BODY": {
     "description": "",
-    "message": "Здравейте! Казвам се {name} и имам {equipment}, без драскотина, за Вас е само {price}."
+    "message": "Поздрави! Казвам се {name} и имам {equipment}, без драскотина, за Вас е само {price}."
   },
   "FLAVOUR_2_TEXT": {
     "description": "Selling second hand ship equipment",
-    "message": "Един брой {equipment} на добра цена!"
+    "message": "Продавам {equipment} на добра цена!"
   },
   "FLAVOUR_2_TITLE": {
     "description": "Selling second hand ship equipment",
@@ -45,11 +45,11 @@
   },
   "FLAVOUR_3_BODY": {
     "description": "",
-    "message": "Здравей! Имам {equipment} в излишък и искам {price}."
+    "message": "Здравейте! Имам {equipment} в излишък и искам {price}."
   },
   "FLAVOUR_3_TEXT": {
     "description": "Selling second hand ship equipment",
-    "message": "Един брой {equipment} в добро състояние."
+    "message": "Продавам {equipment} в добро състояние."
   },
   "FLAVOUR_3_TITLE": {
     "description": "Selling second hand ship equipment",
@@ -69,7 +69,7 @@
   },
   "FLAVOUR_5_BODY": {
     "description": "",
-    "message": "Здравейте! Искате ли {equipment}? Вършеше ми работа, но вече си изпя песента и не ми трябва. Цената е {price}."
+    "message": "Поздрави! Искате ли {equipment}? Вършеше ми работа, но вече си изпя песента и не ми трябва. Цената е {price}."
   },
   "FLAVOUR_5_TEXT": {
     "description": "Selling second hand ship equipment",
@@ -86,6 +86,18 @@
   "HOW_DO_I_FITT_IT": {
     "description": "Regarding installing a component on the ship",
     "message": "Как се монтира?"
+  },
+  "NO_LONGER_AVAILABLE_0": {
+    "description": "If the sentence is hard to translate, just make up an excuse why the item is no longer available.",
+    "message": "Съжалявам, изпревариха ви!"
+  },
+  "NO_LONGER_AVAILABLE_1": {
+    "description": "If the sentence is hard to translate, just make up an excuse why the item is no longer available.",
+    "message": "Съжалявам, вече сме се договорили с друг клиент!"
+  },
+  "NO_LONGER_AVAILABLE_2": {
+    "description": "If the sentence is hard to translate, just make up an excuse why the item is no longer available.",
+    "message": "Промених си мнението, вече не се продава."
   },
   "REPEAT_OFFER": {
     "description": "",

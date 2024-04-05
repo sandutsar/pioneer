@@ -1,4 +1,4 @@
-// Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #pragma once
@@ -9,9 +9,12 @@
 #include "ViewController.h"
 #include "utils.h"
 
+class HeadtrackingManager;
+
 class ShipViewController : public ViewController {
 public:
 	ShipViewController(WorldView *v);
+	~ShipViewController();
 
 	void Update() override;
 	void Activated() override;
@@ -43,6 +46,8 @@ private:
 	enum CamType m_camType;
 
 	sigc::connection m_onMouseWheelCon;
+
+	std::unique_ptr<HeadtrackingManager> m_headtrackingManager;
 
 	std::unique_ptr<InternalCameraController> m_internalCameraController;
 	std::unique_ptr<ExternalCameraController> m_externalCameraController;

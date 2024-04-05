@@ -1,4 +1,4 @@
--- Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 -- Convenience wrappers for the C++ UI functions and general functions
@@ -6,24 +6,28 @@ local Engine = require 'Engine'
 local Game = require 'Game'
 local utils = require 'utils'
 local pigui = Engine.pigui
+
+---@class ui
 local ui = require 'pigui.libs.forwarded'
 
 --
 -- Function: ui.pcall
 --
--- ui.pcall(fun, ...)
+-- Run a function in *protected mode* with the given arguments. Any error
+-- inside the function will be caught and the ImGui stack cleaned up to a safe
+-- state to continue calling UI functions.
 --
--- Clean up the ImGui stack in case of an error
---
+-- A detailed stack dump of the error will be written to the game's output log
+-- and a traceback returned with the error message.
 --
 -- Example:
 --
--- >
+-- > local ok, err = ui.pcall(fun, ...)
 --
 -- Parameters:
 --
---   fun -
---   ... -
+--   fun - function to call in protected mode
+--   ... - any arguments to be passed to the function
 --
 -- Returns:
 --
@@ -33,8 +37,33 @@ function ui.pcall(fun, ...)
 	local stack = pigui.GetImguiStack()
 	return xpcall(fun, function(msg)
 		pigui.CleanupImguiStack(stack)
+		logWarning("Caught error in Lua UI code:\n\t" .. tostring(msg) .. '\n')
+		logVerbose(debug.dumpstack(2))
 		return debug.traceback(msg, 2) .. "\n"
 	end, ...)
+end
+
+local _nextWindowPadding = nil
+
+--
+-- Function: ui.setNextWindowPadding()
+--
+-- Overrides the window padding for the next ui.window() or ui.child() call
+-- without propagating the padding to further subwindows.
+--
+-- Example:
+--
+-- > ui.setNextWindowPadding( Vector2(0, 0) )
+-- > ui.window("NoPadding", function()
+-- >     ui.child("ID", { "AlwaysUseWindowPadding" }, function() ... end)
+-- > end)
+--
+-- Parameters:
+--
+--  padding - Vector2, the window padding to override with.
+--
+function ui.setNextWindowPadding(padding)
+	_nextWindowPadding = padding
 end
 
 --
@@ -86,7 +115,17 @@ end
 --   nil
 --
 function ui.window(name, params, fun)
-	local ok = pigui.Begin(name, params)
+	local ok
+
+	if _nextWindowPadding then
+		pigui.PushStyleVar("WindowPadding", _nextWindowPadding)
+		ok = pigui.Begin(name, params)
+		pigui.PopStyleVar(1)
+	else
+		ok = pigui.Begin(name, params)
+	end
+	_nextWindowPadding = nil
+
 	if ok then fun() end
 	pigui.End()
 end
@@ -231,7 +270,15 @@ function ui.child(id, size, flags, fun)
 		flags = {}
 	end
 
-	pigui.BeginChild(id, size, flags)
+	if _nextWindowPadding then
+		pigui.PushStyleVar("WindowPadding", _nextWindowPadding)
+		pigui.BeginChild(id, size, flags)
+		pigui.PopStyleVar()
+		_nextWindowPadding = nil
+	else
+		pigui.BeginChild(id, size, flags)
+	end
+
 	fun()
 	pigui.EndChild()
 end
@@ -329,6 +376,20 @@ end
 --
 function ui.isAnyWindowHovered()
 	return ui.isWindowHovered({"AnyWindow", "AllowWhenBlockedByPopup", "AllowWhenBlockedByActiveItem"})
+end
+
+--
+-- Function: ui.canClickOnScreenObjectHere
+--
+-- A set of checks sufficient to safely process a click at the current mouse
+-- coordinates.
+--
+-- Returns:
+--
+--   boolean
+--
+function ui.canClickOnScreenObjectHere()
+	return not ui.isAnyWindowHovered() and not ui.isAnyPopupOpen()
 end
 
 --
@@ -580,9 +641,9 @@ function ui.withStyleColors(styles, fun)
 	for k,v in pairs(styles) do
 		pigui.PushStyleColor(k, v)
 	end
-	local res = fun()
+	local res = table.pack(fun())
 	pigui.PopStyleColor(utils.count(styles))
-	return res
+	return table.unpack(res, 1, res.n)
 end
 
 --
@@ -648,6 +709,33 @@ function ui.withStyleColorsAndVars(styles, vars, fun)
 	local res = fun()
 	pigui.PopStyleVar(utils.count(vars))
 	pigui.PopStyleColor(utils.count(styles))
+	return res
+end
+
+--
+-- Function: ui.withClipRect
+--
+-- ui.withClipRect(min, max, fun)
+--
+-- Wrap the passed UI code inside a user-defined clipping rectangle
+--
+-- Example:
+--
+-- >
+--
+-- Parameters:
+--   min        - Vector2, minimum screen position of the new clip rect
+--   max        - Vector2, maximum screen position of the new clip rect
+--   fun        - function, a function to call that shows the contents
+--
+-- Returns:
+--
+--   any - the value returned from fun
+--
+function ui.withClipRect(min, max, fun)
+	pigui.PushClipRect(min, max, true)
+	local res = fun()
+	pigui.PopClipRect()
 	return res
 end
 
@@ -790,10 +878,38 @@ function ui.loadTexture(filename)
 	return pigui:LoadTexture(filename)
 end
 
-function ui.maybeSetTooltip(tooltip)
-	if not Game.player:IsMouseActive() then
-		pigui.SetTooltip(tooltip)
-	end
+--
+-- Function: ui.incrementDrag
+--
+-- ui.incrementDrag(label, value, v_speed, v_min, v_max, format, draw_progress_bar)
+--
+-- Create a "drag with arrows and progress bar" widget, uses type double as value.
+--
+-- Example:
+--
+-- > value, changed = ui.incrementDrag("##mydrag", value, 1, 0, 20, "%.0f", false)
+--
+-- Parameters:
+--
+--   label - string, text, also used as ID
+--   value - int, set drag to this value
+--   v_speed - minimum change step
+--   v_min - int, lower bound
+--   v_max - int, upper bound
+--   format - string, format according to snprintf
+--   draw_progress_bar - optional boolean, whether to draw a progress bar as
+--                       the value changes from minimum to maximum
+--
+-- Returns:
+--
+--   value - the value that the drag was set to
+--   changed - nil, if the value has not changed
+--             1, if value is changed by mouse
+--             2, if the value is changed by keyboard input
+--
+function ui.incrementDrag(...)
+	local args = table.pack(...)
+	return ui.withButtonColors(ui.theme.buttonColors.transparent, function()
+		return pigui.IncrementDrag(table.unpack(args))
+	end)
 end
-
-ui.setTooltip = ui.maybeSetTooltip

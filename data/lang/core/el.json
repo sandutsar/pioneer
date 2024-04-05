@@ -17,27 +17,35 @@
   },
   "AND_HIGHLY_COMPLEX_ECOSYSTEM": {
     "description": "",
-    "message": "\" and a highly complex ecosystem.\""
+    "message": "και οικοσύστημα μεγάλης πολυπλοκότητας."
   },
   "AND_INDIGENOUS_MICROBIAL_LIFE": {
     "description": "",
-    "message": "\" and indigenous microbial life.\""
+    "message": "και ιθαγενείς μικροβιακές μορφές ζωής."
   },
   "AND_INDIGENOUS_PLANT_LIFE": {
     "description": "",
-    "message": "\" and indigenous plant life.\""
+    "message": "και ιθαγενή χλωρίδα."
   },
   "ANIMAL_MEAT": {
     "description": "",
     "message": "Κρέας ζώων"
   },
+  "AN_AR_ATMOSPHERE": {
+    "description": "",
+    "message": "ατμόσφαιρα αποτελούμενη κυρίως από αργό."
+  },
+  "AN_O2_ATMOSPHERE": {
+    "description": "",
+    "message": "ατμόσφαιρα κυρίως από οξυγόνο."
+  },
   "APOAPSIS_DISTANCE": {
     "description": "",
-    "message": "Apoapsis distance"
+    "message": "Απόαψη"
   },
   "AR_ATMOSPHERE": {
     "description": "",
-    "message": "\" Argon atmosphere\""
+    "message": "ατμόσφαιρα αποτελούμενη κυρίως από αργό."
   },
   "ASTEROID": {
     "description": "",
@@ -79,9 +87,37 @@
     "description": "",
     "message": "Axial tilt"
   },
+  "A_CH4_ATMOSPHERE": {
+    "description": "",
+    "message": "ατμόσφαιρα αποτελούμενη κυρίως από μεθάνιο."
+  },
+  "A_CO2_ATMOSPHERE": {
+    "description": "",
+    "message": "ατμόσφαιρα αποτελούμενη κυρίως από διοξείδιο του άνθρακα."
+  },
+  "A_CO_ATMOSPHERE": {
+    "description": "",
+    "message": "ατμόσφαιρα αποτελούμενη κυρίως από μονοξείδιο του άνθρακα."
+  },
   "A_FEW_THOUSAND": {
     "description": "regarding population",
     "message": "Μόνο μερικές χιλιάδες"
+  },
+  "A_HE_ATMOSPHERE": {
+    "description": "",
+    "message": "ατμόσφαιρα αποτελούμενη κυρίως από ήλιο."
+  },
+  "A_H_ATMOSPHERE": {
+    "description": "",
+    "message": "ατμόσφαιρα αποτελούμενη κυρίως από υδρογόνο."
+  },
+  "A_N_ATMOSPHERE": {
+    "description": "",
+    "message": "ατμόσφαιρα αποτελούμενη κυρίως από άζωτο."
+  },
+  "A_S_ATMOSPHERE": {
+    "description": "",
+    "message": "ατμόσφαιρα αποτελούμενη κυρίως από θείο."
   },
   "BATTLE_WEAPONS": {
     "description": "",
@@ -93,7 +129,7 @@
   },
   "BODIES": {
     "description": "space bodies",
-    "message": "bodies"
+    "message": "σώματα"
   },
   "BODY": {
     "description": "",
@@ -169,15 +205,15 @@
   },
   "CH4_ATMOSPHERE": {
     "description": "",
-    "message": "\" Methane atmosphere\""
+    "message": "ατμόσφαιρα μεθανίου"
   },
   "CO2_ATMOSPHERE": {
     "description": "",
-    "message": "\" Carbon Dioxide atmosphere\""
+    "message": "ατμόσφαιρα διοξειδίου του άνθρακα."
   },
   "COMMA_HIGHLY_VOLCANIC": {
     "description": "",
-    "message": ", highly volcanic"
+    "message": "με έντονη ηφαιστειακή δραστηριότητα."
   },
   "COMMODITY_NONE": {
     "description": "When no commodities exist",
@@ -265,11 +301,11 @@
   },
   "COUNT_STARPORTS": {
     "description": "",
-    "message": "starports"
+    "message": "κοσμοδρόμια"
   },
   "CO_ATMOSPHERE": {
     "description": "",
-    "message": "\" Carbon Monoxide atmosphere\""
+    "message": "ατμόσφαιρα μονοξειδίου του άνθρακα"
   },
   "CTRL": {
     "description": "Ctrl key on keyboard",
@@ -285,7 +321,7 @@
   },
   "DAY_LENGTH": {
     "description": "",
-    "message": "Day length"
+    "message": "διάρκεια ημέρας"
   },
   "DECREASE_RADAR_RANGE": {
     "description": "",
@@ -335,6 +371,22 @@
     "description": "",
     "message": "Σχεδίαση κάθετων γραμμών"
   },
+  "DWARF_PLANET_CONTAINING_LIQUID_WATER": {
+    "description": "",
+    "message": "πλανήτης νάνος που περιέχει νερό σε υγρή μορφή"
+  },
+  "DWARF_PLANET_CONTAINING_SOME_LIQUIDS": {
+    "description": "",
+    "message": "πλανήτης νάνος που περιέχει ουσίες σε υγρή μορφή"
+  },
+  "DWARF_PLANET_MOSTLY_COVERED_IN_ICE": {
+    "description": "",
+    "message": "πλανήτης νάνος που καλύπτεται κυρίως από πάγο"
+  },
+  "DWARF_PLANET_TERRESTRIAL": {
+    "description": "",
+    "message": "πλανήτης νάνος"
+  },
   "EARTH_FEDERATION_COLONIAL_RULE": {
     "description": "",
     "message": "Αποικιακή διακυβέρνηση Ομοσπονδίας Γης"
@@ -358,6 +410,10 @@
   "EQUATORIAL_RADIUS_TO_POLAR_RADIUS_RATIO": {
     "description": "",
     "message": "Equatorial to polar radius ratio"
+  },
+  "ESCAPE_VELOCITY": {
+    "description": "",
+    "message": "ταχύτητα διαφυγής"
   },
   "EXACT_MATCH_X": {
     "description": "",
@@ -439,6 +495,10 @@
     "description": "",
     "message": "Δεν ήταν δυνατή η εγγραφή αυτού του αποθηκευμένου αρχείου παιχνιδιού λόγω σφάλματος συστήματος."
   },
+  "GAME_SAVE_INVALID_NAME": {
+    "description": "",
+    "message": "Αδυναμία αποθήκευσης λόγω ακατάλληλου ονόματος αρχείου."
+  },
   "GENERAL_VIEW_CONTROLS": {
     "description": "",
     "message": "Χειρισμοί Γενικής Άποψης"
@@ -497,11 +557,11 @@
   },
   "HE_ATMOSPHERE": {
     "description": "",
-    "message": "\" Helium atmosphere\""
+    "message": "ατμόσφαιρα ηλίου"
   },
   "HIGHLY_VOLCANIC": {
     "description": "",
-    "message": "Highly volcanic"
+    "message": "με έντονη ηφαιστειακή δραστηριότητα"
   },
   "HIGH_POPULATION_OUTDOOR_WORLD": {
     "description": "",
@@ -561,11 +621,19 @@
   },
   "H_ATMOSPHERE": {
     "description": "",
-    "message": "\" Hydrogen atmosphere\""
+    "message": "ατμόσφαιρα υδρογόνου"
+  },
+  "ICE_DWARF_PLANET": {
+    "description": "",
+    "message": "πλανήτης νάνος καλυμμένος με πάγο"
+  },
+  "ICE_MOON": {
+    "description": "",
+    "message": "\" ice moon\""
   },
   "ICE_WORLD": {
     "description": "",
-    "message": "\" ice world\""
+    "message": "παγωμένος κόσμος"
   },
   "ILLEGAL_CURRENT_SYSTEM": {
     "description": "Short (tooltip) description of commodity (singular) status in the system the player is currently in",
@@ -629,11 +697,11 @@
   },
   "LARGE": {
     "description": "regarding terrestrial planet size (mass actually)",
-    "message": "Large"
+    "message": "Μεγάλος"
   },
   "LARGE_GAS_GIANT": {
     "description": "",
-    "message": "Large gas giant"
+    "message": "Μεγάλος αεριώδης γίγαντας"
   },
   "LASER_FIRE_DETECTED": {
     "description": "",
@@ -723,6 +791,10 @@
     "description": "",
     "message": "Μάζα: %{mass}t"
   },
+  "MEAN_DENSITY": {
+    "description": "",
+    "message": "Μέση πυκνότητα"
+  },
   "MEDICINES": {
     "description": "",
     "message": "Φάρμακα"
@@ -733,7 +805,7 @@
   },
   "MEDIUM_GAS_GIANT": {
     "description": "",
-    "message": "Medium gas giant"
+    "message": "Αεριώδης γίγαντας μέτριου μεγέθους"
   },
   "MESSAGE_FROM_X": {
     "description": "",
@@ -847,6 +919,14 @@
     "description": "",
     "message": "Σεπ"
   },
+  "MOON_CONTAINING_LIQUID_WATER": {
+    "description": "",
+    "message": "δορυφόρος που περιέχει νερό σε υγρή μορφή"
+  },
+  "MOON_WITH_SOME_ICE": {
+    "description": "",
+    "message": "δορυφόρος με κάποια ποσότητα πάγου"
+  },
   "NAME_OBJECT": {
     "description": "For an item or object",
     "message": "Είδος"
@@ -870,6 +950,10 @@
   "NERVE_GAS": {
     "description": "",
     "message": "Αέριο νεύρων."
+  },
+  "NONE": {
+    "description": "To indicate the absence of something",
+    "message": "<None>"
   },
   "NOT_FOUND": {
     "description": "searching star system in sector view",
@@ -949,7 +1033,7 @@
   },
   "N_ATMOSPHERE": {
     "description": "",
-    "message": "\" Nitrogen atmosphere\""
+    "message": "ατμόσφαιρα αζώτου"
   },
   "N_CELSIUS": {
     "description": "",
@@ -989,11 +1073,15 @@
   },
   "O2_ATMOSPHERE": {
     "description": "",
-    "message": "\" Oxygen atmosphere\""
+    "message": "ατμόσφαιρα οξυγόνου"
   },
   "OBJECT_INFO": {
     "description": "Originally for use as a window title and a button tooltip in the system map",
     "message": "Στοιχεία αντικειμένου"
+  },
+  "OCEANICMOON": {
+    "description": "",
+    "message": "\" oceanic moon\""
   },
   "OCEANICWORLD": {
     "description": "",
@@ -1001,7 +1089,7 @@
   },
   "ORBITAL_PERIOD": {
     "description": "",
-    "message": "Orbital period"
+    "message": "τροχιακή περίοδος"
   },
   "ORBITAL_STARPORT": {
     "description": "",
@@ -1057,15 +1145,15 @@
   },
   "PLANETARY_INFO": {
     "description": "",
-    "message": "Planetary info"
+    "message": "Πληροφορίες πλανήτη"
   },
   "PLANET_CONTAINING_LIQUID_WATER": {
     "description": "",
-    "message": "\" planet containing liquid water\""
+    "message": "πλανήτης που περιέχει νερό σε υγρή μορφή"
   },
   "PLANET_WITH_SOME_ICE": {
     "description": "",
-    "message": "\" planet with some ice\""
+    "message": "πλανήτης με παρουσία πάγου"
   },
   "PLANNED_ECONOMY": {
     "description": "",
@@ -1125,7 +1213,7 @@
   },
   "RADIUS": {
     "description": "",
-    "message": "Radius"
+    "message": "Ακτίνα"
   },
   "RECENTLY_EXPLORED_SYSTEM": {
     "description": "",
@@ -1142,6 +1230,14 @@
   "ROBOTS": {
     "description": "",
     "message": "Ρομπότ"
+  },
+  "ROCKY_MOON": {
+    "description": "",
+    "message": "\" rocky moon\""
+  },
+  "ROCKY_MOON_CONTAINING_SOME_LIQUIDS": {
+    "description": "",
+    "message": "\" rocky moon containing some liquids,\""
   },
   "ROCKY_PLANET": {
     "description": "",
@@ -1196,7 +1292,7 @@
     "message": "Σκουπίδια"
   },
   "SCOOP": {
-    "description": "Is followed by a number, repersenting scoop mounts/slots available to fit cargo scoop and/or fuel scoop",
+    "description": "Is followed by a number, representing scoop mounts/slots available to fit cargo scoop and/or fuel scoop",
     "message": "Συλλέκτης"
   },
   "SCREENSHOT_FILENAME_TEMPLATE": {
@@ -1258,6 +1354,10 @@
   "SET_LOW_THRUST_POWER_LEVEL_TO_X_PERCENT": {
     "description": "",
     "message": "Όρισε το επίπεδο για ώθηση μικρής ισχύος σε %power%%"
+  },
+  "SET_MAXIMUM_SPEED_LIMIT": {
+    "description": "Speed limiter tooltip.",
+    "message": "Ορίσατε ανώτατο όριο ταχύτητας"
   },
   "SET_NAVTARGET_TO": {
     "description": "",
@@ -1329,7 +1429,7 @@
   },
   "SMALL_GAS_GIANT": {
     "description": "",
-    "message": "Small gas giant"
+    "message": "Αεριώδης γίγαντας μικρού μεγέθους"
   },
   "SMALL_INDUSTRIAL_OUTPOST": {
     "description": "",
@@ -1357,7 +1457,7 @@
   },
   "STABLE_SYSTEM_WITH_N_MAJOR_BODIES_STARPORTS": {
     "description": "",
-    "message": "Stable system with %bodycount major %{body(s)} and %portcount %{starport(s)}"
+    "message": "Σταθερό σύστημα με %bodycount κύρια % [body(s)] και %portcount %[starport(s)]"
   },
   "STARPORT": {
     "description": "",
@@ -1365,7 +1465,7 @@
   },
   "STARPORTS": {
     "description": "",
-    "message": "Starports"
+    "message": "Κοσμοδρόμια"
   },
   "STAR_A": {
     "description": "",
@@ -1489,7 +1589,7 @@
   },
   "STAR_SYSTEM_INFORMATION": {
     "description": "",
-    "message": "Star system information"
+    "message": "Πληροφορίες αστρικού συστήματος"
   },
   "STAR_S_BH": {
     "description": "",
@@ -1501,11 +1601,11 @@
   },
   "SURFACE_GRAVITY": {
     "description": "",
-    "message": "Surface gravity"
+    "message": "Επιτάχυνση βαρύτητας στην επιφάνεια"
   },
   "SURFACE_TEMPERATURE": {
     "description": "",
-    "message": "Surface temperature"
+    "message": "Θερμοκρασία στην επιφάνεια"
   },
   "SWAP_SELECTED_HYPERSPACE_TARGET": {
     "description": "",
@@ -1537,7 +1637,7 @@
   },
   "S_ATMOSPHERE": {
     "description": "",
-    "message": "\" Sulfuric atmosphere\""
+    "message": "ατμόσφαιρα θείου"
   },
   "TAKEOFF": {
     "description": "",
@@ -1549,7 +1649,7 @@
   },
   "TENUOUS": {
     "description": "atmosphere thickness",
-    "message": "tenuous"
+    "message": "\"a tenuous \""
   },
   "TEXTILES": {
     "description": "",
@@ -1557,11 +1657,11 @@
   },
   "THICK": {
     "description": "",
-    "message": "πυκνό"
+    "message": "\"a thick \""
   },
   "THIN": {
     "description": "",
-    "message": "thin"
+    "message": "\"a thin \""
   },
   "THRIVING_OUTDOOR_WORLD": {
     "description": "",
@@ -1597,7 +1697,7 @@
   },
   "TINY": {
     "description": "Adjective used to describe the size of an object.",
-    "message": "Tiny"
+    "message": "Μικροσκοπικός"
   },
   "TOGGLE_EQUIPMENT_VIEW": {
     "description": "Tooltip for the Equipment View button",
@@ -1629,7 +1729,7 @@
   },
   "TRIPLE_SYSTEM": {
     "description": "",
-    "message": "Triple system"
+    "message": "τριπλό σύστημα"
   },
   "UNDOCKING": {
     "description": "Flight state of ship when leaving station",
@@ -1650,6 +1750,10 @@
   "UNIT_AU": {
     "description": "Distance unit: an astronomical unit, radius of Earth's orbit",
     "message": "AU"
+  },
+  "UNIT_CUBIC_METERS": {
+    "description": "Volume unit: cubic meter",
+    "message": "m³"
   },
   "UNIT_DAYS": {
     "description": "Duration unit: one 24-hour day",
@@ -1677,7 +1781,7 @@
   },
   "UNIT_KILOMETERS_PER_SECOND": {
     "description": "Speed unit: one kilometer per second",
-    "message": "km/s"
+    "message": "χλμ/ω"
   },
   "UNIT_KILOTONNES": {
     "description": "Mass unit: one kilotonne",
@@ -1697,7 +1801,7 @@
   },
   "UNIT_METERS_PER_SECOND": {
     "description": "Speed unit: one meter per second",
-    "message": "m/s"
+    "message": "μ/δ"
   },
   "UNIT_MILLION_METERS": {
     "description": "Distance unit: one million meters",
@@ -1753,11 +1857,11 @@
   },
   "VERY_DENSE": {
     "description": "",
-    "message": "very dense"
+    "message": "πολύ μεγάλης πυκνότητας"
   },
   "VERY_LARGE_GAS_GIANT": {
     "description": "",
-    "message": "Very large gas giant"
+    "message": "Αεριώδης γίγαντας πολύ μεγάλου μεγέθους"
   },
   "VIEW": {
     "description": "",
@@ -1791,13 +1895,13 @@
     "description": "",
     "message": "White dwarf stellar remnant"
   },
-  "WITH_A": {
+  "WITH": {
     "description": "",
-    "message": "\" with a \""
+    "message": "με"
   },
   "WITH_NO_SIGNIFICANT_ATMOSPHERE": {
     "description": "",
-    "message": "\" with no significant atmosphere\""
+    "message": "ουσιαστικά χωρίς ατμόσφαιρα"
   },
   "YAW": {
     "description": "",

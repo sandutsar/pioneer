@@ -1,4 +1,4 @@
--- Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local Engine = require 'Engine'
@@ -62,27 +62,10 @@ local function displayECM(uiPos)
 	if current_view == "world" then
 		local ecms = player:GetEquip('ecm')
 		for i,ecm in ipairs(ecms) do
-			local size, clicked = iconEqButton(uiPos, icons[ecm.ecm_type], false, mainIconSize, "ECM", not player:IsECMReady(), mainBackgroundColor, mainForegroundColor, mainHoverColor, mainPressedColor, 'ECM')
+			local size, clicked = iconEqButton(uiPos, icons[ecm.ecm_type], false, mainIconSize, "ECM", not player:IsECMReady(), mainBackgroundColor, mainForegroundColor, mainHoverColor, mainPressedColor, lec[ecm.hover_message])
 			uiPos.y = uiPos.y + size.y + 10
 			if clicked then
 				player:UseECM()
-			end
-		end
-	end
-	return uiPos
-end
-
-local function displayBodyScanner(uiPos)
-	player = Game.player
-	local current_view = Game.CurrentView()
-	if current_view == "world" then
-		local sensors = player:GetEquip('sensor')
-		for i,sensor in ipairs(sensors) do
-			local size,clicked = iconEqButton(uiPos, icons.scanner, false, mainIconSize, sensor:GetName(), false, mainBackgroundColor, mainForegroundColor, mainHoverColor, mainPressedColor, 'Body scanner')
-			uiPos.y = uiPos.y + size.y + 10
-			if clicked then
-				player:StartSensor(i)
-				-- or StopSensor(i)
 			end
 		end
 	end
@@ -137,7 +120,6 @@ local function displayEquipment()
 	local uiPos = Vector2(15, ui.screenHeight / 3 + 10)
 	uiPos = displayMissiles(uiPos)
 	uiPos = displayECM(uiPos + Vector2(0, 10))
-	uiPos = displayBodyScanner(uiPos + Vector2(0, 10))
 end
 
 ui.registerModule("game", displayEquipment)

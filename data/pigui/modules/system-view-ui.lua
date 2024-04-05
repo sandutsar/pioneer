@@ -1,4 +1,4 @@
--- Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local Game = require 'Game'
@@ -7,16 +7,19 @@ local Event = require 'Event'
 local Lang = require 'Lang'
 local ui = require 'pigui'
 local Format = require 'Format'
+local SpaceStation = require 'SpaceStation'
 local Constants = _G.Constants
 
 local Vector2 = _G.Vector2
 local lc = Lang.GetResource("core")
 local luc = Lang.GetResource("ui-core")
 local layout = require 'pigui.libs.window-layout'
+local Sidebar = require 'pigui.libs.sidebar'
 
 local player = nil
 local colors = ui.theme.colors
 local icons = ui.theme.icons
+local styles = ui.theme.styles
 
 local systemView = Game and Game.systemView -- for hot-reload
 
@@ -161,8 +164,6 @@ end
 -- all windows in this view
 local Windows = {
 	systemName = layout.NewWindow("SystemMapSystemName"),
-	systemOverview = layout.NewWindow("SystemMapOverview"),
-	systemOverviewHidden = layout.NewWindow("SystemOverviewHidden"),
 	objectInfo = layout.NewWindow("SystemMapObjectIngo"),
 	edgeButtons = layout.NewWindow("SystemMapEdgeButtons"),
 	orbitPlanner = layout.NewWindow("SystemMapOrbitPlanner"),
@@ -170,8 +171,12 @@ local Windows = {
 	unexplored = layout.NewWindow("SystemMapUnexplored")
 }
 
+Windows.systemName.style_colors["WindowBg"] = colors.transparent
+
 local systemViewLayout = layout.New(Windows)
 systemViewLayout.mainFont = winfont
+
+local leftSidebar = Sidebar.New("##SidebarL", "left")
 
 local systemOverviewWidget = require 'pigui.modules.system-overview-window'.New()
 systemOverviewWidget.visible = true
@@ -184,36 +189,73 @@ function systemOverviewWidget:onBodyDoubleClicked(sBody)
 	systemView:ViewSelectedObject()
 end
 
-function systemOverviewWidget:overrideDrawButtons()
-	if ui.mainMenuButton(icons.system_overview, luc.TOGGLE_OVERVIEW_WINDOW) then
-		self.visible = false
-	end
-	ui.sameLine()
-	self:drawControlButtons()
-end
+table.insert(leftSidebar.modules, {
+	priority = 1,
+	side = "left",
+	showInHyperspace = false,
+	icon = icons.system_overview,
+	tooltip = luc.TOGGLE_OVERVIEW_WINDOW,
+	exclusive = true,
 
-function Windows.systemOverview.ShouldShow()
-	return not Windows.unexplored.visible and systemOverviewWidget.visible
-end
-
-function Windows.systemOverviewHidden.ShouldShow()
-	return not Windows.unexplored.visible and not systemOverviewWidget.visible
-end
-
-function Windows.systemOverview.Show()
-	local selected = { [systemView:GetSelectedObject().ref or true] = true }
-	ui.withFont(ui.fonts.pionillium.medium, function()
-		systemOverviewWidget:display(systemView:GetSystem(), nil, selected)
-	end)
-end
-
-function Windows.systemOverviewHidden.Show()
-	ui.withFont(ui.fonts.pionillium.medium, function()
-		if ui.mainMenuButton(icons.system_overview, luc.TOGGLE_OVERVIEW_WINDOW) then
-			systemOverviewWidget.visible = true
+	drawTitle = function()
+		if Windows.unexplored.visible then
+			ui.text(lc.UNEXPLORED_SYSTEM_NO_SYSTEM_VIEW)
+		else
+			systemOverviewWidget:displaySidebarTitle(systemView:GetSystem())
 		end
-	end)
-end
+	end,
+
+	drawBody = function()
+		local system = systemView:GetSystem() ---@type StarSystem
+		if not system or Windows.unexplored.visible then
+			return
+		end
+
+		systemOverviewWidget:displaySearch()
+
+		systemOverviewWidget.size.y = math.max(ui.getContentRegion().y, ui.screenHeight / 1.6)
+
+		local root = system.rootSystemBody
+		local selected = { [systemView:GetSelectedObject().ref or 0] = true }
+
+		systemOverviewWidget:display(Game.system, root, selected)
+	end
+})
+
+local systemEconView = require 'pigui.modules.system-econ-view'.New()
+
+table.insert(leftSidebar.modules, {
+	priority = 2,
+	side = "left",
+	showInHyperspace = false,
+	icon = icons.money,
+	tooltip = luc.ECONOMY_TRADE,
+	exclusive = true,
+
+	drawTitle = function()
+		ui.text(luc.ECONOMY_TRADE)
+	end,
+
+	drawBody = function()
+		local selected = systemView:GetSelectedObject().ref ---@type SystemBody?
+		local docked = Game.player:GetDockedWith()
+		local current
+
+		if docked then
+			if not selected or not selected.isStation then
+				selected = docked:GetSystemBody()
+			else
+				current = docked:GetSystemBody()
+			end
+		end
+
+		if not selected or not selected.isStation then
+			systemEconView:drawSystemComparison(systemView:GetSystem())
+		else
+			systemEconView:drawStationComparison(selected, current)
+		end
+	end
+})
 
 local function drawWindowControlButton(window, icon, tooltip)
 	local isWindowActive = true
@@ -712,12 +754,15 @@ function Windows.objectInfo.ShouldShow()
 	return true
 end
 
-function Windows.objectInfo.Show()
+function Windows.objectInfo:Show()
 	local obj = systemView:GetSelectedObject()
-
 	local isSystemBody = obj.base == Projectable.SYSTEMBODY
 	local body = obj.ref
 
+	--FIXME there is some flickering when changing from one info to another
+	--which has different lenght. If the new one is shorter then the first header drawing
+	--seems to be too high (accodring to positioning relative to old info).
+	--Probably only durring the second drawing the position is ok. The window is anchored at bottom
 	textIcon(getBodyIcon(obj))
 	ui.text(isSystemBody and body.name or body.label)
 	ui.spacing()
@@ -731,62 +776,82 @@ function Windows.objectInfo.Show()
 	ui.separator()
 	ui.spacing()
 
-	local data = { }
+	local data = {}
 
-	if isSystemBody then -- system body
-		local parent = body.parent
-		local starport = body.superType == "STARPORT"
-		local surface = body.type == "STARPORT_SURFACE"
-		local sma = body.semiMajorAxis
-		local semimajoraxis = nil
-		if sma and sma > 0 then
-			semimajoraxis = ui.Format.Distance(sma)
-		end
-
-		local rp = body.rotationPeriod * 24 * 60 * 60
-		local op = body.orbitPeriod * 24 * 60 * 60
-		local pop = math.round(body.population * 1e9)
-		data = {
-			{ name = lc.MASS, icon = icons.body_radius,
-				value = (not starport) and ui.Format.Mass(body.mass) or nil },
-			{ name = lc.RADIUS, icon = icons.body_radius,
-				value = (not starport) and ui.Format.Distance(body.radius) or nil },
-			{ name = lc.SURFACE_GRAVITY, icon = icons.body_radius,
-				value = (not starport) and ui.Format.Speed(body.gravity, true).." ("..ui.Format.Gravity(body.gravity / 9.8066)..")" or nil },
-			{ name = lc.ORBITAL_PERIOD, icon = icons.body_orbit_period,
-				value = op and op > 0 and ui.Format.Duration(op, 2) or nil },
-			{ name = lc.DAY_LENGTH, icon = icons.body_day_length,
-				value = rp > 0 and ui.Format.Duration(rp, 2) or nil },
-			{ name = luc.ORBIT_APOAPSIS, icon = icons.body_semi_major_axis,
-				value = (parent and not surface) and ui.Format.Distance(body.apoapsis) or nil },
-			{ name = luc.ORBIT_PERIAPSIS, icon = icons.body_semi_major_axis,
-				value = (parent and not surface) and ui.Format.Distance(body.periapsis) or nil },
-			{ name = lc.SEMI_MAJOR_AXIS, icon = icons.body_semi_major_axis,
-				value = semimajoraxis },
-			{ name = lc.ECCENTRICITY, icon = icons.body_semi_major_axis,
-				value = (parent and not surface) and string.format("%0.2f", body.eccentricity) or nil },
-			{ name = lc.AXIAL_TILT, icon = icons.body_semi_major_axis,
-				value = (not starport) and string.format("%0.2f", body.axialTilt) or nil },
-			{ name = lc.POPULATION, icon = icons.personal,
-				value = pop > 0 and ui.Format.NumberAbbv(pop) or nil },
-
-		}
-
-	elseif obj.ref:IsShip() then -- physical body
-		-- TODO: the advanced target scanner should add additional data here,
-		-- but we really do not want to hardcode that here. there should be
-		-- some kind of hook that the target scanner can hook into to display
-		-- more info here.
-		-- This is what should be inserted:
-		table.insert(data, { name = luc.SHIP_TYPE, value = body:GetShipType() })
-		if player:GetEquipCountOccupied('target_scanner') > 0 or player:GetEquipCountOccupied('advanced_target_scanner') > 0 then
-			local hd = body:GetEquip("engine", 1)
-			table.insert(data, { name = luc.HYPERDRIVE, value = hd and hd:GetName() or lc.NO_HYPERDRIVE })
-			table.insert(data, { name = luc.MASS, value = Format.MassTonnes(body:GetStats().staticMass) })
-			table.insert(data, { name = luc.CARGO, value = Format.MassTonnes(body:GetStats().usedCargo) })
-		end
+	--SystemBody data is static so we use cache
+	--Ship data migh be dynamic in the future
+	if isSystemBody and self.prev_body == body then
+		data = self.data
 	else
-		data = {}
+		self.prev_body = body
+
+		if isSystemBody then -- system body
+			local parent = body.parent
+			local starport = body.superType == "STARPORT"
+			local surface = body.type == "STARPORT_SURFACE"
+			local sma = body.semiMajorAxis
+			local semimajoraxis = nil
+			if sma and sma > 0 then
+				semimajoraxis = ui.Format.Distance(sma)
+			end
+			local rp = body.rotationPeriod * 24 * 60 * 60
+			local op = body.orbitPeriod * 24 * 60 * 60
+			local pop = math.round(body.population * 1e9)
+			local techLevel = starport and SpaceStation.GetTechLevel(body) or nil
+			if techLevel == 11 then
+				techLevel = luc.MILITARY
+			end
+			data = {
+				{ name = lc.MASS, icon = icons.body_radius,
+					value = (not starport) and ui.Format.Mass(body.mass) or nil },
+				{ name = lc.RADIUS, icon = icons.body_radius,
+					value = (not starport) and ui.Format.Distance(body.radius) or nil },
+				{ name = lc.SURFACE_GRAVITY, icon = icons.body_radius,
+					value = (not starport) and ui.Format.Speed(body.gravity, true).." ("..ui.Format.Gravity(body.gravity / 9.80665)..")" or nil },
+				{ name = lc.ESCAPE_VELOCITY, icon = icons.body_radius,
+					value = (not starport) and ui.Format.Speed(body.escapeVelocity , true) or nil },
+				{ name = lc.MEAN_DENSITY, icon = icons.body_radius,
+					value = (not starport) and ui.Format.Mass(body.meanDensity).."/m3" or nil },
+				{ name = lc.ORBITAL_PERIOD, icon = icons.body_orbit_period,
+					value = op and op > 0 and ui.Format.Duration(op, 2) or nil },
+				{ name = lc.DAY_LENGTH, icon = icons.body_day_length,
+					value = rp > 0 and ui.Format.Duration(rp, 2) or nil },
+				{ name = luc.ORBIT_APOAPSIS, icon = icons.body_semi_major_axis,
+					value = (parent and not surface) and ui.Format.Distance(body.apoapsis) or nil },
+				{ name = luc.ORBIT_PERIAPSIS, icon = icons.body_semi_major_axis,
+					value = (parent and not surface) and ui.Format.Distance(body.periapsis) or nil },
+				{ name = lc.SEMI_MAJOR_AXIS, icon = icons.body_semi_major_axis,
+					value = semimajoraxis },
+				{ name = lc.ECCENTRICITY, icon = icons.body_semi_major_axis,
+					value = (parent and not surface) and string.format("%0.2f", body.eccentricity) or nil },
+				{ name = lc.AXIAL_TILT, icon = icons.body_semi_major_axis,
+					value = (not starport) and string.format("%0.2f", body.axialTilt) or nil },
+				{ name = lc.POPULATION, icon = icons.personal,
+					value = pop > 0 and ui.Format.NumberAbbv(pop) or nil },
+				{ name = luc.TECH_LEVEL, icon = icons.equipment,
+					value = starport and techLevel or nil }
+			}
+
+			--change the internal cached data only when new is fully built
+			--prevents additional flickering
+			self.data = data
+
+		elseif obj.ref:IsShip() then -- physical body
+			-- TODO: the advanced target scanner should add additional data here,
+			-- but we really do not want to hardcode that here. there should be
+			-- some kind of hook that the target scanner can hook into to display
+			-- more info here.
+			-- This is what should be inserted:
+			table.insert(data, { name = luc.SHIP_TYPE, value = body:GetShipType() })
+			if player:GetEquipCountOccupied('target_scanner') > 0 or player:GetEquipCountOccupied('advanced_target_scanner') > 0 then
+				local hd = body:GetEquip("engine", 1)
+				table.insert(data, { name = luc.HYPERDRIVE, value = hd and hd:GetName() or lc.NO_HYPERDRIVE })
+				table.insert(data, { name = luc.MASS, value = Format.MassTonnes(body:GetStats().staticMass) })
+				table.insert(data, { name = luc.CARGO, value = Format.MassTonnes(body:GetStats().usedCargo) })
+			end
+		else
+			data = {}
+		end
 	end
 
 	ui.withFont(detailfont, function()
@@ -801,22 +866,21 @@ function Windows.objectInfo.Dummy()
 end
 
 function systemViewLayout:onUpdateWindowPivots(w)
-	w.edgeButtons.anchors = { ui.anchor.right, ui.anchor.center }
-	w.timeButtons.anchors = { ui.anchor.right, ui.anchor.bottom }
-	w.orbitPlanner.anchors = { ui.anchor.right, ui.anchor.bottom }
-	w.objectInfo.anchors = { ui.anchor.right, ui.anchor.bottom }
-	w.unexplored.anchors = { ui.anchor.center, ui.anchor.center }
+	w.systemName.anchors   = { ui.anchor.center, ui.anchor.top }
+	w.edgeButtons.anchors  = { ui.anchor.right,  ui.anchor.center }
+	w.timeButtons.anchors  = { ui.anchor.right,  ui.anchor.bottom }
+	w.orbitPlanner.anchors = { ui.anchor.right,  ui.anchor.bottom }
+	w.objectInfo.anchors   = { ui.anchor.right,  ui.anchor.bottom }
+	w.unexplored.anchors   = { ui.anchor.center, ui.anchor.center }
 end
 
 function systemViewLayout:onUpdateWindowConstraints(w)
 	-- resizing, aligning windows - static
-	w.systemName.pos = Vector2(winfont.size)
+	w.systemName.pos.x = ui.screenWidth * 0.5
+	w.systemName.pos.y = styles.MainButtonSize.y + (styles.MainButtonPadding + styles.WindowPadding.y) * 2 -- matches fx-window.lua
 	w.systemName.size.x = 0 -- adaptive width
-	w.edgeButtons.size.y = 0 -- adaptive height
 
-	w.systemOverview.pos = w.systemName.pos + w.systemName.size
-	w.systemOverview.size.y = ui.screenHeight - w.systemOverview.pos.y - 12 - ui.timeWindowSize.y
-	w.systemOverviewHidden.pos = w.systemOverview.pos
+	w.edgeButtons.size.y = 0 -- adaptive height
 
 	w.orbitPlanner.pos = w.timeButtons.pos - Vector2(w.edgeButtons.size.x, w.timeButtons.size.y)
 	w.orbitPlanner.size.x = w.timeButtons.size.x - w.edgeButtons.size.x
@@ -827,6 +891,8 @@ end
 local function displaySystemViewUI()
 	if not systemView then onGameStart() end
 
+	if not ui.shouldDrawUI() then return end
+
 	player = Game.player
 	if Game.CurrentView() == "system" then
 		if ui.isKeyReleased(ui.keys.tab) then
@@ -834,6 +900,10 @@ local function displaySystemViewUI()
 		end
 
 		systemViewLayout:display()
+		ui.withStyleColors({ WindowBg = colors.transparent }, function()
+			leftSidebar:Draw()
+		end)
+
 		displayOnScreenObjects()
 
 		if ui.escapeKeyReleased() then
@@ -841,6 +911,8 @@ local function displaySystemViewUI()
 		end
 
 		if ui.ctrlHeld() and ui.isKeyReleased(ui.keys.delete) then
+			package.reimport 'pigui.modules.system-overview-window'
+			package.reimport 'pigui.modules.system-econ-view'
 			package.reimport()
 		end
 	end

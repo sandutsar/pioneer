@@ -213,7 +213,7 @@
   },
   "FLAVOUR_12_ADTITLE": {
     "description": "",
-    "message": "SE REQUIEE NAVE"
+    "message": "SE REQUIERE NAVE"
   },
   "FLAVOUR_12_DANGER": {
     "description": "",
@@ -321,7 +321,7 @@
   },
   "FLAVOUR_3_ADTITLE": {
     "description": "",
-    "message": "SE REQUIEE NAVE"
+    "message": "SE REQUIERE NAVE"
   },
   "FLAVOUR_3_DANGER": {
     "description": "",
@@ -385,7 +385,7 @@
   },
   "FLAVOUR_4_WHYSOMUCH": {
     "description": "",
-    "message": "Soy viajante."
+    "message": "I'm a traveling salesman."
   },
   "FLAVOUR_5_ADTEXT": {
     "description": "",
@@ -429,7 +429,7 @@
   },
   "FLAVOUR_6_ADTITLE": {
     "description": "",
-    "message": "SE REQUIEE NAVE"
+    "message": "SE REQUIERE NAVE"
   },
   "FLAVOUR_6_DANGER": {
     "description": "",
@@ -457,7 +457,7 @@
   },
   "FLAVOUR_6_WHYSOMUCH": {
     "description": "",
-    "message": "Soy periodista autónomo."
+    "message": "I'm a freelance journalist."
   },
   "FLAVOUR_7_ADTEXT": {
     "description": "",

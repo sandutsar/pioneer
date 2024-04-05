@@ -1,10 +1,8 @@
--- Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 -- this is the only library automatically loaded at startup
 -- its the right place to extend core Lua tables
-
-require 'SpaceStation'
 
 string.trim = function(s)
 	return string.gsub(s or "", "^%s*(.-)%s*$", "%1")
@@ -20,6 +18,16 @@ end
 
 math.clamp = function(v, min, max)
 	return math.min(max, math.max(v,min))
+end
+
+-- linearly interpolate between min and max according to V
+math.lerp = function(min, max, v)
+	return min + (max - min) * v
+end
+
+-- calculate the interpolation factor of the given number v relative to min and max
+math.invlerp = function(min, max, v)
+	return (v - min) / (max - min)
 end
 
 debug.deprecated = function(name)
@@ -38,7 +46,67 @@ end
 
 -- a nice string interpolator
 string.interp = function (s, t)
-	return (s:gsub('(%b{})', function(w) return t[w:sub(2,-2)] or w end))
+	local i = 0
+	return (s:gsub('(%b{})', function(w)
+		if #w > 2 then
+			return tostring(t[w:sub(2, -2)]) or w
+		else
+			i = i + 1; return tostring(t[i]) or w
+		end
+	end))
+end
+
+---@class string
+---@operator mod(table): string
+
+-- allow using string.interp via "s" % { t }
+getmetatable("").__mod = string.interp
+
+-- make a simple shallow copy of the passed-in table
+-- does not copy metatable nor recurse into the table
+---@generic T
+---@param t T
+---@return T
+table.copy = function(t)
+	local ret = {}
+	for k, v in pairs(t) do
+		ret[k] = v
+	end
+	return ret
+end
+
+-- Copy values from table b into a
+--
+-- Does not copy metatable nor recurse into the table.
+-- Pass an optional predicate to transform the keys and values before assignment.
+---@generic K, V
+---@param a table
+---@param b table<K, V>
+---@param predicate nil|fun(k: K, v: V): any, any
+---@return table
+table.merge = function(a, b, predicate)
+	for k, v in pairs(b) do
+		if predicate then k, v = predicate(k, v) end
+		a[k] = v
+	end
+	return a
+end
+
+-- Append array b to array a
+--
+-- Does not copy metatable nor recurse into the table.
+-- Pass an optional predicate to transform the keys and values before assignment.
+---@generic T
+---@param a table
+---@param b T[]
+---@param predicate nil|fun(v: T): any
+---@return table
+table.append = function(a, b, predicate)
+	for _, v in ipairs(b) do
+		if predicate then v = predicate(v) end
+		table.insert(a, v)
+	end
+	return a
 end
 
 -- make import break. you should never import this file

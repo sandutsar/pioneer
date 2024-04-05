@@ -37,7 +37,7 @@
   },
   "POLICE_TAUNT_2": {
     "description": "",
-    "message": "Smuglare, du skall betala det ultimata priset!"
+    "message": "Smugglare, du kommer betala det ultimata priset!"
   },
   "POLICE_TAUNT_3": {
     "description": "",
@@ -49,7 +49,7 @@
   },
   "RESPECT_THE_LAW_2": {
     "description": "",
-    "message": "Du har anlänt till {sysmte} systemet. Vänligen respektera lagen!"
+    "message": "Du har anlänt till {system} systemet. Vänligen respektera lagen!"
   },
   "TAKE_A_HIKE": {
     "description": "",
@@ -69,6 +69,6 @@
   },
   "TARGET_DESTROYED_4": {
     "description": "",
-    "message": "Ännu en biter gräset!"
+    "message": "Ännu en biter i gräset!"
   }
 }

@@ -1,4 +1,4 @@
--- Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local e = require 'Equipment'
@@ -8,6 +8,7 @@ local Ship = require 'Ship'
 local ShipDef = require 'ShipDef'
 local Space = require 'Space'
 local utils = require 'utils'
+local Commodities = require 'Commodities'
 
 local Core = require 'modules.TradeShips.Core'
 local Trader = require 'modules.TradeShips.Trader'
@@ -65,19 +66,25 @@ end
 local function getImportsExports(system)
 	local import_score, export_score = 0, 0
 	local imports, exports = {}, {}
-	for key, equip in pairs(e.cargo) do
+
+	for key, commodity in pairs(Commodities) do
 		local v = system:GetCommodityBasePriceAlterations(key)
-		if key ~= "rubbish" and key ~= "radioactives" and system:IsCommodityLegal(key) then
+		local isTransportable =
+			commodity.price > 0 and
+			commodity.purchasable and
+			system:IsCommodityLegal(key)
+
+		if isTransportable then
 			-- values from SystemInfoView::UpdateEconomyTab
 
 			if v > 2 then
 				import_score = import_score + (v > 10 and 2 or 1)
-				table.insert(imports, equip)
+				table.insert(imports, commodity)
 			end
 
 			if v < -4 then
 				export_score = export_score + (v < -10 and 2 or 1)
-				table.insert(exports, equip)
+				table.insert(exports, commodity)
 			end
 		end
 	end
@@ -101,7 +108,7 @@ Flow.calculateSystemParams = function()
 	if system.population == 0 then return nil end
 
 	-- all ports in the system
-	local ports = Space.GetBodies(function (body) return body.superType == 'STARPORT' end)
+	local ports = Space.GetBodies("SpaceStation")
 	-- check if the current system can be traded in
 	if #ports == 0 then return nil end
 
@@ -136,8 +143,12 @@ Flow.calculateSystemParams = function()
 	for _, ship_name in ipairs(ship_names) do
 		local dummy = Ship.Create(ship_name)
 		Trader.addEquip(dummy)
+
+		---@type CargoManager
+		local cargoMgr = dummy:GetComponent('CargoManager')
+
 		-- just fill it with hydrogen to the brim
-		dummy:AddEquip(e.cargo.hydrogen, Trader.emptySpace(dummy))
+		cargoMgr:AddCommodity(Commodities.hydrogen, cargoMgr:GetFreeSpace())
 		dummies[ship_name] = dummy
 	end
 
@@ -447,15 +458,19 @@ Flow.spawnInitialShips = function()
 		if place == "inbound" then
 			local params = utils.chooseNormalized(routes_variants)
 			local hj_route = utils.chooseEqual(hyper_routes[params.id])
+
 			local ship = Space.SpawnShip(params.id, 9, 11, {hj_route.from, params.from:GetSystemBody().path, 0.0})
 			ship:SetLabel(Ship.MakeRandomLabel())
 			Core.ships[ship] = { ts_error = "OK", status = 'inbound', starport = params.to, ship_name	= params.id}
+
 			Trader.addEquip(ship)
 			local fuel_added = Trader.addFuel(ship)
 			Trader.addCargo(ship, 'import')
+
 			if fuel_added and fuel_added > 0 then
-				ship:RemoveEquip(e.cargo.hydrogen, math.min(hj_route.fuel, fuel_added))
+				Trader.removeFuel(ship, math.min(hj_route.fuel, fuel_added))
 			end
+
 			Space.PutShipOnRoute(ship, params.to, Engine.rand:Number(0.0, 0.999))-- don't generate at the destination
 			ship:AIDockWith(params.to)
 
@@ -470,13 +485,55 @@ Flow.spawnInitialShips = function()
 			local ship = Space.SpawnShipDocked(params.id, params.port)
 			-- if can't spawn - just skip
 			if ship then
-				Core.ships[ship] = { ts_error = "OK", status = 'docked', starport	= params.port, ship_name = params.id }
+				Core.ships[ship] = { ts_error = "OK", status = 'docked', starport = params.port, ship_name = params.id }
 				ship:SetLabel(Ship.MakeRandomLabel())
 				Trader.addEquip(ship)
+				Trader.assignTask(ship, Game.time + utils.deviation(Core.params.port_params[params.port].time * 3600, 0.8), 'doUndock')
 			end
 		end
 	end
 	return ships_in_space
+end
+
+Flow.setPlayerAsTraderDocked = function()
+	local ship = Game.player
+	--if player is not a trader
+	if Core.ships[ship] then
+		print("Flow.setPlayerAsTraderDocked: player is already a trader")
+		return
+	end
+	--if player is currently docked
+	if ship.flightState ~= 'DOCKED' then
+		print("Flow.setPlayerAsTraderDocked: can't set player as docked trader when player is not currently docked")
+		return
+	end
+	local dockedStation = ship:GetDockedWith()
+	Core.ships[ship] = { ts_error = "OK", status = 'docked', starport = dockedStation, ship_name = Game.player.shipId }
+	Trader.assignTask(ship, Game.time + utils.deviation(Core.params.port_params[Core.ships[ship].starport].time * 3600, 0.8), 'doUndock')
+end
+
+Flow.setPlayerAsTraderInbound = function()
+	local ship = Game.player
+	--if player is not a trader
+	if Core.ships[ship] then
+		print("Flow.setPlayerAsTraderInbound: player is already a trader")
+		return
+	end
+	-- Space.PutShipOnRoute will teleport player to star's surface when player is docked. We don't want that
+	if ship.flightState ~= 'FLYING' then
+		print("Flow.setPlayerAsTraderInbound: can't set player as inbound trader when player is not currently flying")
+		return
+	end
+	-- if there's any station in the system
+	local nearestStation = ship:FindNearestTo("SPACESTATION")
+	if not nearestStation then
+		print("Flow.setPlayerAsTraderInbound: no nearby station is found to set player as inbound trader")
+		return
+	end
+	Core.ships[ship] = { ts_error = "OK", status = 'inbound', starport = nearestStation, ship_name = Game.player.shipId }
+	Space.PutShipIntoOrbit(ship, Game.system:GetStars()[1].body)
+	Space.PutShipOnRoute(ship, Core.ships[ship].starport, Engine.rand:Number(0.0, 0.999))-- don't generate at the destination
+	ship:AIDockWith(Core.ships[ship].starport)
 end
 
 Flow.run = function()

@@ -1,4 +1,4 @@
--- Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 -- impaktor's script for monitoring commodity prices
 
@@ -8,12 +8,13 @@ local Engine = require "Engine"
 local Rand = require "Rand"
 local Format = require "Format"
 local debugView = require 'pigui.views.debug'
-local e = require "Equipment"
 local Format = require 'Format'
+local Commodities = require 'Commodities'
 
 -- (local) Global options
 local radius = 20
 local N = 0
+local commodities = nil
 local include_illegal, changed = false, false
 
 
@@ -139,7 +140,7 @@ local build_nearby_systems = function (dist, display)
 	local max_dist = dist or 30
 	local display = display or false
 
-	nearbysystems = Game.system:GetNearbySystems(max_dist, function (s) return #s:GetStationPaths() > 0 end)
+	local nearbysystems = Game.system:GetNearbySystems(max_dist, function (s) return #s:GetStationPaths() > 0 end)
 
 	if display then
 		for key, sys in pairs(nearbysystems) do
@@ -170,21 +171,21 @@ local scan_systems = function(dist)
 	-- for each system
 	for idx, sys in pairs(nearby_systems) do
 		-- for each commodity
-		for key, equip in pairs(e.cargo) do
-			-- table.sort(equip, function (a,b) return a:GetName() > b:GetName() end)
+		for key, comm in pairs(Commodities) do
+			-- table.sort(comm, function (a,b) return a:GetName() > b:GetName() end)
 
 			-- include goods if legal, or if we've chosen to include it
-			local include = include_illegal or sys:IsCommodityLegal(equip.name)
+			local include = include_illegal or sys:IsCommodityLegal(comm.name)
 
 			-- TODO: also include negative products, right?
-			-- if equip.price > 0 then
+			-- if comm.price > 0 then
 
-				local name = equip:GetName()
-				local price = getprice(equip, sys)
+				local name = comm:GetName()
+				local price = getprice(comm, sys)
 
 				if not commodities[name] then
-					commodities[name] = Commodity:new(name, equip.price)
-					print(name, equip.price)
+					commodities[name] = Commodity:new(name, comm.price)
+					print(name, comm.price)
 				end
 
 				-- if interesting, get name, and check price
@@ -337,6 +338,7 @@ end
 -- end)
 
 debugView.registerTab("Commodity Price", function()
+  if Game.player == nil then return end
   if ui.beginTabItem("Commodity Price") then
     main()
     ui.endTabItem()

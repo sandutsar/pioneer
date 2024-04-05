@@ -1,4 +1,4 @@
-// Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "WorldView.h"
@@ -10,9 +10,11 @@
 #include "HudTrail.h"
 #include "HyperspaceCloud.h"
 #include "Input.h"
+#include "Json.h"
 #include "Lang.h"
 #include "Pi.h"
 #include "Player.h"
+#include "SDL_keycode.h"
 #include "SectorView.h"
 #include "Sensors.h"
 #include "SpeedLines.h"
@@ -21,10 +23,13 @@
 #include "graphics/Graphics.h"
 #include "graphics/Material.h"
 #include "graphics/Renderer.h"
+#include "graphics/RenderState.h"
 #include "matrix4x4.h"
 #include "ship/PlayerShipController.h"
 #include "ship/ShipViewController.h"
 #include "sound/Sound.h"
+
+WorldView::~WorldView() {}
 
 namespace {
 	static const float HUD_CROSSHAIR_SIZE = 8.0f;
@@ -40,6 +45,12 @@ REGISTER_INPUT_BINDING(WorldView)
 	input->AddActionBinding("BindToggleHudMode", group, Action({ SDLK_TAB }));
 	input->AddActionBinding("BindIncreaseTimeAcceleration", group, Action({ SDLK_PAGEUP }));
 	input->AddActionBinding("BindDecreaseTimeAcceleration", group, Action({ SDLK_PAGEDOWN }));
+	// universal axes for selecting an item from a radial menu
+	input->AddAxisBinding("BindRadialHorizontalSelection", group, Axis({}, { SDLK_LEFT }, { SDLK_RIGHT }));
+	input->AddAxisBinding("BindRadialVerticalSelection", group, Axis({}, { SDLK_UP }, { SDLK_DOWN }));
+	// radial menu activators
+	input->AddActionBinding("BindFlightAssistRadial", group, Action{});
+	input->AddActionBinding("BindFixheadingRadial", group, Action{});
 }
 
 void WorldView::InputBinding::RegisterBindings()
@@ -47,6 +58,10 @@ void WorldView::InputBinding::RegisterBindings()
 	toggleHudMode = AddAction("BindToggleHudMode");
 	increaseTimeAcceleration = AddAction("BindIncreaseTimeAcceleration");
 	decreaseTimeAcceleration = AddAction("BindDecreaseTimeAcceleration");
+	AddAxis("BindRadialVerticalSelection");
+	AddAxis("BindRadialHorizontalSelection");
+	AddAction("BindFlightAssistRadial");
+	AddAction("BindFixheadingRadial");
 }
 
 WorldView::WorldView(Game *game) :
@@ -97,7 +112,7 @@ void WorldView::InitObject()
 
 	const float fovY = Pi::config->Float("FOVVertical");
 
-	m_cameraContext.Reset(new CameraContext(Graphics::GetScreenWidth(), Graphics::GetScreenHeight(), fovY, znear, zfar));
+	m_cameraContext.Reset(new CameraContext(Pi::renderer->GetWindowWidth(), Pi::renderer->GetWindowHeight(), fovY, znear, zfar));
 	m_camera.reset(new Camera(m_cameraContext, Pi::renderer));
 
 	InputBindings.RegisterBindings();
@@ -110,12 +125,6 @@ void WorldView::InitObject()
 	m_onDecTimeAccelCon = InputBindings.decreaseTimeAcceleration->onPressed.connect(sigc::mem_fun(this, &WorldView::OnRequestTimeAccelDec));
 }
 
-WorldView::~WorldView()
-{
-	m_onToggleHudModeCon.disconnect();
-	m_onIncTimeAccelCon.disconnect();
-	m_onDecTimeAccelCon.disconnect();
-}
 
 void WorldView::SaveToJson(Json &jsonObj)
 {
@@ -176,7 +185,7 @@ void WorldView::Draw3D()
 
 	// setup orthographic projection the indicator coordinate system expects
 	// (could also draw this using ImGui methods in DrawPiGui, but this is a quick patch for release)
-	m_renderer->SetProjection(matrix4x4f::OrthoFrustum(0, Graphics::GetScreenWidth(), Graphics::GetScreenHeight(), 0, 0, 1));
+	m_renderer->SetProjection(matrix4x4f::OrthoFrustum(0, m_renderer->GetWindowWidth(), m_renderer->GetWindowHeight(), 0, 0, 1));
 	m_renderer->SetTransform(matrix4x4f::Identity());
 
 	// combat target indicator
@@ -325,8 +334,9 @@ void WorldView::UpdateProjectedObjects()
 			}
 		}
 
-		if (laser >= 0 && Pi::player->GetFixedGuns()->IsGunMounted(laser)) {
-			UpdateIndicator(m_targetLeadIndicator, cam_rot * Pi::player->GetFixedGuns()->GetTargetLeadPos());
+		FixedGuns *gunManager = Pi::player->GetComponent<FixedGuns>();
+		if (laser >= 0 && gunManager->IsGunMounted(laser) && gunManager->IsFiringSolutionOk()) {
+			UpdateIndicator(m_targetLeadIndicator, cam_rot * gunManager->GetTargetLeadPos());
 			if ((m_targetLeadIndicator.side != INDICATOR_ONSCREEN) || (m_combatTargetIndicator.side != INDICATOR_ONSCREEN))
 				HideIndicator(m_targetLeadIndicator);
 		} else {
@@ -346,8 +356,8 @@ void WorldView::UpdateIndicator(Indicator &indicator, const vector3d &cameraSpac
 	const float BORDER_BOTTOM = 90.0;
 	// XXX BORDER_BOTTOM is 10+the control panel height and shouldn't be needed at all
 
-	const float w = Graphics::GetScreenWidth();
-	const float h = Graphics::GetScreenHeight();
+	const float w = m_renderer->GetWindowWidth();
+	const float h = m_renderer->GetWindowHeight();
 
 	if (cameraSpacePos.LengthSqr() < 1e-6) { // length < 1e-3
 		indicator.pos.x = w / 2.0f;
@@ -503,7 +513,7 @@ void WorldView::DrawCombatTargetIndicator(const Indicator &target, const Indicat
 
 void WorldView::DrawEdgeMarker(const Indicator &marker, const Color &c)
 {
-	const vector2f screenCentre(Graphics::GetScreenWidth() / 2.0f, Graphics::GetScreenHeight() / 2.0f);
+	const vector2f screenCentre(m_renderer->GetWindowWidth() / 2.0f, m_renderer->GetWindowHeight() / 2.0f);
 	vector2f dir = screenCentre - marker.pos;
 	float len = dir.Length();
 	dir *= HUD_CROSSHAIR_SIZE / len;
@@ -572,8 +582,8 @@ std::tuple<double, double, double> WorldView::CalculateHeadingPitchRoll(PlaneTyp
 static vector3d projectToScreenSpace(const vector3d &pos, RefCountedPtr<CameraContext> cameraContext, const bool adjustZ = true)
 {
 	const Graphics::Frustum &frustum = cameraContext->GetFrustum();
-	const float h = Graphics::GetScreenHeight();
-	const float w = Graphics::GetScreenWidth();
+	const float h = cameraContext->GetHeight();
+	const float w = cameraContext->GetWidth();
 	vector3d proj;
 	if (!frustum.ProjectPoint(pos, proj)) {
 		return vector3d(w / 2, h / 2, 0);

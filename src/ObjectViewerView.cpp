@@ -1,4 +1,4 @@
-// Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "ObjectViewerView.h"
@@ -18,6 +18,7 @@
 #include "graphics/Renderer.h"
 #include "imgui/imgui.h"
 #include "pigui/LuaPiGui.h"
+#include "profiler/Profiler.h"
 #include "terrain/Terrain.h"
 #include "utils.h"
 
@@ -39,7 +40,7 @@ ObjectViewerView::ObjectViewerView() :
 	Pi::renderer->GetNearFarRange(znear, zfar);
 
 	const float fovY = Pi::config->Float("FOVVertical");
-	m_cameraContext.Reset(new CameraContext(Graphics::GetScreenWidth(), Graphics::GetScreenHeight(), fovY, znear, zfar));
+	m_cameraContext.Reset(new CameraContext(Pi::renderer->GetWindowWidth(), Pi::renderer->GetWindowHeight(), fovY, znear, zfar));
 	m_camera.reset(new Camera(m_cameraContext, Pi::renderer));
 
 	m_cameraContext->SetCameraFrame(Pi::player->GetFrame());
@@ -80,7 +81,7 @@ void ObjectViewerView::Draw3D()
 
 		m_targetBody->Render(m_renderer, m_camera.get(), vector3d(0, 0, -viewingDist), m_camRot);
 
-		// industry-standard red/green/blue XYZ axis indiactor
+		// industry-standard red/green/blue XYZ axis indicator
 		matrix4x4d trans = matrix4x4d::Translation(vector3d(0, 0, -viewingDist)) * m_camRot * matrix4x4d::ScaleMatrix(m_targetBody->GetClipRadius() * 2.0);
 		m_renderer->SetTransform(matrix4x4f(trans));
 		Graphics::Drawables::GetAxes3DDrawable(m_renderer)->Draw(m_renderer);
@@ -147,11 +148,13 @@ void ObjectViewerView::DrawInfoWindow()
 	std::string infoLabel = fmt::format("View dist: {} Object: {}",
 		format_distance(viewingDist), m_targetBody->GetLabel());
 
+	ImVec2 vpSize = ImGui::GetMainViewport()->Size;
+
 	float xpos = ImGui::GetStyle().WindowPadding.x * 2;
-	float ypos = Graphics::GetScreenHeight() - (ImGui::GetTextLineHeightWithSpacing() * 5 + ImGui::GetFrameHeightWithSpacing());
+	float ypos = vpSize.y - (ImGui::GetTextLineHeightWithSpacing() * 5 + ImGui::GetFrameHeightWithSpacing());
 
 	ImGui::SetNextWindowPos({ xpos, ypos });
-	ImGui::SetNextWindowSize({ Graphics::GetScreenWidth() - xpos, Graphics::GetScreenHeight() - ypos });
+	ImGui::SetNextWindowSize({ vpSize.x - xpos, vpSize.y - ypos });
 	ImGui::Begin("ObjectViewerView#Info", nullptr, ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration);
 
 	ImGui::TextUnformatted(infoLabel.c_str());
@@ -173,11 +176,13 @@ namespace ImGui {
 
 void ObjectViewerView::DrawControlsWindow()
 {
-	float xpos = Graphics::GetScreenWidth() - Graphics::GetScreenWidth() / 5.0;
+	ImVec2 vpSize = ImGui::GetMainViewport()->Size;
+
+	float xpos = vpSize.x - vpSize.x / 5.0;
 	float ypos = ImGui::GetStyle().WindowPadding.y;
 
 	ImGui::SetNextWindowPos({ xpos, ypos });
-	ImGui::SetNextWindowSize({ Graphics::GetScreenWidth() - xpos, Graphics::GetScreenHeight() - ypos });
+	ImGui::SetNextWindowSize({ vpSize.x - xpos, vpSize.y - ypos });
 	ImGui::Begin("ObjectViewerView#Controls", nullptr, ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration);
 
 	if (m_isTerrainBody) {

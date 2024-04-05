@@ -1,4 +1,4 @@
--- Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local Engine = require 'Engine'
@@ -66,14 +66,17 @@ end
 
 local function button_wheelstate()
 	local wheelstate = player:GetWheelState() -- 0.0 is up, 1.0 is down
-	if wheelstate == 0.0 then -- gear is up
-		if ui.mainMenuButton(icons.landing_gear_down, lui.HUD_BUTTON_LANDING_GEAR_IS_UP) or (ui.noModifierHeld() and ui.isKeyReleased(ui.keys.f6)) then
+	local locked = player:GetFlightControlState() == "CONTROL_AUTOPILOT"
+	if locked and wheelstate == 0.0 then
+		ui.mainMenuButton(icons.landing_gear_down, lc.AUTOPILOT_CONTROL, ui.theme.buttonColors.disabled)
+	elseif wheelstate == 0.0 then -- gear is up
+		if ui.mainMenuButton(icons.landing_gear_down, lui.HUD_BUTTON_LANDING_GEAR_IS_UP) then
 			player:ToggleWheelState()
-	end
+		end
 	elseif wheelstate == 1.0 then -- gear is down
-		if ui.mainMenuButton(icons.landing_gear_up, lui.HUD_BUTTON_LANDING_GEAR_IS_DOWN) or (ui.noModifierHeld() and ui.isKeyReleased(ui.keys.f6)) then
+		if ui.mainMenuButton(icons.landing_gear_up, lui.HUD_BUTTON_LANDING_GEAR_IS_DOWN) then
 			player:ToggleWheelState()
-	end
+		end
 	else
 		ui.mainMenuButton(icons.landing_gear_up, lui.HUD_BUTTON_LANDING_GEAR_IS_MOVING, ui.theme.buttonColors.disabled)
 	end
@@ -108,14 +111,14 @@ local function displayShipFunctionWindow()
 	ui.window("ShipFunctions", windowFlags, function()
 		if current_view == "world" then
 			local shift = Vector2(0.0, thrust_widget_size.y - mainButtonSize.y)
-			ui.setCursorPos(ui.getCursorPos() + shift)
+			ui.addCursorPos(shift)
 			button_wheelstate()
 			ui.sameLine()
 			button_rotation_damping()
 			ui.sameLine()
 			button_lowThrustPower()
 			ui.sameLine()
-			ui.setCursorPos(ui.getCursorPos() - shift)
+			ui.addCursorPos(-shift)
 			button_thrustIndicator(thrust_widget_size)
 			if ui.noModifierHeld() and ui.isKeyReleased(ui.keys.f8) then
 				show_thrust_slider = not show_thrust_slider

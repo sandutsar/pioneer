@@ -1,4 +1,4 @@
--- Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local Comms		= require 'Comms'
@@ -8,6 +8,7 @@ local Lang		= require 'Lang'
 local ShipDef	= require 'ShipDef'
 local InfoView	= require 'pigui.views.info-view'
 local PiGuiFace = require 'pigui.libs.face'
+local Commodities = require 'Commodities'
 
 local ui = require 'pigui'
 local textTable = require 'pigui.libs.text-table'
@@ -60,7 +61,11 @@ local crewTasks = {
 		local hullMassLeft = Game.player.hullMassLeft
 		local hullDamage = hullMass - hullMassLeft
 		if hullDamage > 0 then
-			if Game.player:CountEquip(Equipment.cargo.metal_alloys, "cargo") <= 0 then
+			---@type CargoManager
+			local cargoMgr = Game.player:GetComponent('CargoManager')
+			local num_metal_alloys = cargoMgr:CountCommodity(Commodities.metal_alloys)
+
+			if num_metal_alloys <= 0 then
 				return l.NOT_ENOUGH_ALLOY_TO_ATTEMPT_A_REPAIR:interp({alloy = l.METAL_ALLOYS})
 			end
 
@@ -69,9 +74,9 @@ local crewTasks = {
 				local repair = math.min(
 					-- Need metal alloys for repair. Check amount.
 					math.ceil(hullDamage/(64 - result)), -- 65 > result > 3
-					Game.player:CountEquip(Equipment.cargo.metal_alloys, "cargo")
+					num_metal_alloys
 				)
-				Game.player:RemoveEquip(Equipment.cargo.metal_alloys, repair) -- These will now be part of the hull.
+				cargoMgr:RemoveCommodity(Commodities.metal_alloys, repair) -- These will now be part of the hull.
 				local repairPercent = math.min(math.ceil(100 * (repair + hullMassLeft) / hullMass), 100) -- Get new hull percentage...
 				Game.player:SetHullPercent(repairPercent)   -- ...and set it.
 				return l.HULL_REPAIRED_BY_NAME_NOW_AT_N_PERCENT:interp({name = crewMember.name,repairPercent = repairPercent})
@@ -86,6 +91,11 @@ local crewTasks = {
 	end,
 
 	DESTROY_ENEMY_SHIP = function ()
+		local crewMember = checkPilotLockout() and testCrewMember('piloting')
+		if not crewMember then
+			pilotLockout()
+			return (l.THERE_IS_NOBODY_ELSE_ON_BOARD_ABLE_TO_FLY_THIS_SHIP)
+		end
 		if Game.player.flightState ~= 'FLYING'
 		then
 			return (({
@@ -99,18 +109,17 @@ local crewTasks = {
 		elseif not Game.player:GetCombatTarget() then
 			return (l.YOU_MUST_FIRST_SELECT_A_COMBAT_TARGET_COMMANDER)
 		else
-			local crewMember = checkPilotLockout() and testCrewMember('piloting')
-			if not crewMember then
-				pilotLockout()
-				return (l.THERE_IS_NOBODY_ELSE_ON_BOARD_ABLE_TO_FLY_THIS_SHIP)
-			else
-				Game.player:AIKill(Game.player:GetCombatTarget())
-				return (l.PILOT_SEAT_IS_NOW_OCCUPIED_BY_NAME:interp({name = crewMember.name}))
-			end
+			Game.player:AIKill(Game.player:GetCombatTarget())
+			return (l.PILOT_SEAT_IS_NOW_OCCUPIED_BY_NAME:interp({name = crewMember.name}))
 		end
 	end,
 
 	DOCK_AT_CURRENT_TARGET = function ()
+		local crewMember = checkPilotLockout() and testCrewMember('piloting')
+		if not crewMember then
+			pilotLockout()
+			return (l.THERE_IS_NOBODY_ELSE_ON_BOARD_ABLE_TO_FLY_THIS_SHIP)
+		end
 		local target = Game.player:GetNavTarget()
 		if Game.player.flightState ~= 'FLYING'
 		then
@@ -125,14 +134,8 @@ local crewTasks = {
 		elseif not (target and target:isa('SpaceStation')) then
 			return (l.YOU_MUST_FIRST_SELECT_A_SUITABLE_NAVIGATION_TARGET_COMMANDER)
 		else
-			local crewMember = checkPilotLockout() and testCrewMember('piloting')
-			if not crewMember then
-				pilotLockout()
-				return (l.THERE_IS_NOBODY_ELSE_ON_BOARD_ABLE_TO_FLY_THIS_SHIP)
-			else
-				Game.player:AIDockWith(target)
-				return (l.PILOT_SEAT_IS_NOW_OCCUPIED_BY_NAME:interp({name = crewMember.name}))
-			end
+			Game.player:AIDockWith(target)
+			return (l.PILOT_SEAT_IS_NOW_OCCUPIED_BY_NAME:interp({name = crewMember.name}))
 		end
 	end
 }
@@ -140,6 +143,7 @@ local crewTasks = {
 local dismissButton = function(crewMember)
 	if Game.player:Dismiss(crewMember) then
 		crewMember:Save() -- Save to persistent characters list
+
 		if crewMember.contract then
 			if crewMember.contract.outstanding > 0 then
 				Comms.Message(l.IM_TIRED_OF_WORKING_FOR_NOTHING_DONT_YOU_KNOW_WHAT_A_CONTRACT_IS,crewMember.name)
@@ -168,7 +172,7 @@ end
 local function makeCrewList()
 	local t = {
 		separated = true, headerOnly = true,
-		{ l.NAME_PERSON, l.POSITION, l.WAGE, l.OWED, l.NEXT_PAID, "", font = orbiteer.xlarge }
+		{ l.NAME_PERSON, l.POSITION, l.WAGE, l.OWED, l.NEXT_PAID, "", font = orbiteer.heading }
 	}
 
 	local wageTotal = 0
@@ -211,7 +215,7 @@ local function drawCrewList(crewList)
 	textTable.drawTable(6, nil, crewList)
 
 	ui.newLine()
-	ui.withFont(orbiteer.xlarge, function() ui.text(l.GIVE_ORDERS_TO_CREW .. ":") end)
+	ui.withFont(orbiteer.heading, function() ui.text(l.GIVE_ORDERS_TO_CREW .. ":") end)
 	for label, task in pairs(crewTasks) do
 		if ui.button(l[label], Vector2(0, 0)) then lastTaskResult = task() end
 		ui.sameLine()
@@ -229,16 +233,17 @@ local function drawCrewInfo(crew)
 	local spacing = InfoView.windowPadding.x * 2.0
 	local info_column_width = (ui.getColumnWidth() - spacing) / 2
 	ui.child("PlayerInfoDetails", Vector2(info_column_width, 0), function()
-		ui.withFont(orbiteer.xlarge, function() ui.text(crew.name) end)
+		ui.withFont(orbiteer.heading, function() ui.text(crew.name) end)
+		ui.newLine()
 
-		textTable.withHeading(l.QUALIFICATION_SCORES, orbiteer.large, {
+		textTable.withHeading(l.QUALIFICATION_SCORES, orbiteer.body, {
 			{ l.ENGINEERING,	crew.engineering },
 			{ l.PILOTING,		crew.piloting },
 			{ l.NAVIGATION,		crew.navigation },
 			{ l.SENSORS,		crew.sensors },
 		})
 		ui.newLine()
-		textTable.withHeading(l.REPUTATION, orbiteer.large, {
+		textTable.withHeading(l.REPUTATION, orbiteer.body, {
 			{ l.RATING,			l[crew:GetCombatRating()] },
 			{ l.KILLS,			ui.Format.Number(crew.killcount) },
 			{ l.REPUTATION..":",l[crew:GetReputationRating()] },
@@ -246,7 +251,7 @@ local function drawCrewInfo(crew)
 
 		if not crew.player then
 			ui.newLine()
-			ui.withFont(orbiteer.xlarge, function() ui.text(l.EMPLOYMENT) end)
+			ui.withFont(orbiteer.body, function() ui.text(l.EMPLOYMENT) end)
 
 			if Game.player.flightState == 'DOCKED' then
 				if ui.button(l.DISMISS, Vector2(0, 0)) then dismissButton(crew) end
@@ -282,7 +287,7 @@ InfoView:registerView({
     showView = true,
 	draw = function()
 		ui.withStyleVars({ItemSpacing = itemSpacing}, function()
-			ui.withFont(pionillium.medlarge, function()
+			ui.withFont(pionillium.body, function()
 				if inspectingCrewMember then
 					drawCrewInfo(inspectingCrewMember)
 				else

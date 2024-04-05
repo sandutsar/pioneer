@@ -1,4 +1,4 @@
-// Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "LuaShipDef.h"
@@ -147,6 +147,14 @@
  */
 
 /*
+ * Attribute: linAccelerationCap
+ *
+ * Table keyed on <Constants.ShipTypeThruster>, containing acceleration cap of
+ * that thruster direction in m/s/s
+ *
+ */
+
+/*
  * Attribute: effectiveExhaustVelocity
  *
  * Ship thruster efficiency as the effective exhaust velocity in m/s.
@@ -249,6 +257,9 @@ void LuaShipDef::Register()
 		pi_lua_settable(l, "hyperdriveClass", st.hyperdriveClass);
 		pi_lua_settable(l, "effectiveExhaustVelocity", st.effectiveExhaustVelocity);
 		pi_lua_settable(l, "thrusterFuelUse", st.GetFuelUseRate());
+		pi_lua_settable(l, "frontCrossSec", st.frontCrossSection);
+		pi_lua_settable(l, "sideCrossSec", st.sideCrossSection);
+		pi_lua_settable(l, "topCrossSec", st.topCrossSection);
 		pi_lua_settable(l, "atmosphericPressureLimit", st.atmosphericPressureLimit);
 
 		lua_newtable(l);
@@ -256,6 +267,13 @@ void LuaShipDef::Register()
 			pi_lua_settable(l, EnumStrings::GetString("ShipTypeThruster", t), st.linThrust[t]);
 		pi_lua_readonly_table_proxy(l, -1);
 		lua_setfield(l, -3, "linearThrust");
+		lua_pop(l, 1);
+		
+		lua_newtable(l);
+		for (int t = Thruster::THRUSTER_REVERSE; t < Thruster::THRUSTER_MAX; t++)
+			pi_lua_settable(l, EnumStrings::GetString("ShipTypeThruster", t), st.linAccelerationCap[t]);
+		pi_lua_readonly_table_proxy(l, -1);
+		lua_setfield(l, -3, "linAccelerationCap");
 		lua_pop(l, 1);
 
 		lua_newtable(l);

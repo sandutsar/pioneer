@@ -1,4 +1,4 @@
--- Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local Game = require 'Game'
@@ -11,10 +11,14 @@ local Timer = require 'Timer'
 local Engine = require 'Engine'
 local Format = require 'Format'
 local Mission = require 'Mission'
+local MissionUtils = require 'modules.MissionUtils'
 local ShipDef = require 'ShipDef'
 local Character = require 'Character'
 local Equipment = require 'Equipment'
 local Serializer = require 'Serializer'
+
+local CommodityType = require 'CommodityType'
+local Commodities   = require 'Commodities'
 
 local utils = require 'utils'
 
@@ -32,83 +36,69 @@ local max_dist = 20 * AU
 local ads = {}
 local missions = {}
 
-local rescue_capsule = Equipment.EquipType.New({
-	name = "rescue_capsule",
+local rescue_capsule = CommodityType.RegisterCommodity("rescue_capsule", {
 	l10n_key = "RESCUE_CAPSULE",
 	l10n_resource = "module-scoop",
-	slots = "cargo",
 	price = 500,
 	icon_name = "Default",
 	model_name = "escape_pod",
-	capabilities = { mass = 1, crew = 1 },
+	mass = 1,
 	purchasable = false
 })
 
-local rocket_launchers = Equipment.EquipType.New({
-	name = "rocket_launchers",
+local rocket_launchers = CommodityType.RegisterCommodity("rocket_launchers", {
 	l10n_key = "ROCKET_LAUNCHERS",
 	l10n_resource = "module-scoop",
-	slots = "cargo",
 	price = 500,
 	icon_name = "Default",
-	capabilities = { mass = 1 },
+	mass = 1,
 	purchasable = false
 })
 
-local detonators = Equipment.EquipType.New({
-	name = "detonators",
+local detonators = CommodityType.RegisterCommodity("detonators", {
 	l10n_key = "DETONATORS",
 	l10n_resource = "module-scoop",
-	slots = "cargo",
 	price = 250,
 	icon_name = "Default",
-	capabilities = { mass = 1 },
+	mass = 1,
 	purchasable = false
 })
 
-local nuclear_missile = Equipment.EquipType.New({
-	name = "nuclear_missile",
+local nuclear_missile = CommodityType.RegisterCommodity("nuclear_missile", {
 	l10n_key = "NUCLEAR_MISSILE",
 	l10n_resource = "module-scoop",
-	slots = "cargo",
 	price = 1250,
 	icon_name = "Default",
 	model_name = "missile",
-	capabilities = { mass = 1 },
+	mass = 1,
 	purchasable = false
 })
 
 -- Useless waste that the player has to sort out
-local toxic_waste = Equipment.EquipType.New({
-	name = "toxic_waste",
+local toxic_waste = CommodityType.RegisterCommodity("toxic_waste", {
 	l10n_key = "TOXIC_WASTE",
 	l10n_resource = "module-scoop",
-	slots = "cargo",
 	price = -50,
 	icon_name = "Default",
-	capabilities = { mass = 1 },
+	mass = 1,
 	purchasable = false
 })
 
-local spoiled_food = Equipment.EquipType.New({
-	name = "spoiled_food",
+local spoiled_food = CommodityType.RegisterCommodity("spoiled_food", {
 	l10n_key = "SPOILED_FOOD",
 	l10n_resource = "module-scoop",
-	slots = "cargo",
 	price = -10,
 	icon_name = "Default",
-	capabilities = { mass = 1 },
+	mass = 1,
 	purchasable = false
 })
 
-local unknown = Equipment.EquipType.New({
-	name = "unknown",
+local unknown = CommodityType.RegisterCommodity("unknown", {
 	l10n_key = "UNKNOWN",
 	l10n_resource = "module-scoop",
-	slots = "cargo",
 	price = -5,
 	icon_name = "Default",
-	capabilities = { mass = 1 },
+	mass = 1,
 	purchasable = false
 })
 
@@ -126,8 +116,8 @@ local waste = {
 	toxic_waste,
 	spoiled_food,
 	unknown,
-	Equipment.cargo.radioactives,
-	Equipment.cargo.rubbish
+	Commodities.radioactives,
+	Commodities.rubbish
 }
 
 local flavours = {
@@ -166,10 +156,12 @@ local sortGoods = function (goods)
 	local system = Game.system
 
 	for _, e in pairs(goods) do
-		if e.purchasable and system:IsCommodityLegal(e.name) then
-			table.insert(legal_goods, e)
-		else
-			table.insert(illegal_goods, e)
+		if e.purchasable then
+			if system:IsCommodityLegal(e.name) then
+				table.insert(legal_goods, e)
+			else
+				table.insert(illegal_goods, e)
+			end
 		end
 	end
 
@@ -315,11 +307,16 @@ local transferCargo = function (mission, ref)
 
 		if Game.player:DistanceTo(mission.client_ship) <= 100 then
 
+			---@type CargoManager
+			local cargoMgr = Game.player:GetComponent('CargoManager')
+			---@type CargoManager
+			local clientCargo = mission.client_ship:GetComponent('CargoManager')
+
 			-- unload mission cargo
 			for i, e in pairs(mission.debris) do
 				if e.body == nil then
-					if Game.player:RemoveEquip(e.cargo, 1, "cargo") == 1 then
-						mission.client_ship:AddEquip(e.cargo, 1, "cargo")
+					if cargoMgr:RemoveCommodity(e.cargo, 1) == 1 then
+						clientCargo:AddCommodity(e.cargo, 1)
 						mission.debris[i] = nil
 						mission.amount = mission.amount - 1
 					end
@@ -475,7 +472,7 @@ local makeAdvert = function (station)
 	if #planets == 0 then return end
 
 	if flavours[LEGAL].cargo_type == nil then
-		flavours[LEGAL].cargo_type, flavours[ILLEGAL].cargo_type = sortGoods(Equipment.cargo)
+		flavours[LEGAL].cargo_type, flavours[ILLEGAL].cargo_type = sortGoods(Commodities)
 	end
 
 	local stars = Game.system:GetStars()
@@ -483,7 +480,9 @@ local makeAdvert = function (station)
 	local planet = planets[Engine.rand:Integer(1, #planets)]
 	local dist = station:DistanceTo(Space.GetBody(planet:GetSystemBody().index))
 	local flavour = flavours[Engine.rand:Integer(1, #flavours)]
-	local due = Game.time + mission_time * (1 + dist / max_dist) * Engine.rand:Number(0.8, 1.2)
+	local time = Engine.rand:Number(mission_time)
+	local due = time + MissionUtils.TravelTimeLocal(dist) * Engine.rand:Number(0.9, 1.1)
+	local timeout = due/2 + Game.time -- timeout after half of the travel time
 	local reward
 
 	if flavour.reward < 0 then
@@ -492,6 +491,7 @@ local makeAdvert = function (station)
 		reward = flavour.reward * (1 + dist / max_dist) * Engine.rand:Number(0.75, 1.25)
 	end
 	reward = utils.round(reward, 50)
+	due = utils.round(due + Game.time, 3600)
 
 	if #flavour.cargo_type > 0 and dist < max_dist and station:DistanceTo(Space.GetBody(star.index)) < max_dist then
 		local ad = {
@@ -506,6 +506,7 @@ local makeAdvert = function (station)
 			reward            = math.ceil(reward),
 			amount            = flavour.amount,
 			due               = due,
+			timeout           = timeout,
 			return_to_station = flavour.return_to_station,
 			deliver_to_ship   = flavour.deliver_to_ship,
 			ship_label        = flavour.deliver_to_ship and Ship.MakeRandomLabel() or nil
@@ -534,7 +535,7 @@ end
 
 local onUpdateBB = function (station)
 	for ref, ad in pairs(ads) do
-		if ad.due < Game.time + 5*24*60*60 then -- five day timeout
+		if ad.timeout < Game.time then
 			ad.station:RemoveAdvert(ref)
 		end
 	end
@@ -543,13 +544,16 @@ local onUpdateBB = function (station)
 	end
 end
 
-local onShipEquipmentChanged = function (ship, equipment)
-	if not ship:IsPlayer() or equipment == nil or equipment:GetDefaultSlot() ~= "cargo" then return end
+-- 0..25% chance for police to notice you scooping illegal cargo
+local onPlayerCargoChanged = function (comm, amount)
+	if not Game.system then return end
+
+	if Game.system:IsCommodityLegal(comm.name) or Game.player:IsDocked() then return end
 
 	for ref, mission in pairs(missions) do
-		if not mission.police and not Game.system:IsCommodityLegal(equipment.name) and not ship:IsDocked() and mission.location:IsSameSystem(Game.system.path) then
+		if not mission.police and mission.location:IsSameSystem(Game.system.path) then
 			if (1 - Game.system.lawlessness) > Engine.rand:Number(4) then
-				local station = ship:FindNearestTo("SPACESTATION")
+				local station = Game.player:FindNearestTo("SPACESTATION")
 				if station then mission.police = spawnPolice(station) end
 			end
 		end
@@ -658,11 +662,13 @@ local onShipDocked = function (player, station)
 		end
 
 		if mission.return_to_station or mission.deliver_to_ship and not mission.client_ship and mission.station == station.path then
+			---@type CargoManager
+			local cargoMgr = player:GetComponent('CargoManager')
 
 			-- unload mission cargo
 			for i, e in pairs(mission.debris) do
 				if e.body == nil then
-					if player:RemoveEquip(e.cargo, 1, "cargo") == 1 then
+					if cargoMgr:RemoveCommodity(e.cargo, 1) == 1 then
 						mission.debris[i] = nil
 						mission.amount = mission.amount - 1
 					end
@@ -721,7 +727,7 @@ local onEnterSystem = function (ship)
 	local planets = getPopulatedPlanets(Game.system)
 	local num = Engine.rand:Integer(0, math.ceil(Game.system.population * Game.system.lawlessness))
 
-	flavours[LEGAL].cargo_type, flavours[ILLEGAL].cargo_type = sortGoods(Equipment.cargo)
+	flavours[LEGAL].cargo_type, flavours[ILLEGAL].cargo_type = sortGoods(Commodities)
 
 	-- spawn random cargo (legal or illegal goods)
 	for i = 1, num do
@@ -823,6 +829,8 @@ local onGameStart = function ()
 			end
 		end
 	end
+
+	Game.player:GetComponent('CargoManager'):AddListener('scoop-mission', onPlayerCargoChanged)
 end
 
 local onGameEnd = function ()
@@ -841,7 +849,6 @@ end
 
 Event.Register("onCreateBB", onCreateBB)
 Event.Register("onUpdateBB", onUpdateBB)
-Event.Register("onShipEquipmentChanged", onShipEquipmentChanged)
 Event.Register("onShipDocked", onShipDocked)
 Event.Register("onShipUndocked", onShipUndocked)
 Event.Register("onShipHit", onShipHit)

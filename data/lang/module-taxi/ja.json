@@ -65,7 +65,7 @@
   },
   "DENY_1": {
     "description": "",
-    "message": "Come back when you have some qualifications."
+    "message": "ふさわしい能力を身につけたら戻ってきてください。"
   },
   "DENY_2": {
     "description": "",
@@ -97,7 +97,7 @@
   },
   "EXCELLENT": {
     "description": "",
-    "message": "Excellent."
+    "message": "素晴らしい。"
   },
   "FLAVOUR_0_ADTEXT": {
     "description": "",
@@ -385,7 +385,7 @@
   },
   "FLAVOUR_4_WHYSOMUCH": {
     "description": "",
-    "message": "I'm traveling salesman."
+    "message": "I'm a traveling salesman."
   },
   "FLAVOUR_5_ADTEXT": {
     "description": "",
@@ -457,7 +457,7 @@
   },
   "FLAVOUR_6_WHYSOMUCH": {
     "description": "",
-    "message": "I'm freelance journalist."
+    "message": "I'm a freelance journalist."
   },
   "FLAVOUR_7_ADTEXT": {
     "description": "",

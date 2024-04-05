@@ -1,10 +1,12 @@
-// Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef _LUAUTILS_H
 #define _LUAUTILS_H
 
-#include "utils.h"
+// to mask __attribute on MSVC
+#include "core/macros.h"
+
 #include <lua.hpp>
 #include <string>
 
@@ -74,7 +76,7 @@ void pi_lua_import_recursive(lua_State *L, const std::string &importName);
 int pi_lua_panic(lua_State *l) __attribute((noreturn));
 void pi_lua_protected_call(lua_State *state, int nargs, int nresults);
 int pi_lua_loadfile(lua_State *l, const FileSystem::FileData &code);
-void pi_lua_dofile(lua_State *l, const std::string &path);
+void pi_lua_dofile(lua_State *l, const std::string &path, int nret = 0);
 void pi_lua_dofile_recursive(lua_State *l, const std::string &basepath);
 
 void pi_lua_warn(lua_State *l, const char *format, ...) __attribute((format(printf, 2, 3)));
@@ -83,6 +85,9 @@ bool pi_lua_split_table_path(lua_State *l, const std::string &path);
 
 int secure_trampoline(lua_State *l);
 
+std::string pi_lua_traceback(lua_State *l, int top);
+std::string pi_lua_dumpstack(lua_State *l, int top);
+void pi_lua_printvalue(lua_State *l, int idx);
 void pi_lua_stacktrace(lua_State *l);
 
 #ifdef DEBUG

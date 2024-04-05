@@ -1,4 +1,4 @@
-// Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "LuaMetaType.h"
@@ -60,11 +60,6 @@ LuaConsole::LuaConsole() :
 	std::fill_n(m_editBuffer.get(), EDIT_BUFFER_LENGTH, '\0');
 }
 
-LuaConsole::~LuaConsole()
-{
-	m_logCallbackConn.disconnect();
-}
-
 REGISTER_INPUT_BINDING(LuaConsole)
 {
 	auto *group = Pi::input->GetBindingPage("General")->GetBindingGroup("Miscellaneous");
@@ -74,7 +69,7 @@ REGISTER_INPUT_BINDING(LuaConsole)
 void LuaConsole::SetupBindings()
 {
 	toggleLuaConsole = m_inputFrame.AddAction("BindToggleLuaConsole");
-	toggleLuaConsole->onPressed.connect(sigc::mem_fun(this, &LuaConsole::Toggle));
+	toggleLuaConsole->onReleased.connect(sigc::mem_fun(this, &LuaConsole::Toggle));
 	Pi::input->AddInputFrame(&m_inputFrame);
 }
 
@@ -197,7 +192,7 @@ static int callback(ImGuiInputTextCallbackData *data)
 void LuaConsole::Draw()
 {
 	ImGui::SetNextWindowPos({ 0, 0 });
-	ImGui::SetNextWindowSize({ float(Graphics::GetScreenWidth()), float(Graphics::GetScreenHeight()) });
+	ImGui::SetNextWindowSize(ImGui::GetMainViewport()->Size);
 	if (ImGui::Begin("Lua Console", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings)) {
 		if (ImGui::BeginChild("##TextWindow", ImVec2(0.f, -ImGui::GetFrameHeightWithSpacing() - ImGui::GetStyle().ItemSpacing.y))) {
 			for (const auto &str : m_outputLines) {
@@ -210,7 +205,7 @@ void LuaConsole::Draw()
 		ImGui::EndChild();
 		ImGui::Separator();
 
-		if (ImGui::IsKeyPressed(SDL_GetScancodeFromKey(SDLK_ESCAPE)))
+		if (ImGui::IsKeyReleased(ImGuiKey_Escape))
 			Toggle();
 
 		ImGui::SetNextItemWidth(ImGui::GetColumnWidth());
@@ -618,6 +613,22 @@ void LuaConsole::OpenTCPDebugConnection(int portnumber)
 			m_debugSocket = 0;
 			return;
 		}
+	}
+}
+
+void LuaConsole::CloseTCPDebugConnection()
+{
+	const char *cmd = "CloseTCPDebugConnection";
+	if (m_debugSocket) {
+		errno = 0;
+		if (close(m_debugSocket) == -1) {
+			Output("%s: FAIL(%d).\n", cmd, errno);
+		} else {
+			Output("%s: OK.\n", cmd);
+		}
+		m_debugSocket = 0;
+	} else {
+		Output("%s: FAIL - already closed.\n", cmd);
 	}
 }
 

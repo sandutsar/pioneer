@@ -1,4 +1,4 @@
-// Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef _QUATERNION_H
@@ -47,7 +47,7 @@ public:
 
 	void GetAxisAngle(T &angle, vector3<T> &axis)
 	{
-		if (w > 1.0) *this = Normalized(); // if w>1 acos and sqrt will produce errors, this cant happen if quaternion is normalised
+		if (w > 1.0) *this = Normalized(); // if w>1 acos and sqrt will produce errors, this can't happen if quaternion is normalised
 		angle = 2.0 * acos(w);
 		double s = sqrt(1.0 - w * w); // assuming quaternion normalised then w is less than 1, so term always positive.
 		if (s < 0.001) {			  // test to avoid divide by zero, s is always positive due to sqrt
@@ -98,6 +98,13 @@ public:
 		r.y = a.y * s;
 		r.z = a.z * s;
 		return r;
+	}
+	// vector transform with quaternion
+	// (see https://community.khronos.org/t/quaternion-functions-for-glsl/50140/3)
+	friend vector3<T> operator*(const Quaternion &a, const vector3<T> &vec)
+	{
+		vector3<T> xyz = vector3<T>(a.x, a.y, a.z);
+		return vec + 2.0 * (vec.Cross(xyz) + a.w * vec).Cross(xyz);
 	}
 	friend Quaternion operator+(const Quaternion &a, const Quaternion &b)
 	{

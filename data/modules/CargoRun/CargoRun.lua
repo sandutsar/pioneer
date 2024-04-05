@@ -1,4 +1,4 @@
--- Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local Engine = require 'Engine'
@@ -8,6 +8,7 @@ local Space = require 'Space'
 local Comms = require 'Comms'
 local Event = require 'Event'
 local Mission = require 'Mission'
+local MissionUtils = require 'modules.MissionUtils'
 local Format = require 'Format'
 local Serializer = require 'Serializer'
 local Character = require 'Character'
@@ -22,8 +23,6 @@ local lc = Lang.GetResource 'core'
 
 -- don't produce missions for further than this many light years away
 local max_delivery_dist = 15
--- typical time for travel to a system max_delivery_dist away
-local typical_travel_time = (2.5 * max_delivery_dist + 8) * 24 * 60 * 60
 -- typical reward for delivery to a system max_delivery_dist away
 local typical_reward = 35 * max_delivery_dist
 -- typical reward for local delivery
@@ -34,255 +33,26 @@ local min_local_dist_pay = 10
 local max_cargo = 10
 local max_cargo_wholesaler = 100
 -- factor for pickup missions
-local pickup_factor = 1.75
+local pickup_factor = 2
 -- the maximum price of the custom cargo
 local max_price = 300
 
--- the custom cargo
-local aluminium_tubes = Equipment.EquipType.New({
-	name = "aluminium_tubes",
-	l10n_key = 'ALUMINIUM_TUBES', slots="cargo", price=50,
-	capabilities={mass=1},
-	purchasable=false, icon_name="Default",
-	l10n_resource="module-cargorun"
-})
-local art_objects = Equipment.EquipType.New({
-	name = "art_objects",
-	l10n_key = 'ART_OBJECTS', slots="cargo", price=200,
-	capabilities={mass=1},
-	purchasable=false, icon_name="Default",
-	l10n_resource="module-cargorun"
-})
-local clus = Equipment.EquipType.New({
-	name = "clus",
-	l10n_key = 'CLUS', slots="cargo", price=20,
-	capabilities={mass=1},
-	purchasable=false, icon_name="Default",
-	l10n_resource="module-cargorun"
-})
-local diamonds = Equipment.EquipType.New({
-	name = "diamonds",
-	l10n_key = 'DIAMONDS', slots="cargo", price=300,
-	capabilities={mass=1},
-	purchasable=false, icon_name="Default",
-	l10n_resource="module-cargorun"
-})
-local digesters = Equipment.EquipType.New({
-	name = "digesters",
-	l10n_key = 'DIGESTERS', slots="cargo", price=10,
-	capabilities={mass=1},
-	purchasable=false, icon_name="Default",
-	l10n_resource="module-cargorun"
-})
-local electrical_appliances = Equipment.EquipType.New({
-	name = "electrical_appliances",
-	l10n_key = 'ELECTRICAL_APPLIANCES', slots="cargo", price=150,
-	capabilities={mass=1},
-	purchasable=false, icon_name="Default",
-	l10n_resource="module-cargorun"
-})
-local explosives = Equipment.EquipType.New({
-	name = "explosives",
-	l10n_key = 'EXPLOSIVES', slots="cargo", price=50,
-	capabilities={mass=1},
-	purchasable=false, icon_name="Default",
-	l10n_resource="module-cargorun"
-})
-local furniture = Equipment.EquipType.New({
-	name = "furniture",
-	l10n_key = 'FURNITURE', slots="cargo", price=15,
-	capabilities={mass=1},
-	purchasable=false, icon_name="Default",
-	l10n_resource="module-cargorun"
-})
-local greenhouses = Equipment.EquipType.New({
-	name = "greenhouses",
-	l10n_key = 'GREENHOUSES', slots="cargo", price=20,
-	capabilities={mass=1},
-	purchasable=false, icon_name="Default",
-	l10n_resource="module-cargorun"
-})
-local hazardous_substances = Equipment.EquipType.New({
-	name = "hazardous_substances",
-	l10n_key = 'HAZARDOUS_SUBSTANCES', slots="cargo", price=100,
-	capabilities={mass=1},
-	purchasable=false, icon_name="Default",
-	l10n_resource="module-cargorun"
-})
-local machine_tools = Equipment.EquipType.New({
-	name = "machine_tools",
-	l10n_key = 'MACHINE_TOOLS', slots="cargo", price=10,
-	capabilities={mass=1},
-	purchasable=false, icon_name="Default",
-	l10n_resource="module-cargorun"
-})
-local neptunium = Equipment.EquipType.New({
-	name = "neptunium",
-	l10n_key = 'NEPTUNIUM', slots="cargo", price=200,
-	capabilities={mass=1},
-	purchasable=false, icon_name="Default",
-	l10n_resource="module-cargorun"
-})
-local plutonium = Equipment.EquipType.New({
-	name = "plutonium",
-	l10n_key = 'PLUTONIUM', slots="cargo", price=200,
-	capabilities={mass=1},
-	purchasable=false, icon_name="Default",
-	l10n_resource="module-cargorun"
-})
-local semi_finished_products = Equipment.EquipType.New({
-	name = "semi_finished_products",
-	l10n_key = 'SEMI_FINISHED_PRODUCTS', slots="cargo", price=10,
-	capabilities={mass=1},
-	purchasable=false, icon_name="Default",
-	l10n_resource="module-cargorun"
-})
-local spaceship_parts = Equipment.EquipType.New({
-	name = "spaceship_parts",
-	l10n_key = 'SPACESHIP_PARTS', slots="cargo", price=250,
-	capabilities={mass=1},
-	purchasable=false, icon_name="Default",
-	l10n_resource="module-cargorun"
-})
-local titanium = Equipment.EquipType.New({
-	name = "titanium",
-	l10n_key = 'TITANIUM', slots="cargo", price=150,
-	capabilities={mass=1},
-	purchasable=false, icon_name="Default",
-	l10n_resource="module-cargorun"
-})
-local tungsten = Equipment.EquipType.New({
-	name = "tungsten",
-	l10n_key = 'TUNGSTEN', slots="cargo", price=125,
-	capabilities={mass=1},
-	purchasable=false, icon_name="Default",
-	l10n_resource="module-cargorun"
-})
-local uranium = Equipment.EquipType.New({
-	name = "uranium",
-	l10n_key = 'URANIUM', slots="cargo", price=175,
-	capabilities={mass=1},
-	purchasable=false, icon_name="Default",
-	l10n_resource="module-cargorun"
-})
-local quibbles = Equipment.EquipType.New({
-	name = "quibbles",
-	l10n_key = 'QUIBBLES', slots="cargo", price=1,
-	capabilities={mass=1},
-	purchasable=false, icon_name="Default",
-	l10n_resource="module-cargorun"
-})
-local wedding_dresses = Equipment.EquipType.New({
-	name = "wedding_dresses",
-	l10n_key = 'WEDDING_DRESSES', slots="cargo", price=15,
-	capabilities={mass=1},
-	purchasable=false, icon_name="Default",
-	l10n_resource="module-cargorun"
-})
-local stem_bolts = Equipment.EquipType.New({
-	name = "stem_bolts",
-	l10n_key = 'STEM_BOLTS', slots="cargo", price=143,
-	capabilities={mass=1},
-	purchasable=false, icon_name="Default",
-	l10n_resource="module-cargorun"
-})
-
-local chemical = {
-	digesters,
-	hazardous_substances
-}
-
-local mining = {
-	clus,
-	explosives
-}
-
-local hardware = {
-	aluminium_tubes,
-	diamonds,
-	hazardous_substances,
-	machine_tools,
-	neptunium,
-	plutonium,
-	semi_finished_products,
-	spaceship_parts,
-	stem_bolts,
-	titanium,
-	tungsten,
-	uranium
-}
-
-local infrastructure = {
-	clus,
-	explosives,
-	greenhouses
-}
-
-local consumer_goods = {
-	electrical_appliances,
-	furniture,
-	spaceship_parts
-}
-
-local expensive = { -- price >= 175
-	art_objects,
-	diamonds,
-	neptunium,
-	plutonium,
-	spaceship_parts,
-	uranium
-}
-
-local fluffy = {
-	quibbles
-}
-
-local wedding = {
-	wedding_dresses
-}
-
-local art = {
-	art_objects
-}
-
-local gems = {
-	diamonds
-}
-
-local radioactive = {
-	neptunium,
-	plutonium,
-	uranium
-}
-
-local centrifuges = {
-	aluminium_tubes
-}
-
-local custom_cargo = {
-	{ bkey = "CHEMICAL", goods = chemical, weight = 0 },
-	{ bkey = "MINING", goods = mining, weight = 0 },
-	{ bkey = "HARDWARE", goods = hardware, weight = 0 },
-	{ bkey = "INFRASTRUCTURE", goods = infrastructure, weight = 0 },
-	{ bkey = "CONSUMER_GOODS", goods = consumer_goods, weight = 0 },
-	{ bkey = "EXPENSIVE", goods = expensive, weight = 0 },
-	{ bkey = "FLUFFY", goods = fluffy, weight = 0 },
-	{ bkey = "WEDDING" , goods = wedding, weight = 0 },
-	{ bkey = "ART", goods = art, weight = 0 },
-	{ bkey = "GEMS", goods = gems, weight = 0 },
-	{ bkey = "RADIOACTIVE", goods = radioactive, weight = 0 },
-	{ bkey = "CENTRIFUGES", goods = centrifuges, weight = 0 }
-}
+local custom_cargo = {}
 
 -- Each branch should have a probability weight proportional to its size
 local custom_cargo_weight_sum = 0
-for branch,branch_array in pairs(custom_cargo) do
-	custom_cargo[branch].weight = #branch_array.goods
-	custom_cargo_weight_sum = custom_cargo_weight_sum + #branch_array.goods
-end
 
 local ads = {}
 local missions = {}
+
+local setDefaultCustomCargo = function()
+	custom_cargo_weight_sum = 0
+	custom_cargo = require 'modules.CargoRun.CargoTypes'
+	for branch,branch_array in pairs(custom_cargo) do
+		custom_cargo[branch].weight = #branch_array.goods
+		custom_cargo_weight_sum = custom_cargo_weight_sum + #branch_array.goods
+	end	
+end
 
 local isQualifiedFor = function(reputation, ad)
 	return
@@ -427,19 +197,29 @@ onChat = function (form, ref, option)
 		form:AddOption(l.IS_IT_NEGOTIABLE, 6)
 
 	elseif option == 3 then
-		if not ad.pickup and (Game.player.totalCargo - Game.player.usedCargo) < ad.negotiated_amount or
-			Game.player.totalCargo < ad.negotiated_amount then
-			form:SetMessage(l.YOU_DO_NOT_HAVE_ENOUGH_CARGO_SPACE_ON_YOUR_SHIP)
-			form:RemoveNavButton()
-			return
+		---@type CargoManager
+		local cargoMgr = Game.player:GetComponent('CargoManager')
+
+		if not ad.pickup then
+			if cargoMgr:GetFreeSpace() < ad.negotiated_amount then
+				form:SetMessage(l.YOU_DO_NOT_HAVE_ENOUGH_EMPTY_CARGO_SPACE)
+				form:RemoveNavButton()
+				return
+			elseif cargoMgr:GetTotalSpace() < ad.negotiated_amount then
+				form:SetMessage(l.YOU_DO_NOT_HAVE_ENOUGH_CARGO_SPACE_ON_YOUR_SHIP)
+				form:RemoveNavButton()
+				return
+			end
 		end
+
 		local cargo_picked_up
 		if not ad.pickup then
-			Game.player:AddEquip(ad.cargotype, ad.negotiated_amount, "cargo")
+			cargoMgr:AddCommodity(ad.cargotype, ad.negotiated_amount)
 			cargo_picked_up = true
 		else
 			cargo_picked_up = false
 		end
+
 		form:RemoveAdvertOnClose()
 		ads[ref] = nil
 		local mission = {
@@ -566,7 +346,7 @@ local nearbysystems
 
 local makeAdvert = function (station)
 	local reward, due, location, nearbysystem, dist, nearbystations, amount
-	local risk, wholesaler, pickup, branch, cargotype, missiontype
+	local risk, wholesaler, pickup, branch, cargotype, missiontype, timeout
 	local client = Character.New()
 	local urgency = Engine.rand:Number(0, 1)
 	local localdelivery = Engine.rand:Number(0, 1) > 0.5 and true or false
@@ -578,31 +358,33 @@ local makeAdvert = function (station)
 		-- discard stations closer than 1000m and further than 20AU
 		nearbystations = findNearbyStations(station, 1000, 1.4960e11 * 20)
 		if #nearbystations == 0 then return nil end
+
 		amount = Engine.rand:Integer(1, max_cargo)
 		risk = 0 -- no risk for local delivery
 		wholesaler = false -- no local wholesaler delivery
 		pickup = Engine.rand:Number(0, 1) > 0.75 and true or false
 		location, dist = table.unpack(nearbystations[Engine.rand:Integer(1,#nearbystations)])
 		reward = typical_reward_local + math.max(math.sqrt(dist) / 15000, min_local_dist_pay) * (1.5+urgency) * (1+amount/max_cargo)
-		due = (4*24*60*60) + (24*60*60 * (dist / (1.49*10^11))) * (1.5 - urgency)
+		due = (60*60*18 + MissionUtils.TravelTimeLocal(dist)) * 1.66 * (1.5 - urgency) * Engine.rand:Number(0.9, 1.1)
+		timeout = due/2 -- timeout after half of the travel time
+
 		if pickup then
 			missiontype = "PICKUP_LOCAL"
-			reward = reward * pickup_factor
-			due = due * pickup_factor + Game.time
 		else
 			missiontype = "LOCAL"
-			due = due + Game.time
 		end
 	else
 		if nearbysystems == nil then
 			nearbysystems = Game.system:GetNearbySystems(max_delivery_dist, function (s) return #s:GetStationPaths() > 0 end)
 		end
 		if #nearbysystems == 0 then return nil end
+
 		nearbysystem = nearbysystems[Engine.rand:Integer(1,#nearbysystems)]
 		dist = nearbysystem:DistanceTo(Game.system)
 		nearbystations = nearbysystem:GetStationPaths()
 		location = nearbystations[Engine.rand:Integer(1,#nearbystations)]
 		wholesaler = Engine.rand:Number(0, 1) > 0.75 and true or false
+
 		if wholesaler then
 			amount = Engine.rand:Integer(max_cargo, max_cargo_wholesaler)
 			missiontype = "WHOLESALER"
@@ -616,25 +398,33 @@ local makeAdvert = function (station)
 				missiontype = branch
 			end
 		end
+
 		risk = 0.75 * cargotype.price / max_price + Engine.rand:Number(0, 0.25) -- goods with price max_price have a risk of 0.75 to 1
 		reward = (dist / max_delivery_dist) * typical_reward * (1+risk) * (1.5+urgency) * (1+amount/max_cargo_wholesaler) * Engine.rand:Number(0.8,1.2)
-		due = (dist / max_delivery_dist) * typical_travel_time * (1.5 - urgency)
-		if pickup then
-			reward = reward * pickup_factor
-			due = due * pickup_factor + Game.time
-		else
-			due = due + Game.time
-		end
+		due = MissionUtils.TravelTime(dist, location) * 1.66 * (1.5 - urgency) * Engine.rand:Number(0.9, 1.1)
+		timeout = due/2 -- timeout after half of the travel time
+	end
+
+	if pickup then
+		reward = reward * pickup_factor
+		due = due * pickup_factor + Game.time
+		timeout = timeout * pickup_factor + Game.time
+	else
+		due = due + Game.time
+		timeout = timeout + Game.time
 	end
 	reward = utils.round(reward, 25)
+	due = utils.round(due, 900)
 
 	local n = getNumberOfFlavours("INTROTEXT_" .. missiontype)
 	local introtext
+
 	if n >= 1 then
 		introtext = "INTROTEXT_" .. missiontype .. "_" .. Engine.rand:Integer(1, n)
 	else
 		introtext = "INTROTEXT_" .. Engine.rand:Integer(1, getNumberOfFlavours("INTROTEXT"))
 	end
+
 	local ad = {
 		station       = station,
 		domicile      = station.path,
@@ -646,6 +436,7 @@ local makeAdvert = function (station)
 		introtext     = introtext,
 		dist          = dist,
 		due           = due,
+		timeout       = timeout,
 		amount        = amount,
 		negotiable    = negotiable,
 		branch        = branch,
@@ -681,16 +472,11 @@ end
 
 local onUpdateBB = function (station)
 	for ref,ad in pairs(ads) do
-		if ad.localdelivery then
-			if ad.due < Game.time + 2*60*60*24 then -- two day timeout for locals
-				ad.station:RemoveAdvert(ref)
-			end
-		else
-			if ad.due < Game.time + 5*60*60*24 then -- five day timeout for inter-system
-				ad.station:RemoveAdvert(ref)
-			end
+		if ad.timeout < Game.time then
+			ad.station:RemoveAdvert(ref)
 		end
 	end
+
 	if Engine.rand:Integer(12*60*60) < 60*60 then -- roughly once every twelve hours
 		makeAdvert(station)
 	end
@@ -756,6 +542,7 @@ local onEnterSystem = function (player)
 					client = mission.client.name, location = mission.location:GetSystemBody().name,})
 				Comms.ImportantMessage(pirate_greeting, pirate.label)
 				pirate_gripes_time = Game.time
+
 				if mission.wholesaler or Engine.rand:Number(0, 1) >= 0.75 then
 					local shipdef = ShipDef[Game.system.faction.policeShip]
 					local escort = Space.SpawnShipNear(shipdef.id, Game.player, 50, 100)
@@ -764,6 +551,7 @@ local onEnterSystem = function (player)
 					escort:AddEquip(Equipment.misc.shield_generator)
 					escort:AIKill(pirate)
 					table.insert(escort_ships, escort)
+
 					Comms.ImportantMessage(l["ESCORT_CHATTER_" .. Engine.rand:Integer(1, getNumberOfFlavours("ESCORT_CHATTER"))], escort.label)
 					escort_chatter_time = Game.time
 					escort_switch_target = Game.time + Engine.rand:Integer(90, 120)
@@ -888,11 +676,17 @@ local onShipDocked = function (player, station)
 
 	-- First drop off cargo (if any such missions)
 	for ref,mission in pairs(missions) do
-		if (mission.location == station.path and not mission.pickup) or
-			(mission.domicile == station.path and mission.pickup and mission.cargo_picked_up) then
+		local readyToComplete = (mission.location == station.path and not mission.pickup) or
+			(mission.domicile == station.path and mission.pickup and mission.cargo_picked_up)
+
+		if readyToComplete then
+
 			local reputation = mission.localdelivery and 1 or 1.5
 			local oldReputation = Character.persistent.player.reputation
-			local amount = Game.player:RemoveEquip(mission.cargotype, mission.amount, "cargo")
+
+			---@type CargoManager
+			local cargoMgr = Game.player:GetComponent('CargoManager')
+			local amount = cargoMgr:RemoveCommodity(mission.cargotype, mission.amount)
 
 			if Game.time <= mission.due and amount == mission.amount then
 				local n = getNumberOfFlavours("SUCCESSMSG_" .. mission.branch)
@@ -901,6 +695,7 @@ local onShipDocked = function (player, station)
 				else
 					Comms.ImportantMessage(l["SUCCESSMSG_" .. Engine.rand:Integer(1, getNumberOfFlavours("SUCCESSMSG"))], mission.client.name)
 				end
+
 				Character.persistent.player.reputation = Character.persistent.player.reputation + reputation
 				player:AddMoney(mission.reward)
 			else
@@ -916,8 +711,10 @@ local onShipDocked = function (player, station)
 						Comms.ImportantMessage(l["FAILUREMSG_" .. Engine.rand:Integer(1, getNumberOfFlavours("FAILUREMSG"))], mission.client.name)
 					end
 				end
+
 				Character.persistent.player.reputation = Character.persistent.player.reputation - reputation
 			end
+
 			Event.Queue("onReputationChanged", oldReputation, Character.persistent.player.killcount,
 				Character.persistent.player.reputation, Character.persistent.player.killcount)
 
@@ -931,23 +728,34 @@ local onShipDocked = function (player, station)
 
 	-- Now we have space pick up cargo as well
 	for ref,mission in pairs(missions) do
-		if mission.location == station.path and mission.pickup and not mission.cargo_picked_up then
+		local readyToPickup = mission.location == station.path and mission.pickup and not mission.cargo_picked_up
+
+		if readyToPickup then
 			if Game.time < mission.due then
-				if (player.totalCargo - player.usedCargo) < mission.amount then
+
+				---@type CargoManager
+				local cargoMgr = Game.player:GetComponent('CargoManager')
+
+				if cargoMgr:GetFreeSpace() < mission.amount then
 					Comms.ImportantMessage(l.YOU_DO_NOT_HAVE_ENOUGH_EMPTY_CARGO_SPACE, mission.client.name)
 				else
-					Game.player:AddEquip(mission.cargotype, mission.amount, "cargo")
+					cargoMgr:AddCommodity(mission.cargotype, mission.amount);
 					mission.cargo_picked_up = true
 					Comms.ImportantMessage(l.WE_HAVE_LOADED_UP_THE_CARGO_ON_YOUR_SHIP, mission.client.name)
 				end
+
 			else
+
 				local oldReputation = Character.persistent.player.reputation
 				Character.persistent.player.reputation = Character.persistent.player.reputation - (mission.localdelivery and 1 or 1.5)
+
 				Comms.ImportantMessage(l.TOO_LATE_TO_PICK_UP, mission.client.name)
 				Event.Queue("onReputationChanged", oldReputation, Character.persistent.player.killcount,
 					Character.persistent.player.reputation, Character.persistent.player.killcount)
+
 				mission:Remove()
 				missions[ref] = nil
+
 			end
 		end
 	end
@@ -978,6 +786,8 @@ local onGameStart = function ()
 		custom_cargo = loaded_data.custom_cargo
 		custom_cargo_weight_sum = loaded_data.custom_cargo_weight_sum
 		loaded_data = nil
+	else
+		setDefaultCustomCargo()
 	end
 end
 
@@ -985,6 +795,11 @@ local onGameEnd = function ()
 	nearbysystems = nil
 	pirate_ships = {}
 	escort_ships = {}
+
+	ads = {}
+	missions = {}
+	custom_cargo = {}
+	custom_cargo_weight_sum = 0
 end
 
 local buildMissionDescription = function(mission)

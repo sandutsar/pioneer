@@ -1,4 +1,4 @@
--- Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 -- This module is a substitute for not having a propper "bar" /
@@ -32,6 +32,7 @@ local travellers_advice_indices = {481, -- tame black market
 								   23,  -- double trouble
 								   52,  -- service ship
 								   248, -- change faction
+								   171, -- the harder the g
 }
 
 -- Hold all different types of advice/rumours available:
@@ -72,8 +73,8 @@ end
 local onChat = function (form, ref, option)
 	local ad = ads[ref]
 	form:Clear()
-	form:SetTitle(ad.id)
-	form:SetMessage(ad.bodytext)
+	form:SetTitle(flavours[ad.n].ID)
+	form:SetMessage(flavours[ad.n].bodytext)
 end
 
 local onDelete = function (ref)
@@ -86,19 +87,16 @@ local onCreateBB = function (station)
 	local n = rand:Integer(1, #flavours)
 
 	local ad = {
-		id = flavours[n].ID,
-		headline = flavours[n].ID,
-		description = flavours[n].headline,
-		bodytext = flavours[n].bodytext,
-		station  = station
+		station = station,
+		n = n
 	}
 
 	-- only create one per BBS, with advice_probability
 	local ref
 	if rand:Number() < advice_probability then
 		ref = station:AddAdvert({
-			title       = ad.headline,
-			description = ad.description,
+			title       = flavours[n].ID,
+			description = flavours[n].headline,
 			icon        = "advice",
 			onChat      = onChat,
 			onDelete    = onDelete})
@@ -116,8 +114,8 @@ local onGameStart = function ()
 
 	for k,ad in pairs(loaded_data.ads or {}) do
 		local ref = ad.station:AddAdvert({
-			title       = ad.headline,
-			description = ad.description,
+			title       = flavours[ad.n].ID,
+			description = flavours[ad.n].headline,
 			icon        = "advice",
 			onChat      = onChat,
 			onDelete    = onDelete})

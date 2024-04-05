@@ -1,4 +1,4 @@
-// Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "EnumStrings.h"
@@ -47,7 +47,6 @@ static int l_player_is_player(lua_State *l)
  *
  *   stable
  */
-
 static int l_get_nav_target(lua_State *l)
 {
 	Player *p = LuaObject<Player>::CheckFromLua(1);
@@ -74,7 +73,6 @@ static int l_get_nav_target(lua_State *l)
  *
  *   stable
  */
-
 static int l_set_nav_target(lua_State *l)
 {
 	Player *p = LuaObject<Player>::CheckFromLua(1);
@@ -84,46 +82,47 @@ static int l_set_nav_target(lua_State *l)
 }
 
 /*
- * Function: SetSetSpeedTarget
+ * Function: SetFollowTarget
  *
- * Set the "set speed" of player's ship
+ * Set the "reference target" of player's ship
  *
  * Example:
  *
- * > player:SetSetSpeedTarget(body)
+ * > player:SetFollowTarget(body)
  *
  * Parameters:
  *
- *   body - <Body> relative to witch speed is set relative to
+ *   body - <Body> relative to witch speed, orientation (depending on the mode)
+ *   is set relative to
  *
  */
-static int l_set_set_speed_target(lua_State *l)
+static int l_set_follow_target(lua_State *l)
 {
 	Player *p = LuaObject<Player>::CheckFromLua(1);
 	Body *target = LuaObject<Body>::GetFromLua(2);
-	p->SetSetSpeedTarget(target);
+	p->SetFollowTarget(target);
 	return 0;
 }
 
 /*
- * Function: ChangeSetSpeed
+ * Function: ChangeCruiseSpeed
  *
- * Set the "set speed" of player's ship
+ * Set the "cruise speed" of player's ship
  *
  * Example:
  *
- * > player:ChangeSetSpeed(delta)
+ * > player:ChangeCruiseSpeed(delta)
  *
  * Parameters:
  *
- *   delta - Float, by how much to change current set speed
+ *   delta - Float, by how much to change current cruise speed
  *
  */
-static int l_change_set_speed(lua_State *l)
+static int l_change_cruise_speed(lua_State *l)
 {
 	Player *p = LuaObject<Player>::CheckFromLua(1);
 	double delta = LuaPull<double>(l, 2);
-	p->ChangeSetSpeed(delta);
+	p->ChangeCruiseSpeed(delta);
 	return 0;
 }
 
@@ -146,7 +145,6 @@ static int l_change_set_speed(lua_State *l)
  *
  *   stable
  */
-
 static int l_get_combat_target(lua_State *l)
 {
 	Player *p = LuaObject<Player>::CheckFromLua(1);
@@ -173,7 +171,6 @@ static int l_get_combat_target(lua_State *l)
  *
  *   stable
  */
-
 static int l_set_combat_target(lua_State *l)
 {
 	Player *p = LuaObject<Player>::CheckFromLua(1);
@@ -201,7 +198,6 @@ static int l_set_combat_target(lua_State *l)
  *
  *   stable
  */
-
 static int l_get_hyperspace_target(lua_State *l)
 {
 	Player *player = LuaObject<Player>::CheckFromLua(1);
@@ -233,7 +229,6 @@ static int l_get_hyperspace_target(lua_State *l)
  *
  *   stable
  */
-
 static int l_set_hyperspace_target(lua_State *l)
 {
 	LuaObject<Player>::CheckFromLua(1);
@@ -279,7 +274,6 @@ static int l_get_mouse_direction(lua_State *l)
  *
  *   stable
  */
-
 static int l_get_is_mouse_active(lua_State *l)
 {
 	Player *player = LuaObject<Player>::CheckFromLua(1);
@@ -302,7 +296,6 @@ static int l_get_is_mouse_active(lua_State *l)
  *
  *   stable
  */
-
 static int l_get_max_delta_v(lua_State *l)
 {
 	Player *player = LuaObject<Player>::CheckFromLua(1);
@@ -326,7 +319,6 @@ static int l_get_max_delta_v(lua_State *l)
  *
  *   stable
  */
-
 static int l_get_current_delta_v(lua_State *l)
 {
 	Player *player = LuaObject<Player>::CheckFromLua(1);
@@ -349,7 +341,6 @@ static int l_get_current_delta_v(lua_State *l)
  *
  *   stable
  */
-
 static int l_get_remaining_delta_v(lua_State *l)
 {
 	Player *player = LuaObject<Player>::CheckFromLua(1);
@@ -415,7 +406,6 @@ static int l_get_acceleration(lua_State *l)
  *
  *   stable
  */
-
 static int l_get_distance_to_zero_v(lua_State *l)
 {
 	Player *player = LuaObject<Player>::CheckFromLua(1);
@@ -442,7 +432,6 @@ static int l_get_distance_to_zero_v(lua_State *l)
  *
  *   stable
  */
-
 static int l_get_maneuver_time(lua_State *l)
 {
 	Player *player = LuaObject<Player>::CheckFromLua(1);
@@ -465,7 +454,6 @@ static int l_get_maneuver_time(lua_State *l)
  *
  *   stable
  */
-
 static int l_get_maneuver_velocity(lua_State *l)
 {
 	Player *player = LuaObject<Player>::CheckFromLua(1);
@@ -493,7 +481,6 @@ static int l_get_maneuver_velocity(lua_State *l)
  *
  *   stable
  */
-
 static int l_get_heading_pitch_roll(lua_State *l)
 {
 	//  Player *player = LuaObject<Player>::CheckFromLua(1);
@@ -575,65 +562,6 @@ static int l_toggle_rotation_damping(lua_State *l)
 	return 0;
 }
 
-/*
- * Function: GetGPS()
- *
- * Get altitude, speed, and position of player's ship
- *
- * Example:
- *
- * > alt, vspd, lat, long = player:GetGPS()
- *
- * Returns:
- *
- *   alt - altitude
- *
- *   vspd - vertical speed
- *
- *   latitude - latitude
- *
- *   longitude - longitude
- *
- */
-static int l_get_gps(lua_State *l)
-{
-	Player *player = LuaObject<Player>::CheckFromLua(1);
-	vector3d pos = Pi::player->GetPosition();
-	double center_dist = pos.Length();
-	FrameId playerFrameId = player->GetFrame();
-	Frame *playerFrame = Frame::GetFrame(playerFrameId);
-	if (playerFrameId.valid()) {
-		Body *astro = Frame::GetFrame(playerFrameId)->GetBody();
-		if (astro && astro->IsType(ObjectType::TERRAINBODY)) {
-			TerrainBody *terrain = static_cast<TerrainBody *>(astro);
-			if (!playerFrame->IsRotFrame())
-				playerFrame = Frame::GetFrame(playerFrame->GetRotFrame());
-			vector3d surface_pos = pos.Normalized();
-			double radius = 0.0;
-			if (center_dist <= 3.0 * terrain->GetMaxFeatureRadius()) {
-				radius = terrain->GetTerrainHeight(surface_pos);
-			}
-			double altitude = center_dist - radius;
-			vector3d velocity = player->GetVelocity();
-			double vspeed = velocity.Dot(surface_pos);
-			if (fabs(vspeed) < 0.05) vspeed = 0.0; // Avoid alternating between positive/negative zero
-
-			//			RefreshHeadingPitch();
-
-			if (altitude < 0) altitude = 0;
-			LuaPush(l, altitude);
-			LuaPush(l, vspeed);
-			const float lat = RAD2DEG(asin(surface_pos.y));
-			const float lon = RAD2DEG(atan2(surface_pos.x, surface_pos.z));
-			LuaPush(l, lat);
-			LuaPush(l, lon);
-			return 4;
-			//				}
-		}
-	}
-	return 0;
-}
-
 static int l_get_alert_state(lua_State *l)
 {
 	Player *player = LuaObject<Player>::CheckFromLua(1);
@@ -652,7 +580,7 @@ static int l_get_alert_state(lua_State *l)
 		LuaPush(l, "ship-firing");
 		break;
 	default:
-		Error("Unknown alert state %i", state);
+		Error("Unknown alert state %i", int(state));
 	}
 	return 1;
 }
@@ -686,6 +614,171 @@ static int l_player_is_hyperspace_active(lua_State *l)
 	return 1;
 }
 
+/*
+ * Function: GetCruiseDirection()
+ *
+ * Returns:
+ *
+ *   string - 'CRUISE_UP' or 'CRUISE_FWD'
+ *
+ */
+static int l_player_get_cruise_direction(lua_State *l)
+{
+	Player *player = LuaObject<Player>::CheckFromLua(1);
+	auto mode = player->GetPlayerController()->GetCruiseDirection();
+	auto str = EnumStrings::GetString("CruiseDirection", mode);
+	assert(str && "Wrong get cruise direction");
+	LuaPush<const char *>(l, str);
+	return 1;
+}
+
+/*
+ * Function: SetCruiseDirection(direction)
+ *
+ * Parameters:
+ *
+ *   direction - a string 'CRUISE_UP' or 'CRUISE_FWD'
+ *
+ * Returns:
+ *
+ *   nothing
+ *
+ */
+static int l_player_set_cruise_direction(lua_State *l)
+{
+	Player *player = LuaObject<Player>::CheckFromLua(1);
+	auto dir_name = LuaPull<const char *>(l, 2);
+	int value = EnumStrings::GetValue("CruiseDirection", dir_name);
+	if (value == -1)
+		luaL_error(l, "Player:SetCruiseDirection(): invalid cruise direction '%s' specified\n", dir_name);
+	auto dir = static_cast<PlayerShipController::CruiseDirection>(value);
+	player->GetPlayerController()->SetCruiseDirection(dir);
+	return 0;
+}
+
+/*
+ * Function: GetFollowMode()
+ *
+ * Returns:
+ *
+ *   string - 'FOLLOW_POS' or 'FOLLOW_ORI'
+ *
+ */
+static int l_player_get_follow_mode(lua_State *l)
+{
+	Player *player = LuaObject<Player>::CheckFromLua(1);
+	auto mode = player->GetPlayerController()->GetFollowMode();
+	auto str = EnumStrings::GetString("FollowMode", mode);
+	assert(str && "Wrong get follow mode");
+	LuaPush<const char *>(l, str);
+	return 1;
+}
+
+/*
+ * Function: SetFollowMode(mode)
+ *
+ * Parameters:
+ *
+ *   mode - a string 'FOLLOW_POS' or 'FOLLOW_ORI'
+ *
+ * Returns:
+ *
+ *   nothing
+ *
+ */
+static int l_player_set_follow_mode(lua_State *l)
+{
+	Player *player = LuaObject<Player>::CheckFromLua(1);
+	auto mode_name = LuaPull<const char *>(l, 2);
+	auto value = EnumStrings::GetValue("FollowMode", mode_name);
+	if (value == -1)
+		luaL_error(l, "Player:SetFollowMode(): invalid follow mode '%s' specified\n", mode_name);
+	auto mode = static_cast<PlayerShipController::FollowMode>(value);
+	player->GetPlayerController()->SetFollowMode(mode);
+	return 0;
+}
+
+/*
+ * Function: GetSpeedLimit(speed_limit)
+ *
+ * Returns:
+ *
+ *   number - positive, in manual mode, limits the real speed of the
+ *            ship in the current frame, in cruise mode limits the amount of cruise
+ *            speed. If the limiter is off, nil is returned.
+ *
+ */
+static int l_player_get_speed_limit(lua_State *l)
+{
+	Player *player = LuaObject<Player>::CheckFromLua(1);
+	if (player->GetPlayerController()->IsSpeedLimiterActive()) {
+		LuaPush(l, player->GetPlayerController()->GetSpeedLimit());
+	} else {
+		lua_pushnil(l);
+	}
+	return 1;
+}
+
+/*
+ * Function: SetSpeedLimit(speed_limit)
+ *
+ * Parameters:
+ *
+ *   speed_limit - a number, must be positive, 0 means no limit.
+ *                 in manual mode, limits the real speed of the ship in the
+ *                 current frame, in cruise mode limits the amount of cruise
+ *                 speed
+ *
+ * Returns:
+ *
+ *   nothing
+ *
+ */
+static int l_player_set_speed_limit(lua_State *l)
+{
+	Player *player = LuaObject<Player>::CheckFromLua(1);
+	int s = LuaPull<int>(l, 2);
+	player->GetPlayerController()->SetSpeedLimit(s);
+	return 0;
+}
+
+/*
+ * Function: SetSpeedLimiterActive(active)
+ *
+ * Parameters:
+ *
+ *   active - a boolean
+ *
+ * Returns:
+ *
+ *   nothing
+ *
+ */
+static int l_player_set_speed_limiter_active(lua_State *l)
+{
+	Player *player = LuaObject<Player>::CheckFromLua(1);
+	bool active = LuaPull<bool>(l, 2);
+	player->GetPlayerController()->SetSpeedLimiterActive(active);
+	return 0;
+}
+
+/*
+ * Function: IsShipDrifting()
+ *
+ * Returns:
+ *
+ *   bool - if the current setting of the cruise speed in the current following
+ *          mode significantly differs from the real speed of the ship, but not
+ *          too much. Criteria is hardcoded in the PlayerShipController.
+ *
+ */
+static int l_player_is_ship_drifting(lua_State *l)
+{
+	Player *player = LuaObject<Player>::CheckFromLua(1);
+	LuaPush(l, player->GetPlayerController()->IsShipDrifting());
+	return 1;
+}
+
 template <>
 const char *LuaObject<Player>::s_type = "Player";
 
@@ -699,8 +792,8 @@ void LuaObject<Player>::RegisterClass()
 
 		{ "GetNavTarget", l_get_nav_target },
 		{ "SetNavTarget", l_set_nav_target },
-		{ "SetSetSpeedTarget", l_set_set_speed_target },
-		{ "ChangeSetSpeed", l_change_set_speed },
+		{ "SetFollowTarget", l_set_follow_target },
+		{ "ChangeCruiseSpeed", l_change_cruise_speed },
 		{ "GetCombatTarget", l_get_combat_target },
 		{ "SetCombatTarget", l_set_combat_target },
 		{ "GetHyperspaceTarget", l_get_hyperspace_target },
@@ -717,13 +810,20 @@ void LuaObject<Player>::RegisterClass()
 		{ "GetMouseDirection", l_get_mouse_direction },
 		{ "GetRotationDamping", l_get_rotation_damping },
 		{ "SetRotationDamping", l_set_rotation_damping },
-		{ "GetGPS", l_get_gps },
 		{ "ToggleRotationDamping", l_toggle_rotation_damping },
 		{ "GetAlertState", l_get_alert_state },
 		{ "GetLowThrustPower", l_get_low_thrust_power },
 		{ "SetLowThrustPower", l_set_low_thrust_power },
 		{ "IsHyperspaceActive", l_player_is_hyperspace_active },
 		{ "GetHyperspaceCountdown", l_player_get_hyperspace_countdown },
+		{ "GetCruiseDirection", l_player_get_cruise_direction },
+		{ "SetCruiseDirection", l_player_set_cruise_direction },
+		{ "GetFollowMode", l_player_get_follow_mode },
+		{ "SetFollowMode", l_player_set_follow_mode },
+		{ "GetSpeedLimit", l_player_get_speed_limit },
+		{ "SetSpeedLimit", l_player_set_speed_limit },
+		{ "SetSpeedLimiterActive", l_player_set_speed_limiter_active },
+		{ "IsShipDrifting", l_player_is_ship_drifting },
 		{ 0, 0 }
 	};
 

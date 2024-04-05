@@ -1,4 +1,4 @@
-// Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "EnumStrings.h"
@@ -112,6 +112,16 @@ static int l_starsystem_get_body_paths(lua_State *l)
 
 	LUA_DEBUG_END(l, 1);
 
+	return 1;
+}
+
+static int l_starsystem_get_body_by_path(lua_State *l)
+{
+	PROFILE_SCOPED()
+
+	StarSystem *s = LuaObject<StarSystem>::CheckFromLua(1);
+	const SystemPath *path = LuaObject<SystemPath>::CheckFromLua(2);
+	LuaObject<SystemBody>::PushToLua(s->GetBodyByPath(*path));
 	return 1;
 }
 
@@ -255,6 +265,7 @@ static int l_starsystem_get_nearby_systems(lua_State *l)
 
 	const int diff_sec = int(ceil(dist_ly / Sector::SIZE));
 
+	uint32_t numSystems = 0;
 	for (int x = here_x - diff_sec; x <= here_x + diff_sec; x++) {
 		for (int y = here_y - diff_sec; y <= here_y + diff_sec; y++) {
 			for (int z = here_z - diff_sec; z <= here_z + diff_sec; z++) {
@@ -279,7 +290,7 @@ static int l_starsystem_get_nearby_systems(lua_State *l)
 						lua_pop(l, 1);
 					}
 
-					lua_pushinteger(l, lua_rawlen(l, -1) + 1);
+					lua_pushinteger(l, ++numSystems);
 					LuaObject<StarSystem>::PushToLua(sys.Get());
 					lua_rawset(l, -3);
 				}
@@ -581,6 +592,20 @@ static int l_starsystem_attr_number_of_stars(lua_State *l)
 	return 1;
 }
 
+static int l_starsystem_attr_number_of_stations(lua_State *l)
+{
+	StarSystem *s = LuaObject<StarSystem>::CheckFromLua(1);
+	LuaPush(l, s->GetNumSpaceStations());
+	return 1;
+}
+
+static int l_starsystem_attr_number_of_bodies(lua_State *l)
+{
+	StarSystem *s = LuaObject<StarSystem>::CheckFromLua(1);
+	LuaPush(l, s->GetNumBodies());
+	return 1;
+}
+
 static int l_starsystem_attr_root_system_body(lua_State *l)
 {
 	StarSystem *s = LuaObject<StarSystem>::CheckFromLua(1);
@@ -689,6 +714,7 @@ void LuaObject<StarSystem>::RegisterClass()
 	static const luaL_Reg l_methods[] = {
 		{ "GetStationPaths", l_starsystem_get_station_paths },
 		{ "GetBodyPaths", l_starsystem_get_body_paths },
+		{ "GetBodyByPath", l_starsystem_get_body_by_path },
 		{ "GetStars", l_starsystem_get_stars },
 		{ "GetJumpable", l_starsystem_get_jumpable },
 
@@ -717,6 +743,8 @@ void LuaObject<StarSystem>::RegisterClass()
 		{ "govtype", l_starsystem_attr_govtype },
 		{ "explored", l_starsystem_attr_explored },
 		{ "numberOfStars", l_starsystem_attr_number_of_stars },
+		{ "numberOfStations", l_starsystem_attr_number_of_stations },
+		{ "numberOfBodies", l_starsystem_attr_number_of_bodies },
 		{ "rootSystemBody", l_starsystem_attr_root_system_body },
 		{ "shortDescription", l_starsystem_attr_short_description },
 		{ "govDescription", l_starsystem_attr_gov_description },

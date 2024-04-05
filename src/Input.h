@@ -1,14 +1,17 @@
-// Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef INPUT_H
 #define INPUT_H
 
 #include "InputBindings.h"
-#include "utils.h"
 
-#include <algorithm>
+#include "SDL_joystick.h"
+
 #include <array>
+#include <vector>
+#include <map>
+#include <string>
 
 class IniConfig;
 
@@ -75,7 +78,7 @@ namespace Input {
 	struct JoystickInfo {
 		struct Axis {
 			float value = 0.0;
-			float deadzone = 0.0;
+			float deadzone = 0.1;
 			float curve = 1.0;
 			bool zeroToOne = false;
 		};
@@ -91,21 +94,24 @@ namespace Input {
 	};
 
 	void InitJoysticks(IniConfig *config);
-	std::map<SDL_JoystickID, JoystickInfo> &GetJoysticks();
+	std::vector<JoystickInfo> &GetJoysticks();
 
 	// User display name for the joystick from the API/OS.
 	std::string JoystickName(int joystick);
 	// fetch the GUID for the named joystick
 	SDL_JoystickGUID JoystickGUID(int joystick);
 	std::string JoystickGUIDString(int joystick);
+	// update the joystick's saved configuration
+	void SaveJoystickConfig(uint32_t joystick, IniConfig *config);
 
 	// reverse map a JoystickGUID to the actual internal ID.
 	int JoystickFromGUIDString(const std::string &guid);
 	int JoystickFromGUIDString(const char *guid);
 	int JoystickFromGUID(SDL_JoystickGUID guid);
 
-	// We use SDL's joystick IDs because they're stable enough for the job.
-	inline int JoystickFromID(SDL_JoystickID id) { return id; }
+	int JoystickFromID(SDL_JoystickID id);
+	// map SDL joystick instance ID to internal ID
+	void AddJoystickID(SDL_JoystickID sdl_id, uint32_t internal_id);
 
 	// An adapter to decouple input frame creation from input binding registration.
 	// The functions registered via AddBindingRegistrar should be thread-safe and
@@ -142,10 +148,7 @@ public:
 	const std::vector<InputFrame *> &GetInputFrames() { return m_inputFrames; }
 
 	// Check if a specific input frame is currently on the stack.
-	bool HasInputFrame(InputFrame *frame)
-	{
-		return std::count(m_inputFrames.begin(), m_inputFrames.end(), frame) > 0;
-	}
+	bool HasInputFrame(InputFrame *frame);
 
 	// Remove an arbitrary input frame from the input stack.
 	void RemoveInputFrame(InputFrame *frame);
@@ -190,8 +193,13 @@ public:
 	bool IsMouseYInvert() { return mouseYInvert; }
 	void SetMouseYInvert(bool state);
 
-	int MouseButtonState(int button) { return mouseButton[button]; }
+	bool IsMouseButtonPressed(int button) { return mouseButton[button] == 1; }
+	bool IsMouseButtonReleased(int button) { return mouseButton[button] == 4; }
+
+	bool MouseButtonState(int button) { return mouseButton[button] & 3; }
 	void SetMouseButtonState(int button, bool state) { mouseButton[button] = state; }
+
+	void GetMousePosition(int position[2]);
 
 	void GetMouseMotion(int motion[2])
 	{
@@ -209,6 +217,11 @@ public:
 	// To avoid contention between different classes, please only call this when the state
 	// has actually changed.
 	void SetCapturingMouse(bool enabled);
+	void ClearMouse();
+
+	// Get the default speed modifier to apply to movement (scrolling, zooming...), depending on the "shift" keys.
+	// This is a default value only, centralized here to promote uniform user expericience.
+	float GetMoveSpeedShiftModifier();
 
 	sigc::signal<void, SDL_Keysym *> onKeyPress;
 	sigc::signal<void, SDL_Keysym *> onKeyRelease;

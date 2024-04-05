@@ -1,4 +1,4 @@
--- Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local Game = require 'Game'
@@ -6,7 +6,7 @@ local Event = require 'Event'
 local Format = require 'Format'
 local SystemPath = require 'SystemPath'
 local hyperJumpPlanner = require 'pigui.modules.hyperjump-planner'
-local systemEconView = require 'pigui.modules.system-econ-view'
+local systemEconView = require 'pigui.modules.system-econ-view'.New()
 
 local Lang = require 'Lang'
 local lc = Lang.GetResource("core");
@@ -16,6 +16,8 @@ local Color = _G.Color
 
 local ui = require 'pigui'
 local layout = require 'pigui.libs.window-layout'
+
+local Serializer = require 'Serializer'
 
 local player = nil
 local colors = ui.theme.colors
@@ -39,10 +41,16 @@ local buttonState = {
 	[false]       = ui.theme.buttonColors.transparent
 }
 
-local draw_vertical_lines = false
-local draw_out_range_labels = false
-local draw_uninhabited_labels = true
-local automatic_system_selection = true
+local settings = 
+{
+	draw_vertical_lines=false,
+	draw_out_range_labels=false,
+	draw_uninhabited_labels=true,
+	automatic_system_selection=true
+}
+
+local loaded_data = nil
+
 
 local function textIcon(icon, tooltip)
 	ui.icon(icon, Vector2(ui.getTextLineHeight()), svColor.FONT, tooltip)
@@ -65,12 +73,30 @@ local onGameStart = function ()
 	hyperJumpPlanner.setSectorView(sectorView)
 	-- reset hyperspace details cache on new game
 	hyperspaceDetailsCache = {}
+
+	-- apply any data loaded earlier
+	if loaded_data then	
+		if loaded_data.jump_targets then
+			local targets = loaded_data.jump_targets
+			for _, target in pairs( loaded_data.jump_targets) do
+				sectorView:AddToRoute(target)
+			end
+		end
+		if loaded_data.settings then
+			settings = loaded_data.settings
+		end
+		loaded_data = nil
+	end
+
 	-- update visibility states
-	sectorView:SetAutomaticSystemSelection(automatic_system_selection)
-	sectorView:SetDrawOutRangeLabels(draw_out_range_labels)
-	sectorView:SetDrawUninhabitedLabels(draw_uninhabited_labels)
-	sectorView:SetDrawVerticalLines(draw_vertical_lines)
-	sectorView:SetLabelParams("orbiteer", font.size, 2.0, svColor.LABEL_HIGHLIGHT, svColor.LABEL_SHADE)
+	sectorView:SetAutomaticSystemSelection(settings.automatic_system_selection)
+	sectorView:SetDrawOutRangeLabels(settings.draw_out_range_labels)
+	sectorView:GetMap():SetDrawUninhabitedLabels(settings.draw_uninhabited_labels)
+	sectorView:GetMap():SetDrawVerticalLines(settings.draw_vertical_lines)
+	sectorView:GetMap():SetLabelParams("orbiteer", font.size, 2.0, svColor.LABEL_HIGHLIGHT, svColor.LABEL_SHADE)
+
+	-- allow hyperjump planner to register its events:
+	hyperJumpPlanner.onGameStart()
 end
 
 local function getHyperspaceDetails(path)
@@ -132,11 +158,11 @@ function Windows.systemInfo:Show()
 		-- selected system label
 		textIcon(icons.info)
 		ui.text(ui.Format.SystemPath(systempath))
-		if not sectorView:IsCenteredOn(systempath) then
+		if not sectorView:GetMap():IsCenteredOn(systempath) then
 			-- add button to center on the object
 			ui.sameLine()
 			if ui.iconButton(icons.maneuver, Vector2(ui.getTextLineHeight()), lui.CENTER_ON_SYSTEM, ui.theme.buttonColors.transparent) then
-				sectorView:GotoSystemPath(systempath)
+				sectorView:GetMap():GotoSystemPath(systempath)
 			end
 		end
 
@@ -243,21 +269,21 @@ end
 
 local function showSettings()
 	local changed
-	changed, draw_vertical_lines = ui.checkbox(lc.DRAW_VERTICAL_LINES, draw_vertical_lines)
+	changed, settings.draw_vertical_lines = ui.checkbox(lc.DRAW_VERTICAL_LINES, settings.draw_vertical_lines)
 	if changed then
-		sectorView:SetDrawVerticalLines(draw_vertical_lines)
+		sectorView:GetMap():SetDrawVerticalLines(settings.draw_vertical_lines)
 	end
-	changed, draw_out_range_labels = ui.checkbox(lc.DRAW_OUT_RANGE_LABELS, draw_out_range_labels)
+	changed, settings.draw_out_range_labels = ui.checkbox(lc.DRAW_OUT_RANGE_LABELS, settings.draw_out_range_labels)
 	if changed then
-		sectorView:SetDrawOutRangeLabels(draw_out_range_labels)
+		sectorView:SetDrawOutRangeLabels(settings.draw_out_range_labels)
 	end
-	changed, draw_uninhabited_labels = ui.checkbox(lc.DRAW_UNINHABITED_LABELS, draw_uninhabited_labels)
+	changed, settings.draw_uninhabited_labels = ui.checkbox(lc.DRAW_UNINHABITED_LABELS, settings.draw_uninhabited_labels)
 	if changed then
-		sectorView:SetDrawUninhabitedLabels(draw_uninhabited_labels)
+		sectorView:GetMap():SetDrawUninhabitedLabels(settings.draw_uninhabited_labels)
 	end
-	changed, automatic_system_selection = ui.checkbox(lc.AUTOMATIC_SYSTEM_SELECTION, automatic_system_selection)
+	changed, settings.automatic_system_selection = ui.checkbox(lc.AUTOMATIC_SYSTEM_SELECTION, settings.automatic_system_selection)
 	if changed then
-		sectorView:SetAutomaticSystemSelection(automatic_system_selection)
+		sectorView:SetAutomaticSystemSelection(settings.automatic_system_selection)
 	end
 	-- end
 end
@@ -268,9 +294,9 @@ function Windows.edgeButtons.Show()
 		sectorView:ResetView()
 	end
 	ui.mainMenuButton(icons.rotate_view, lui.ROTATE_VIEW)
-	sectorView:SetRotateMode(ui.isItemActive())
+	sectorView:GetMap():SetRotateMode(ui.isItemActive())
 	ui.mainMenuButton(icons.search_lens, lui.ZOOM)
-	sectorView:SetZoomMode(ui.isItemActive())
+	sectorView:GetMap():SetZoomMode(ui.isItemActive())
 	ui.text("")
 	-- settings buttons
 	if ui.mainMenuButton(icons.settings, lui.SETTINGS) then
@@ -317,23 +343,27 @@ function Windows.searchBar:Show()
 	if ui.mainMenuButton(icons.search_lens, lc.SEARCH) then leftBarMode = "SEARCH" end
 	ui.sameLine()
 	if ui.mainMenuButton(icons.money, lui.ECONOMY_TRADE) then
-		leftBarMode = "ECONOMY"
 		self.size.y = self.fullHeight
+		if ui.altHeld() then
+			leftBarMode = "TRADE_COMPUTER"
+		else
+			leftBarMode = "ECONOMY"
+		end
 	end
 
 	ui.spacing()
 
 	if leftBarMode == "SEARCH" then
 		ui.text(lc.SEARCH)
-		local search_text, changed = ui.inputText("", searchString, {})
+		local search_text, changed = ui.inputText("##searchText", searchString, {})
 		ui.spacing()
 		local parsedSystem = changed and search_text ~= "" and SystemPath.ParseString(search_text)
 		if parsedSystem and parsedSystem ~= nil then
-			sectorView:GotoSectorPath(parsedSystem)
+			sectorView:GetMap():GotoSectorPath(parsedSystem)
 		end
 
 		if search_text ~= searchString then
-			systemPaths = search_text ~= "" and sectorView:SearchNearbyStarSystemsByName(search_text)
+			systemPaths = search_text ~= "" and sectorView:GetMap():SearchNearbyStarSystemsByName(search_text)
 			searchString = search_text
 		end
 
@@ -349,34 +379,9 @@ function Windows.searchBar:Show()
 		local selectedPath = sectorView:GetSelectedSystemPath()
 		local currentPath = sectorView:GetCurrentSystemPath()
 
-		local currentSys = currentPath:GetStarSystem()
-		local selectedSys = selectedPath and selectedPath:GetStarSystem()
-		local showComparison = selectedSys.population > 0
-			and not currentPath:IsSameSystem(selectedPath)
-			and (Game.player.trade_computer_cap or 0) > 0
-
-		ui.withFont(smallfont, function() ui.text(lui.COMMODITY_TRADE_ANALYSIS) end)
-		ui.spacing()
-		if showComparison then
-			ui.text(currentSys.name)
-			ui.sameLine(ui.getColumnWidth() - ui.calcTextSize(selectedSys.name).x)
-		end
-		ui.text(selectedSys.name)
-
-		ui.spacing()
-		ui.separator()
-		ui.spacing()
-
-		ui.withFont(smallfont, function()
-			if selectedSys.population <= 0 then
-				textIcon(icons.alert_generic)
-				ui.text(lc.NO_REGISTERED_INHABITANTS)
-			elseif showComparison then
-				systemEconView.draw(currentSys, selectedSys)
-			else
-				systemEconView.draw(selectedSys)
-			end
-		end)
+		systemEconView:drawSystemComparison(selectedPath:GetStarSystem(), currentPath:GetStarSystem())
+	elseif leftBarMode == "TRADE_COMPUTER" then
+		systemEconView:drawSystemFinder()
 	end
 end
 
@@ -384,7 +389,7 @@ function Windows.searchBar.Dummy()
 	ui.mainMenuButton(icons.search_lens, lc.SEARCH)
 	ui.spacing()
 	ui.text("***************")
-	ui.inputText("", "", {})
+	ui.inputText("##searchText", "", {})
 	ui.spacing()
 	ui.text("***************")
 end
@@ -400,14 +405,14 @@ end
 function Windows.factions.Show()
 	textIcon(icons.shield)
 	ui.text("Factions")
-	local factions = sectorView:GetFactions()
+	local factions = sectorView:GetMap():GetFactions()
 	for _,f in pairs(factions) do
 		local changed, value
 		ui.withStyleColors({ ["Text"] = Color(f.faction.colour.r, f.faction.colour.g, f.faction.colour.b) }, function()
 			changed, value = ui.checkbox(f.faction.name, f.visible)
 		end)
 		if changed then
-			sectorView:SetFactionVisible(f.faction, value)
+			sectorView:GetMap():SetFactionVisible(f.faction, value)
 		end
 	end
 end
@@ -450,19 +455,23 @@ ui.registerModule("game", { id = 'map-sector-view', draw = function()
 
 		if ui.isKeyReleased(ui.keys.tab) then
 			sectorViewLayout.enabled = not sectorViewLayout.enabled
-			sectorView:SetLabelsVisibility(not sectorViewLayout.enabled)
+			sectorView:GetMap():SetLabelsVisibility(not sectorViewLayout.enabled)
 		end
 
 		if ui.escapeKeyReleased() then
 			Game.SetView("world")
 		end
 
+		if ui.ctrlHeld() and ui.isKeyReleased(ui.keys.delete) then
+			systemEconView = package.reimport('pigui.modules.system-econ-view').New()
+		end
 	end
 end})
 
 Event.Register("onGameStart", onGameStart)
-Event.Register("onEnterSystem", function()
-	hyperspaceDetailsCache = {}
+Event.Register("onEnterSystem", function(ship)
+	hyperJumpPlanner.onEnterSystem(ship)
+	if ship:IsPlayer() then hyperspaceDetailsCache = {} end
 end)
 
 -- reset cached data
@@ -470,18 +479,41 @@ Event.Register("onGameEnd", function()
 	searchString = ""
 	systemPaths = nil
 	leftBarMode = "SEARCH"
+
+	hyperJumpPlanner.onGameEnd()
 end)
 
--- events moved from hyperJumpPlanner
-Event.Register("onGameEnd", hyperJumpPlanner.onGameEnd)
-Event.Register("onEnterSystem", hyperJumpPlanner.onEnterSystem)
-Event.Register("onShipEquipmentChanged", hyperJumpPlanner.onShipEquipmentChanged)
+Event.Register("onShipEquipmentChanged", function(ship, ...)
+	if ship:IsPlayer() then hyperspaceDetailsCache = {} end
+	hyperJumpPlanner.onShipEquipmentChanged(ship, ...)
+end)
 
-local function clearHyperspaceCache(ship)
-	if ship and ship == player then hyperspaceDetailsCache = {} end
+Event.Register("onShipTypeChanged", function(ship, ...)
+	if ship:IsPlayer() then hyperspaceDetailsCache = {} end
+end)
+
+
+local serialize = function ()
+
+	local data =
+	{
+		version = 1,
+		jump_targets = {},
+		settings = settings
+	}
+
+	for jumpIndex, jump_sys in pairs(sectorView:GetRoute()) do
+		table.insert( data.jump_targets, jump_sys )
+	end
+
+	return data
 end
 
-Event.Register("onShipEquipmentChanged", clearHyperspaceCache)
-Event.Register("onShipTypeChanged", clearHyperspaceCache)
+local unserialize = function (data)
+	loaded_data = data
+end
+
+Serializer:Register("HyperJumpPlanner", serialize, unserialize)
+
 
 return {}

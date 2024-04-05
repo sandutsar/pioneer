@@ -1,4 +1,4 @@
--- Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local theme = {}
@@ -73,6 +73,7 @@ local styleColors = {
 	danger_500		= Color "C51010",
 	danger_700		= Color "8C0606",
 	danger_900		= Color "2C0505",
+
 }
 
 theme.styleColors = styleColors
@@ -82,6 +83,11 @@ theme.buttonColors = {
 		normal  = styleColors.primary_700,
 		hovered = styleColors.primary_600,
 		active  = styleColors.primary_500
+	},
+	deselected = {
+		normal  = styleColors.gray_800,
+		hovered = styleColors.gray_700,
+		active  = styleColors.gray_600
 	},
 	selected = {
 		normal = styleColors.primary_500,
@@ -128,6 +134,9 @@ theme.colors = {
 	maneuver				= styleColors.accent_300,
 	maneuverDark			= styleColors.accent_500,
 	mouseMovementDirection	= styleColors.accent_100,
+
+	overlayWindowBg         = styleColors.gray_900:opacity(0.90),
+
 	-- FIXME: this color is primarily used to tint buttons by rendering over top of the frame color.
 	-- This is atrocious for obvious reasons. Refactor button / frame rendering to draw an independent frame border.
 	lightBlueBackground		= styleColors.background_700:opacity(0.10),
@@ -154,7 +163,10 @@ theme.colors = {
 	white					= styleColors.white,
 	lightGrey				= styleColors.gray_300,
 	grey					= styleColors.gray_500,
+	darkGrey				= styleColors.gray_800,
 	black					= styleColors.black,
+	primary					= styleColors.primary_500,
+	darkPrimary				= styleColors.primary_700,
 
 	alertYellow				= styleColors.warning_300,
 	alertRed				= styleColors.danger_500,
@@ -168,8 +180,12 @@ theme.colors = {
 	econMinorImport			= styleColors.accent_500,
 	econIllegalCommodity	= styleColors.danger_300,
 
+	gaugeCargo              = styleColors.gray_300,
+	gaugeJettison           = styleColors.danger_500,
+
 	gaugeBackground			= styleColors.gray_800:opacity(0.85),
 	gaugePressure			= styleColors.primary_600,
+	gaugeScanner			= styleColors.primary_500,
 	gaugeTemperature		= styleColors.danger_500,
 	gaugeShield				= styleColors.primary_300,
 	gaugeHull				= styleColors.gray_200,
@@ -214,15 +230,20 @@ theme.colors = {
 
 	equipScreenHighlight    = styleColors.gray_300,
 	equipScreenBgText       = styleColors.gray_400,
+
+	compareBetter = styleColors.accent_300,
+	compareWorse  = styleColors.warning_300,
 }
 
 -- ImGui global theming styles
 theme.styles = rescaleUI {
 	WindowBorderSize = 0.0,
+	WindowPadding = Vector2(8, 8),
 	TabRounding = 0.0,
 	TabPadding = Vector2(8, 6),
 	ButtonPadding = Vector2(8, 6),
 	ItemSpacing = Vector2(8, 6),
+	ItemInnerSpacing = Vector2(4, 4),
 	MainButtonSize = Vector2(32, 32),
 	SmallButtonSize = Vector2(24, 24),
 	MainButtonPadding = 3
@@ -259,7 +280,8 @@ theme.icons = {
 	direction_frame = 26,
 	direction_frame_hollow = 27,
 	direction_forward = 28,
-	empty = 29,
+	square_dashed = 29,
+	empty = 30,
 	semi_major_axis = 31,
 	-- third row
 	heavy_fighter = 32,
@@ -498,7 +520,20 @@ theme.icons = {
 	cargo_crate_illegal = 255,
 	-- seventeenth row
 	-- reticle icons 256..268
-	-- EMPTY = 269,
+	follow_ori = 256,
+	follow_pos = 257,
+	follow_edge = 258,
+	follow_fill = 259,
+	manual_flight = 260,
+	cruise_fwd = 261,
+	cruise_up = 262,
+	circ_manual_flight = 263,
+	circ_cruise_fwd = 264,
+	circ_cruise_up = 265,
+	circ_clear_flwtarget = 266,
+	speed_limiter = 267,
+	deltav = 268,
+	paintspray = 269,
 	-- EMPTY = 270,
 	-- EMPTY = 271,
 	-- eighteenth row
@@ -527,7 +562,7 @@ theme.icons = {
 	equip_atmo_shield_generator = 293,
 	equip_scanner = 294,
 	equip_radar = 295,
-	equip_planet_scanner = 296,
+	equip_orbit_scanner = 296,
 	equip_generic = 297,
 	equip_cabin_empty = 298,
 	equip_cabin_occupied = 299,
@@ -539,6 +574,8 @@ theme.icons = {
 	equip_trade_computer = 301,
 	equip_autopilot = 302,
 	equip_hyperdrive = 303,
+	shipmarket_compare_better = 38,
+	shipmarket_compare_worse = 40,
 
 	-- TODO: manual / autopilot
 	-- dummy, until actually defined correctly

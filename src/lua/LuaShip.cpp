@@ -1,4 +1,4 @@
-// Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "CargoBody.h"
@@ -6,7 +6,9 @@
 #include "Frame.h"
 #include "Game.h"
 #include "HyperspaceCloud.h"
+#include "Lua.h"
 #include "LuaObject.h"
+#include "LuaTable.h"
 #include "LuaVector.h"
 #include "Missile.h"
 #include "Pi.h"
@@ -15,9 +17,9 @@
 #include "ShipType.h"
 #include "Space.h"
 #include "SpaceStation.h"
-#include "lua.h"
 #include "ship/PlayerShipController.h"
 #include "ship/PrecalcPath.h"
+#include "lua.h"
 
 /*
  * Class: Ship
@@ -169,7 +171,6 @@ static int l_ship_get_ship_class(lua_State *l)
  *
  *  experimental
  */
-
 static int l_ship_set_hull_percent(lua_State *l)
 {
 	LUA_DEBUG_START(l);
@@ -260,7 +261,6 @@ static int l_ship_set_fuel_percent(lua_State *l)
  *
  * 	experimental
  */
-
 static int l_ship_explode(lua_State *l)
 {
 	LUA_DEBUG_START(l);
@@ -445,8 +445,8 @@ static int l_ship_set_ship_name(lua_State *l)
  *
  * Example:
  *
- * > Game.player:SpawnCargo(Equipment.cargo.hydrogen, 0)
- * > Game.player:SpawnCargo(Equipment.cargo.hydrogen)
+ * > Game.player:SpawnCargo(Commodities.hydrogen, 0)
+ * > Game.player:SpawnCargo(Commodities.hydrogen)
  *
  * Availability:
  *
@@ -508,6 +508,46 @@ static int l_ship_get_docked_with(lua_State *l)
 	Ship *s = LuaObject<Ship>::CheckFromLua(1);
 	if (s->GetFlightState() != Ship::DOCKED) return 0;
 	LuaObject<SpaceStation>::PushToLua(s->GetDockedWith());
+	return 1;
+}
+
+/*
+ * Method: SetDockedWith
+ *
+ * Set the station as docked with the given space station. May not work properly if the ship is already docked.
+ *
+ * > success = ship:SetDockedWith(station)
+ *
+ * Parameters:
+ *
+ *   station - a SpaceStation to dock the current ship with
+ *
+ * Return:
+ *
+ *   success - a boolean indicating whether the current ship was able to be docked at the station
+ *
+ * Availability:
+ *
+ *   2022-11
+ *
+ * Status:
+ *
+ *   experimental
+ */
+static int l_ship_set_docked_with(lua_State *l)
+{
+	Ship *ship = LuaObject<Ship>::CheckFromLua(1);
+	SpaceStation *station = LuaObject<SpaceStation>::CheckFromLua(2);
+
+	int port = station->GetFreeDockingPort(ship); // pass in the ship to get a port we fit into
+	if (port < 0) {
+		lua_pushboolean(l, false);
+		return 0;
+	}
+
+	ship->SetFrame(station->GetFrame());
+	ship->SetDockedWith(station, port);
+	lua_pushboolean(l, true);
 	return 1;
 }
 
@@ -962,46 +1002,48 @@ static int l_ship_set_flight_control_state(lua_State *l)
 	return 0;
 }
 
-/* Method: GetSetSpeed
+/* Method: GetCruiseSpeed
  *
- * Return the current SetSpeed speed in m/s.
+ * Return the current cruise speed in m/s.
  *
- * local speed = ship:GetSetSpeed()
+ * local speed = ship:GetCruiseSpeed()
  *
  * Returns:
  *
- *    the current SetSpeed speed in m/s or nil if not in fix speed mode.
+ *    the current cruise speed in m/s or nil if not in cruise speed mode.
  *
  */
-static int l_ship_get_set_speed(lua_State *l)
+static int l_ship_get_cruise_speed(lua_State *l)
 {
 	Ship *s = LuaObject<Ship>::CheckFromLua(1);
 	if (s->GetController()->GetFlightControlState() == CONTROL_FIXSPEED)
-		LuaPush(l, s->GetController()->GetSetSpeed());
+		LuaPush(l, s->GetController()->GetCruiseSpeed());
 	else
 		lua_pushnil(l);
 	return 1;
 }
 
-/* Method: GetSetSpeedTarget
+/* Method: GetFollowTarget
  *
- * Return the current SetSpeed target of the ship.
+ * Return the current follow target of the ship.
  *
  * Returns:
  *
- *    The <Body> of the current SetSpeed target or nil.
+ *    The <Body> of the current follow target or nil.
  *
  */
-static int l_ship_get_set_speed_target(lua_State *l)
+static int l_ship_get_follow_target(lua_State *l)
 {
 	Ship *s = LuaObject<Ship>::CheckFromLua(1);
-	Body *t = s->GetController()->GetSetSpeedTarget();
+	Body *t = s->GetController()->GetFollowTarget();
+	/*
 	if (s->GetType() == ObjectType::PLAYER && t == nullptr) {
 		FrameId fId = s->GetFrame();
 		Frame *f = Frame::GetFrame(fId);
 		if (f)
 			t = f->GetBody();
 	}
+	*/
 	if (t)
 		LuaObject<Body>::PushToLua(t);
 	else
@@ -1142,7 +1184,7 @@ static int l_ship_get_gun_temperature(lua_State *l)
 {
 	Ship *s = LuaObject<Ship>::CheckFromLua(1);
 	int gun = luaL_checkinteger(l, 2);
-	LuaPush(l, s->GetGunTemperature(gun));
+	LuaPush(l, s->GetComponent<FixedGuns>()->GetGunTemperature(gun));
 	return 1;
 }
 
@@ -1278,8 +1320,30 @@ static int l_ship_is_hyperspace_active(lua_State *l)
 static int l_ship_get_thruster_state(lua_State *l)
 {
 	Ship *s = LuaObject<Ship>::CheckFromLua(1);
-	vector3d v = s->GetPropulsion()->GetLinThrusterState();
+	vector3d v = s->GetComponent<Propulsion>()->GetLinThrusterState();
 	LuaPush<vector3d>(l, v);
+	return 1;
+}
+
+/* Method: GetThrusterAcceleration
+ *
+ * Returns maximum acceleration in one of 6 directions
+ *
+ * Parameters:
+ *
+ *   direction - number, the <ShipTypeThruster> enum value
+ *
+ * Returns:
+ *
+ *   acceleration - number, m/s/s
+ *
+ */
+static int l_ship_get_thruster_acceleration(lua_State *l)
+{
+	Ship *s = LuaObject<Ship>::CheckFromLua(1);
+	auto direction = Thruster(LuaPull<int>(l, 2));
+	double acc = s->GetComponent<Propulsion>()->GetAccel(direction);
+	LuaPush(l, acc);
 	return 1;
 }
 
@@ -1595,6 +1659,13 @@ static int l_ship_update_equip_stats(lua_State *l)
 	return 0;
 }
 
+static int l_ship_attr_equipset(lua_State *l)
+{
+	Ship *s = LuaObject<Ship>::CheckFromLua(1);
+	s->GetEquipSet().PushCopyToStack();
+	return 1;
+}
+
 template <>
 const char *LuaObject<Ship>::s_type = "Ship";
 
@@ -1629,6 +1700,7 @@ void LuaObject<Ship>::RegisterClass()
 		{ "GetDurationForDistance", l_ship_get_duration_for_distance },
 
 		{ "GetDockedWith", l_ship_get_docked_with },
+		{ "SetDockedWith", l_ship_set_docked_with },
 		{ "Undock", l_ship_undock },
 		{ "BlastOff", l_ship_blast_off },
 
@@ -1656,6 +1728,7 @@ void LuaObject<Ship>::RegisterClass()
 		{ "GetVelocity", l_ship_get_velocity },
 		{ "GetPosition", l_ship_get_position },
 		{ "GetThrusterState", l_ship_get_thruster_state },
+		{ "GetThrusterAcceleration", l_ship_get_thruster_acceleration },
 
 		{ "IsDocked", l_ship_is_docked },
 		{ "IsLanded", l_ship_is_landed },
@@ -1663,8 +1736,8 @@ void LuaObject<Ship>::RegisterClass()
 		{ "GetWheelState", l_ship_get_wheel_state },
 		{ "ToggleWheelState", l_ship_toggle_wheel_state },
 		{ "GetFlightState", l_ship_get_flight_state },
-		{ "GetSetSpeed", l_ship_get_set_speed },
-		{ "GetSetSpeedTarget", l_ship_get_set_speed_target },
+		{ "GetCruiseSpeed", l_ship_get_cruise_speed },
+		{ "GetFollowTarget", l_ship_get_follow_target },
 		{ "GetStats", l_ship_get_stats },
 
 		{ "GetHyperspaceCountdown", l_ship_get_hyperspace_countdown },
@@ -1682,7 +1755,12 @@ void LuaObject<Ship>::RegisterClass()
 		{ 0, 0 }
 	};
 
-	LuaObjectBase::CreateClass(s_type, l_parent, l_methods, 0, 0);
+	const luaL_Reg l_attrs[] = {
+		{ "equipSet", l_ship_attr_equipset },
+		{ 0, 0 }
+	};
+
+	LuaObjectBase::CreateClass(s_type, l_parent, l_methods, l_attrs, 0);
 	LuaObjectBase::RegisterPromotion(l_parent, s_type, LuaObject<Ship>::DynamicCastPromotionTest);
 }
 

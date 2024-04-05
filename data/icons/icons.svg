@@ -6,7 +6,7 @@
    viewBox="0 0 3628.4701 4308.7699"
    id="svg7553"
    sodipodi:docname="icons.svg"
-   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -26,15 +26,15 @@
      inkscape:pagecheckerboard="false"
      showgrid="true"
      inkscape:snap-object-midpoints="false"
-     inkscape:zoom="0.16"
-     inkscape:cx="1425"
-     inkscape:cy="2571.875"
-     inkscape:window-width="2489"
-     inkscape:window-height="1417"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
+     inkscape:zoom="1.28"
+     inkscape:cx="3187.8906"
+     inkscape:cy="347.65625"
+     inkscape:window-width="3840"
+     inkscape:window-height="2050"
+     inkscape:window-x="-12"
+     inkscape:window-y="-12"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g7551"
+     inkscape:current-layer="g6009"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
@@ -45,7 +45,10 @@
      inkscape:guide-bbox="true"
      inkscape:snap-nodes="true"
      inkscape:object-nodes="false"
-     inkscape:bbox-nodes="true">
+     inkscape:bbox-nodes="true"
+     inkscape:lockguides="true"
+     inkscape:snap-grids="false"
+     inkscape:snap-bbox-midpoints="true">
     <inkscape:grid
        type="xygrid"
        id="grid14532"
@@ -56,7 +59,13 @@
     <sodipodi:guide
        position="2040.5205,122.26094"
        orientation="1,0"
-       id="guide16936" />
+       id="guide16936"
+       inkscape:locked="true" />
+    <sodipodi:guide
+       position="2948.0121,3855.2298"
+       orientation="0,-1"
+       id="guide4268"
+       inkscape:locked="true" />
   </sodipodi:namedview>
   <defs
      id="defs4054">
@@ -5284,13 +5293,14 @@
          opacity="1"
          id="rect5993" />
       <path
-         d="m 10155,-2172.1 -63.719,-63.718 -63.717,63.718"
+         d="m 10155,-2172.1 -63.719,-63.718 -63.717,63.718 z"
          opacity="1"
          stroke="#ffffff"
          stroke-linecap="round"
          stroke-linejoin="round"
          stroke-width="10"
-         id="path5995" />
+         id="path5995"
+         sodipodi:nodetypes="cccc" />
     </g>
     <g
        transform="rotate(-90,6236.2,1392.5)"
@@ -5331,6 +5341,14 @@
          stroke-linejoin="round"
          stroke-width="10"
          id="path6007" />
+      <path
+         d="m 10027.564,-2245.8178 63.719,-63.718 63.717,63.718"
+         opacity="1"
+         stroke="#ffffff"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="10"
+         id="path6007-5" />
     </g>
     <g
        transform="rotate(90,6689.8,-5864.2)"
@@ -5353,7 +5371,7 @@
          id="path6013" />
     </g>
     <g
-       transform="translate(-7483.5,-226.77)"
+       transform="translate(-7483.5176,-226.77)"
        fill="none"
        id="g6021">
       <path
@@ -13526,6 +13544,90 @@
            id="path6485-6-4"
            sodipodi:nodetypes="ccc" />
       </g>
+    </g>
+    <g
+       transform="translate(-7937.0577,-0.09972888)"
+       fill="none"
+       id="g5434"
+       style="opacity:0.215054"
+       inkscape:label="trgt-horizon">
+      <rect
+         x="10885"
+         y="-2349.2"
+         width="226.77"
+         height="226.77"
+         opacity="1"
+         id="rect5432" />
+    </g>
+    <g
+       transform="translate(-7937.0577,-0.09972888)"
+       fill="none"
+       id="g6021-7"
+       inkscape:label="trgt-horizon-2">
+      <path
+         d="m 11075,-2197.5 v 38.283 l -38.282,-10e-5 m -76.565,-3e-4 -38.283,-1e-4 v -38.283 m 0,-76.566 v -38.283 l 38.283,2e-4 m 76.565,3e-4 38.282,1e-4 v 38.283"
+         opacity="0.123967"
+         stroke="#ffffff"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="16.948"
+         id="path5430" />
+      <path
+         d="m 11029.218,-2312.349 15.391,1e-4 m 30.391,30.3915 v 15.3914"
+         opacity="1"
+         stroke="#ffffff"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="16.948"
+         id="path6017-6"
+         sodipodi:nodetypes="cccc"
+         inkscape:label="path6017-6" />
+      <rect
+         x="10885"
+         y="-2349.2"
+         width="226.77"
+         height="226.77"
+         opacity="1"
+         id="rect6019-9" />
+      <path
+         d="m 10967.421,-2312.349 -15.391,1e-4 m -30.391,30.3915 v 15.3914"
+         opacity="1"
+         stroke="#ffffff"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="16.948"
+         id="use4730"
+         sodipodi:nodetypes="cccc"
+         inkscape:label="path6017-6" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#path6017-6"
+         id="use4732"
+         width="100%"
+         height="100%"
+         transform="rotate(180,10998.319,-2235.6315)"
+         inkscape:label="A" />
+      <path
+         d="m 10967.42,-2158.914 -15.391,-10e-5 m -30.391,-30.3915 v -15.3914"
+         opacity="1"
+         stroke="#ffffff"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="16.948"
+         id="use4734"
+         sodipodi:nodetypes="cccc"
+         inkscape:label="path6017-6" />
+      <path
+         d="m 11029.29,-2158.914 15.391,-10e-5 m 30.391,-30.3915 v -15.3914"
+         opacity="1"
+         stroke="#ffffff"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="16.948"
+         id="use4736"
+         sodipodi:nodetypes="cccc"
+         inkscape:label="path6017-6" />
     </g>
   </g>
 </svg>

@@ -5,7 +5,15 @@
   },
   "ADVICE_10_HEADLINE": {
     "description": "",
-    "message": "Знайте кога да напуснете града."
+    "message": "Знайте кога да си обирате крушите."
+  },
+  "ADVICE_11_BODYTEXT": {
+    "description": "",
+    "message": "Проверете каква е повърхностната гравитация на планетата, преди да се приземите."
+  },
+  "ADVICE_11_HEADLINE": {
+    "description": "A reference to the song 'The Harder They Come', by Jimmy Cliff",
+    "message": "„The harder the g, the harder the fall“"
   },
   "ADVICE_1_BODYTEXT": {
     "description": "Point made is: the real illegal goods traders are fixed to each station, but police's fake illegal goods traders will be random every time.",
@@ -17,7 +25,7 @@
   },
   "ADVICE_2_BODYTEXT": {
     "description": "",
-    "message": "Повече малки пътувания са по-бързи, отколкото всички наведнъж."
+    "message": "Повече малки пътувания са по-бързи, отколкото едно голямо пътуване."
   },
   "ADVICE_2_HEADLINE": {
     "description": "(A reference to the famous poem The Road Not Taken, by Robert Frost)",
@@ -65,7 +73,7 @@
   },
   "ADVICE_8_BODYTEXT": {
     "description": "",
-    "message": "Когато пътувате до системи с две звезди, първо се уверете, че Вашата цел е правилната звезда."
+    "message": "Когато пътувате до системи с две звезди, уверете се, че Вашата цел е правилната звезда."
   },
   "ADVICE_8_HEADLINE": {
     "description": "",

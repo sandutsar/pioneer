@@ -1,12 +1,15 @@
-// Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
-#include "Input.h"
 #include "buildopts.h"
 
 #include "Pi.h"
 
+#include "Body.h"
+#include "BodyComponent.h"
+
 #include "BaseSphere.h"
+#include "Beam.h"
 #include "CityOnPlanet.h"
 #include "DeathView.h"
 #include "EnumStrings.h"
@@ -17,29 +20,13 @@
 #include "GameConfig.h"
 #include "GameLog.h"
 #include "GameSaveError.h"
+#include "Input.h"
 #include "Intro.h"
 #include "Lang.h"
 #include "Missile.h"
 #include "ModManager.h"
 #include "ModelCache.h"
 #include "NavLights.h"
-#include "core/GuiApplication.h"
-#include "core/Log.h"
-#include "core/OS.h"
-#include "graphics/Material.h"
-#include "graphics/RenderState.h"
-#include "graphics/opengl/RendererGL.h"
-#include "imgui/imgui.h"
-#include "lua/Lua.h"
-#include "lua/LuaConsole.h"
-#include "lua/LuaEvent.h"
-#include "lua/LuaTimer.h"
-#include "profiler/Profiler.h"
-#include "sound/AmbientSounds.h"
-#if WITH_OBJECTVIEWER
-#include "ObjectViewerView.h"
-#endif
-#include "Beam.h"
 #include "Player.h"
 #include "PngWriter.h"
 #include "Projectile.h"
@@ -54,26 +41,39 @@
 #include "Tombstone.h"
 #include "TransferPlanner.h"
 #include "WorldView.h"
+
+#if WITH_OBJECTVIEWER
+#include "ObjectViewerView.h"
+#endif
+
 #include "galaxy/GalaxyGenerator.h"
-#include "libs.h"
+
+#include "graphics/Material.h"
+#include "graphics/RenderState.h"
+#include "graphics/Renderer.h"
+#include "graphics/opengl/RendererGL.h"
+
+#include "core/GuiApplication.h"
+#include "core/Log.h"
+#include "core/OS.h"
+
+#include "lua/Lua.h"
+#include "lua/LuaConsole.h"
+#include "lua/LuaEvent.h"
+#include "lua/LuaTimer.h"
+
 #include "pigui/LuaPiGui.h"
 #include "pigui/PerfInfo.h"
 #include "pigui/PiGui.h"
-#include "ship/PlayerShipController.h"
-#include "ship/ShipViewController.h"
+
+#include "sound/AmbientSounds.h"
 #include "sound/Sound.h"
 #include "sound/SoundMusic.h"
 
-#include "graphics/Renderer.h"
-
-#if WITH_DEVKEYS
-#include "graphics/Graphics.h"
-#include "graphics/Light.h"
-#include "graphics/Stats.h"
-#endif // WITH_DEVKEYS
-
-#include "scenegraph/Lua.h"
+#include "profiler/Profiler.h"
 #include "versioningInfo.h"
+
+#include <SDL.h>
 
 #ifdef PROFILE_LUA_TIME
 #include <time.h>
@@ -112,7 +112,6 @@ std::unique_ptr<LuaConsole> Pi::luaConsole;
 Game *Pi::game;
 Random Pi::rng;
 float Pi::frameTime;
-bool Pi::doingMouseGrab;
 bool Pi::showDebugInfo = false;
 int Pi::statSceneTris = 0;
 int Pi::statNumPatches = 0;
@@ -141,7 +140,8 @@ class StartupScreen : public Application::Lifecycle {
 public:
 	StartupScreen() :
 		Lifecycle(true)
-	{}
+	{
+	}
 
 	std::unique_ptr<JobSet> asyncStartupQueue;
 	std::unique_ptr<JobSet> currentStepQueue;
@@ -257,16 +257,18 @@ void Pi::Init(const std::map<std::string, std::string> &options, bool no_gui)
 	Pi::config = new GameConfig(options);
 	m_instance = new Pi::App();
 
-	GetApp()->m_loader = std::make_shared<StartupScreen>();
-	GetApp()->m_mainMenu = std::make_shared<MainMenu>();
-	GetApp()->m_gameLoop = std::make_shared<GameLoop>();
+	GetApp()->m_loader.Reset(new StartupScreen());
+	GetApp()->m_mainMenu.Reset(new MainMenu());
+	GetApp()->m_gameLoop.Reset(new GameLoop());
 
 	m_instance->m_noGui = no_gui;
+
+	m_instance->Startup();
 }
 
 void Pi::App::SetStartPath(const SystemPath &startPath)
 {
-	static_cast<MainMenu *>(m_mainMenu.get())->SetStartPath(startPath);
+	static_cast<MainMenu *>(m_mainMenu.Get())->SetStartPath(startPath);
 }
 
 void TestGPUJobsSupport()
@@ -308,19 +310,21 @@ void TestGPUJobsSupport()
 	}
 }
 
-void Pi::App::Startup()
+void Pi::App::OnStartup()
 {
 	PROFILE_SCOPED()
 	Profiler::Clock startupTimer;
 	startupTimer.Start();
 
-	Application::Startup();
-
-	SetProfilerPath("profiler/");
-	SetProfileSlowFrames(config->Int("ProfileSlowFrames", 0));
-	SetProfileZones(config->Int("ProfilerZoneOutput", 0));
+	SetupProfiler(Pi::config);
 
 	Log::GetLog()->SetLogFile("output.txt");
+
+	if (config->Int("LogVerbose", 0))
+		Log::GetLog()->SetFileSeverity(Log::Severity::Verbose);
+
+	if (config->Int("LogVerbose", 0) > 1)
+		Log::GetLog()->SetSeverity(Log::Severity::Verbose);
 
 	std::string version(PIONEER_VERSION);
 	if (strlen(PIONEER_EXTRAVERSION)) version += " (" PIONEER_EXTRAVERSION ")";
@@ -333,8 +337,9 @@ void Pi::App::Startup()
 	Output("%s\n", OS::GetOSInfoString().c_str());
 
 	ModManager::Init();
+	ModManager::LoadMods(config);
 
-	Lang::Resource res(Lang::GetResource("core", config->String("Lang")));
+	Lang::Resource &res(Lang::GetResource("core", config->String("Lang")));
 	Lang::MakeCore(res);
 
 	// FIXME: move these out of the Pi namespace
@@ -345,7 +350,7 @@ void Pi::App::Startup()
 	Pi::detail.cities = config->Int("DetailCities");
 
 	Graphics::RendererOGL::RegisterRenderer();
-	Pi::renderer = StartupRenderer(Pi::config);
+	Pi::renderer = StartupRenderer(Pi::config, false, config->Int("DebugWindowResize"));
 
 	Pi::rng.IncRefCount(); // so nothing tries to free it
 	Pi::rng.seed(time(0));
@@ -372,6 +377,8 @@ void Pi::App::Startup()
 
 	// Can be initialized directly after FileSystem::Init, but put it here for convenience
 	GalacticEconomy::Init();
+
+	BodyComponentDB::Init();
 
 	Profiler::Clock threadTimer;
 	threadTimer.Start();
@@ -401,7 +408,7 @@ void Pi::App::Startup()
 */
 
 // Immediately destroy everything and end the game.
-void Pi::App::Shutdown()
+void Pi::App::OnShutdown()
 {
 	PROFILE_SCOPED()
 	Output("Pi shutting down.\n");
@@ -440,6 +447,10 @@ void Pi::App::Shutdown()
 
 	GalaxyGenerator::Uninit();
 
+	BodyComponentDB::Uninit();
+
+	ModManager::Uninit();
+
 	ShutdownRenderer();
 	Pi::renderer = nullptr;
 
@@ -448,8 +459,11 @@ void Pi::App::Shutdown()
 
 	delete Pi::config;
 	delete Pi::planner;
+}
 
-	Application::Shutdown();
+void Pi::Uninit()
+{
+	m_instance->Shutdown();
 
 	SDL_Quit();
 	delete Pi::m_instance;
@@ -464,12 +478,12 @@ void Pi::App::Shutdown()
 
 JobSet *Pi::App::GetAsyncStartupQueue() const
 {
-	return static_cast<StartupScreen *>(m_loader.get())->asyncStartupQueue.get();
+	return static_cast<StartupScreen *>(m_loader.Get())->asyncStartupQueue.get();
 }
 
 JobSet *Pi::App::GetCurrentLoadStepQueue() const
 {
-	return static_cast<StartupScreen *>(m_loader.get())->currentStepQueue.get();
+	return static_cast<StartupScreen *>(m_loader.Get())->currentStepQueue.get();
 }
 
 // TODO: investigate constructing a DAG out of Init functions and dependencies
@@ -601,6 +615,7 @@ void StartupScreen::Update(float deltaTime)
 	}
 
 	Pi::pigui->NewFrame();
+	PiGui::EmitEvents();
 	PiGui::RunHandler(GetProgress(), "init");
 	Pi::pigui->Render();
 }
@@ -646,7 +661,8 @@ void StartupScreen::End()
 
 void MainMenu::Start()
 {
-	Pi::intro = new Intro(Pi::renderer, Graphics::GetScreenWidth(), Graphics::GetScreenHeight());
+	// TODO: just calculate this at draw time inside Intro
+	Pi::intro = new Intro(Pi::renderer, Pi::renderer->GetWindowWidth(), Pi::renderer->GetWindowHeight());
 	if (m_skipMenu) {
 		Output("Loading new game immediately!\n");
 		Pi::StartGame(new Game(m_startPath, 0.0));
@@ -670,8 +686,8 @@ void MainMenu::Update(float deltaTime)
 
 	Pi::intro->Draw(deltaTime);
 
-	Pi::renderer->SetRenderTarget(0);
 	Pi::pigui->NewFrame();
+	PiGui::EmitEvents();
 	PiGui::RunHandler(deltaTime, "mainMenu");
 
 	perfInfoDisplay->Update(deltaTime);
@@ -729,9 +745,6 @@ void Pi::HandleKeyDown(SDL_Keysym *key)
 
 	// special keys: CTRL+[KEY].
 	switch (key->sym) {
-	case SDLK_q: // Quit
-		Pi::RequestQuit();
-		break;
 	case SDLK_PRINTSCREEN: // print
 	case SDLK_KP_MULTIPLY: // screen
 	{
@@ -808,15 +821,6 @@ void Pi::HandleKeyDown(SDL_Keysym *key)
 	}
 }
 
-// Return true if the event has been handled and shouldn't be passed through
-// to the normal input system.
-bool Pi::App::HandleEvent(SDL_Event &event)
-{
-	PROFILE_SCOPED()
-
-	return false;
-}
-
 void Pi::App::HandleRequests()
 {
 	for (auto request : internalRequests) {
@@ -870,6 +874,12 @@ static void OnPlayerDockOrUndock();
 void GameLoop::Start()
 {
 	PROFILE_SCOPED()
+
+	// NOTE: this is here because Clang 15+ and GCC 13+ ignore fp-model when
+	// generating vectorized/optimized code and will happily perform exception-
+	// raising operations on the contents of uninitialized or aliased memory
+	OS::DisableFPE();
+
 	// this is a bit brittle. skank may be forgotten and survive between
 	// games
 	Pi::input->InitGame();
@@ -920,6 +930,11 @@ void GameLoop::Update(float deltaTime)
 	perfTimer.SoftReset();			   // Reset() + Start()
 	frame_time_real = deltaTime * 1e3; // convert to ms
 	frame_stat++;
+
+	// Read events into internal structures and into imgui structures,
+	// dispatch will be performed after the imgui frame, so that imgui can add
+	// something based on clicks on widgets
+	Pi::GetApp()->PollEvents();
 
 #ifdef ENABLE_SERVER_AGENT
 	Pi::serverAgent->ProcessResponses();
@@ -978,7 +993,7 @@ void GameLoop::Update(float deltaTime)
 		} else if (Pi::game->GetTime() - time_player_died > 8.0) {
 			// This also shouldn't go here, though we should evaluate to what degree
 			// Pi.cpp is involved in queuing the tombstone loop.
-			SetNextLifecycle(std::make_shared<TombstoneLoop>());
+			SetNextLifecycle(RefCountedPtr<TombstoneLoop>(new TombstoneLoop()));
 			RequestEndLifecycle();
 		}
 	}
@@ -995,10 +1010,10 @@ void GameLoop::Update(float deltaTime)
 	Pi::GetView()->Update();
 	Pi::GetView()->Draw3D();
 
-	// FIXME: HandleEvents at the moment must be after view->Draw3D and before
-	// Gui::Draw so that labels drawn to screen can have mouse events correctly
-	// detected. Gui::Draw wipes memory of label positions.
-	Pi::GetApp()->HandleEvents();
+	// Kick rendering in the background to avoid write->delete->read issues with UI command processing
+	// This may cause future issues if graphic resources are deleted while in-flight, but OpenGL is
+	// capable of handling that eventuality and it prevents application-scope crashes
+	Pi::renderer->FlushCommandBuffers();
 
 #ifdef REMOTE_LUA_REPL
 	Pi::luaConsole->HandleTCPDebugConnections();
@@ -1022,6 +1037,7 @@ void GameLoop::Update(float deltaTime)
 			Pi::luaConsole->Draw();
 		else {
 			Pi::GetView()->DrawPiGui();
+			PiGui::EmitEvents();
 			PiGui::RunHandler(deltaTime, "game");
 		}
 	}
@@ -1032,6 +1048,8 @@ void GameLoop::Update(float deltaTime)
 		perfInfoDisplay->Draw();
 		Pi::pigui->SetNormalStyle();
 	}
+
+	Pi::GetApp()->DispatchEvents();
 
 	// Reset the depth buffer so our UI can get drawn right overtop
 	Pi::renderer->ClearDepthBuffer();
@@ -1077,6 +1095,11 @@ void GameLoop::Update(float deltaTime)
 	if (Pi::isRecordingVideo && (Pi::ffmpegFile != nullptr)) {
 		Graphics::ScreendumpState sd;
 		Pi::renderer->FrameGrab(sd);
+		// note: FrameGrab looked slightly buggy and now Screendump will do the same thing but without alpha channel
+		// so it might need some work to ressurect this and add back in the alpha channel.
+		// Also worth noting, this possibly isn't the right way to do things as it can introduce a stall of the GPU/CPU
+		// interaction.  Much better to write/copy using GPU to a chain of offscreen render targets and pull data back from them
+		// meaning what we write to the video may be a frame or two old, but that's acceptable for better performance.
 		fwrite(sd.pixels.get(), sizeof(uint32_t) * Pi::renderer->GetWindowWidth() * Pi::renderer->GetWindowHeight(), 1, Pi::ffmpegFile);
 	}
 #endif
@@ -1084,13 +1107,22 @@ void GameLoop::Update(float deltaTime)
 
 void GameLoop::End()
 {
+	// Process any pending UI events
+	PiGui::EmitEvents();
+
 	// When Pi::game goes, so too goes the death view.
 	Pi::SetView(0);
 
 	// Clean up any left-over mouse state
 	Pi::input->SetCapturingMouse(false);
 
-	Pi::SetMouseGrab(false);
+#ifdef REMOTE_LUA_REPL
+	Pi::luaConsole->CloseTCPDebugConnection();
+#endif
+
+	// we have to make sure to autosave the game before the end game process starts
+	LuaEvent::Queue("onAutoSaveBeforeGameEnds");
+	LuaEvent::Emit();
 
 	// final event
 	LuaEvent::Queue("onGameEnd");
@@ -1117,7 +1149,8 @@ void GameLoop::End()
 
 void TombstoneLoop::Start()
 {
-	tombstone.reset(new Tombstone(Pi::renderer, Graphics::GetScreenWidth(), Graphics::GetScreenHeight()));
+	// TODO: just calculate this at draw time inside Tombstone
+	tombstone.reset(new Tombstone(Pi::renderer, Pi::renderer->GetWindowWidth(), Pi::renderer->GetWindowHeight()));
 	startTime = Pi::GetApp()->GetTime();
 }
 
@@ -1202,25 +1235,6 @@ static void OnPlayerDockOrUndock()
 {
 	Pi::game->RequestTimeAccel(Game::TIMEACCEL_1X);
 	Pi::game->SetTimeAccel(Game::TIMEACCEL_1X);
-}
-
-float Pi::GetMoveSpeedShiftModifier()
-{
-	// Suggestion: make x1000 speed on pressing both keys?
-	if (Pi::input->KeyState(SDLK_LSHIFT)) return 100.f;
-	if (Pi::input->KeyState(SDLK_RSHIFT)) return 10.f;
-	return 1;
-}
-
-void Pi::SetMouseGrab(bool on)
-{
-	if (!doingMouseGrab && on) {
-		Pi::input->SetCapturingMouse(true);
-		doingMouseGrab = true;
-	} else if (doingMouseGrab && !on) {
-		Pi::input->SetCapturingMouse(false);
-		doingMouseGrab = false;
-	}
 }
 
 // This absolutely ought not to be part of the Pi class

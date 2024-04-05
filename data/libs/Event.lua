@@ -1,4 +1,4 @@
--- Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 --
@@ -25,26 +25,81 @@
 --
 
 local Engine = require 'Engine'
+local utils  = require 'utils'
 
-local pending = {}
-local callbacks = {}
-local do_callback = {}
-
-local do_callback_normal = function (cb, p)
-	cb(table.unpack(p.event))
+local do_callback_normal = function (cb, ev)
+	cb.func(table.unpack(ev))
 end
-local do_callback_timed = function (cb, p)
+local do_callback_timed = function (cb, ev)
 	local d = debug.getinfo(cb)
 
 	local tstart = Engine.ticks
-	cb(table.unpack(p.event))
+	cb.func(table.unpack(ev))
 	local tend = Engine.ticks
 
-	print(string.format("DEBUG: %s %dms %s:%d", p.name, tend-tstart, d.source, d.linedefined))
+	print(string.format("DEBUG: %s %dms %s:%d", ev.name, tend-tstart, d.source, d.linedefined))
 end
 
-local Event
-Event = {
+---@class EventBase
+---@field callbacks table
+---@field debugger table
+local Event = utils.inherits(nil, "Event")
+
+function Event:Register(name, module, func)
+
+	for _, cb in ipairs(self.callbacks[name]) do
+		-- Update registered callback
+		if cb.module == module then
+			logWarning("Module {} overwriting event callback {}" % { module, func })
+			cb.func = func
+			return
+		end
+	end
+
+	table.insert(self.callbacks[name], { module = module, func = func })
+end
+
+function Event:Deregister(name, module, func)
+	for i, cb in ipairs(self.callbacks[name]) do
+		if cb.module == module and cb.func == func then
+			table.remove(self.callbacks[name], i)
+			return
+		end
+	end
+end
+
+function Event:_Emit()
+	while #self > 0 do
+		local ev = table.remove(self, 1)
+		local executor = self.debugger[ev.name] or do_callback_normal
+
+		for _, cb in ipairs(self.callbacks[ev.name]) do
+			executor(cb, ev)
+		end
+	end
+end
+
+function Event:_Dump()
+	for ev, list in pairs(self.callbacks) do
+		print("event: " .. ev)
+
+		for _, v in ipairs(list) do
+			print("\t{module} -> {func}" % v)
+		end
+	end
+end
+
+-- Note: this function is written this way to preserve the existing
+-- interface to Event.Register(name, callback) as well as provide helpers
+-- to automatically acquire module names when registering callbacks
+Event.New = function()
+	---@class EventQueue : EventBase
+	local self = setmetatable({}, Event.meta)
+	local super = Event
+
+	self.callbacks = utils.automagic()
+	self.debugger = {}
+
 	--
 	-- Function: Register
 	--
@@ -76,11 +131,9 @@ Event = {
 	--
 	--   stable
 	--
-	Register = function (name, cb)
-		if not callbacks[name] then callbacks[name] = {} end
-		callbacks[name][cb] = cb;
-        if not do_callback[name] then do_callback[name] = do_callback_normal end
-	end,
+	self.Register = function (name, cb)
+		super.Register(self, name, package.modulename(2), cb)
+	end
 
 	--
 	-- Function: Deregister
@@ -107,10 +160,9 @@ Event = {
 	--
 	--   stable
 	--
-	Deregister = function (name, cb)
-		if not callbacks[name] then return end
-		callbacks[name][cb] = nil
-	end,
+	self.Deregister = function (name, cb)
+		super.Deregister(self, name, package.modulename(2), cb)
+	end
 
 	--
 	-- Function: Queue
@@ -138,9 +190,9 @@ Event = {
 	--
 	--   stable
 	--
-	Queue = function (name, ...)
-		table.insert(pending, { name = name, event = {...} })
-	end,
+	self.Queue = function (name, ...)
+		table.insert(self, { name = name, ... })
+	end
 
 	--
 	-- Function: DebugTimer
@@ -167,27 +219,24 @@ Event = {
 	--   debug
     --
 
-    DebugTimer = function (name, enabled)
+    self.DebugTimer = function (name, enabled)
 		do_callback[name] = enabled and do_callback_timed or do_callback_normal
-	end,
+	end
 
 	-- internal method, called from C++
-	_Clear = function ()
-		pending = {}
-	end,
-
-	-- internal method, called from C++
-	_Emit = function ()
-		while #pending > 0 do
-			local p = table.remove(pending, 1)
-			if callbacks[p.name] then
-				for cb,_ in pairs(callbacks[p.name]) do
-					do_callback[p.name](cb, p)
-				end
-			end
+	self._Clear = function ()
+		for i = #self, 1, -1 do
+			self[i] = nil
 		end
 	end
-}
+
+	-- internal method, called from C++
+	self._Emit = function ()
+		super._Emit(self)
+	end
+
+	return self
+end
 
 --
 -- Event: onGameStart
@@ -332,10 +381,35 @@ Event = {
 --   experimental
 --
 
+
+--
+-- Event: onShipCreated
+--
+-- Triggered when a ship is pushed to Lua and its constructor is called.
+-- This event may be used to start timers related to the ship or add optional
+-- components to the ship object.
+--
+-- > local onShipCreated = function (ship) ... end
+-- > Event.Register("onShipCreated", onShipCreated)
+--
+-- Parameters:
+--
+--   ship - the ship that was created
+--
+-- Availability:
+--
+--   June 2022
+--
+-- Status:
+--
+--   stable
+--
+
 --
 -- Event: onShipDestroyed
 --
--- Triggered when a ship is destroyed.
+-- Triggered when a ship is destroyed by gunfire or collision.
+-- This event will not be triggered when a ship is simply deleted from space.
 --
 -- > local onShipDestroyed = function (ship, attacker) ... end
 -- > Event.Register("onShipDestroyed", onShipDestroyed)
@@ -749,6 +823,52 @@ Event = {
 --
 
 --
+-- Event: onShipScoopFuel
+--
+-- Triggered when a ship has stayed in the atmosphere of a star or gas giant
+-- and a unit of fuel should be scooped into the players' cargo hold.
+--
+-- > local onShipScoopFuel = function (ship, body) ... end
+-- > Event.Register("onShipScoopFuel", onShipScoopFuel)
+--
+-- Parameters:
+--
+--   ship - the <Ship> which just scooped fuel
+--
+--   body - the <SystemBody> the fuel was scooped from
+--
+-- Availability:
+--
+--   June 2022
+--
+-- Status:
+--
+--   experimental
+--
+
+--
+-- Event: onShipScoopCargo
+--
+-- Triggered when a ship attempts to scoop up a cargo container.
+--
+-- Parameters:
+--
+--   ship - the <Ship> which attempted to scoop a cargo item
+--
+--   success - was the cargo container successfully scooped?
+--
+--   cargoType - the <CommodityType> contained in the cargo item
+--
+-- Availability:
+--
+--   June 2022
+--
+-- Status:
+--
+--   experimental
+--
+
+--
 -- Event: onGamePaused
 --
 -- Triggered when the game is paused.
@@ -783,4 +903,4 @@ Event = {
 --   experimental
 --
 
-return Event
+return Event.New()

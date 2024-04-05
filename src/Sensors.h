@@ -1,4 +1,4 @@
-// Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef _SENSORS_H
@@ -12,7 +12,8 @@
  *  - allow "pinned" radar contacts (visible at all ranges, for missions)
  */
 #include "Body.h"
-#include "libs.h"
+
+#include <list>
 
 class Body;
 class HudTrail;
@@ -28,7 +29,8 @@ public:
 	};
 
 	enum TargetingCriteria {
-		TARGET_NEAREST_HOSTILE
+		TARGET_NEAREST_HOSTILE,
+		CYCLE_HOSTILE
 	};
 
 	struct RadarContact {
@@ -48,7 +50,7 @@ public:
 	static bool ContactDistanceSort(const RadarContact &a, const RadarContact &b);
 
 	Sensors(Ship *owner);
-	bool ChooseTarget(TargetingCriteria);
+	Body* ChooseTarget(TargetingCriteria, const Body* oldTarget);
 	IFF CheckIFF(Body *other);
 	const ContactList &GetContacts() { return m_radarContacts; }
 	const ContactList &GetStaticContacts() { return m_staticContacts; }

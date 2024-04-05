@@ -19,6 +19,10 @@
     "description": "",
     "message": "Bağlılık:"
   },
+  "ALL_PARAMETERS_WERE_RECOVERED_SUCCESSFULLY": {
+    "description": "Message when restoring savegame",
+    "message": "Tüm parametreler başarıyla kurtarıldı."
+  },
   "ALL_UP_WEIGHT": {
     "description": "",
     "message": "Tam yüklü ağırlık"
@@ -46,6 +50,10 @@
   "ATMO_PRESS_LIMIT": {
     "description": "Base external pressure limit of a ship (without atmo shield)",
     "message": "Atmo. basınç limiti"
+  },
+  "ATTEMPTING_TO_RECOVER_GAME_PROGRESS_FROM_SAVE_X": {
+    "description": "Message when restoring savegame",
+    "message": "Kayıtlı oyun kurtarılmaya çalışılıyor: {save}"
   },
   "ATTEMPT_TO_REPAIR_HULL": {
     "description": "",
@@ -99,6 +107,14 @@
     "description": "",
     "message": "Bu öge satılamıyor"
   },
+  "CANT_FIND_PATH": {
+    "description": "Message when restoring savegame, file path",
+    "message": "Yol bulunamıyor: %s"
+  },
+  "CANT_FIND_PLAYERS_SHIP_IN_SPACE": {
+    "description": "Message when restoring savegame",
+    "message": "Oyuncunun gemisi uzayda bulunamadı"
+  },
   "CAPACITY": {
     "description": "Capacity of ship to fit more equipment",
     "message": "Kapasite"
@@ -110,6 +126,10 @@
   "CARGO": {
     "description": "",
     "message": "Kargo"
+  },
+  "CARGO_CAPACITY": {
+    "description": "Label to show a ship's total cargo space.",
+    "message": "Kargo Kapasitesi"
   },
   "CARGO_SPACE": {
     "description": "",
@@ -126,6 +146,10 @@
   "CARGO_T_USED": {
     "description": "t for tonne",
     "message": "{amount}T kullanılan"
+  },
+  "CASE_SENSITIVE": {
+    "description": "",
+    "message": "Büyük-küçük harf duyarlı"
   },
   "CASH": {
     "description": "",
@@ -146,6 +170,22 @@
   "CHANGE_BINDING": {
     "description": "Key binding option",
     "message": "Atamayı Değiştir"
+  },
+  "CHANGE_COLOR": {
+    "description": "Paintshop button",
+    "message": "Renk Değiştir"
+  },
+  "CHANGE_PATTERN": {
+    "description": "Paintshop button",
+    "message": "Desen Değiştir"
+  },
+  "CHARACTER": {
+    "description": "",
+    "message": "Karakter"
+  },
+  "CHARISMA": {
+    "description": "Character parameter",
+    "message": "Karizma"
   },
   "CHIEF_MECHANIC": {
     "description": "",
@@ -179,6 +219,10 @@
     "description": "",
     "message": "Kapat"
   },
+  "COLOR": {
+    "description": "",
+    "message": "Renk"
+  },
   "COMBAT": {
     "description": "Headline for kills and combat rating",
     "message": "Savaş"
@@ -194,10 +238,6 @@
   "COMMODITY_TRADE_ANALYSIS": {
     "description": "",
     "message": "Malın ticari analizi:"
-  },
-  "COMPACT_RADAR": {
-    "description": "Game settings option",
-    "message": "Sıkıştırılmış radar"
   },
   "COMPETENT": {
     "description": "Combat rating",
@@ -239,9 +279,21 @@
     "description": "",
     "message": "Kontrol Seçenekleri"
   },
+  "COULD_NOT_DELETE_SAVE": {
+    "description": "",
+    "message": "Kayıt silinemedi"
+  },
+  "COULD_NOT_FIND_SYSTEM_BODY_FOR_FRAME": {
+    "description": "Message when restoring savegame",
+    "message": "Referans çerçevesi için sistem cismi bulunamadı"
+  },
   "COULD_NOT_LOAD_GAME": {
     "description": "",
     "message": "Oyun yüklenemiyor:"
+  },
+  "COULD_NOT_READ_THE_SAVE_VERSION": {
+    "description": "Message when restoring savegame",
+    "message": "Kayıt sürümü okunamadı"
   },
   "CREDIBLE": {
     "description": "For player reputation",
@@ -250,6 +302,10 @@
   "CREDITS": {
     "description": "in game currency",
     "message": "Kredi"
+  },
+  "CREW": {
+    "description": "Tab item in the start game menu",
+    "message": "Mürettebat"
   },
   "CREW_CABINS": {
     "description": "",
@@ -271,6 +327,14 @@
     "description": "For hyperjump planner",
     "message": "Mevcut Yakıt:"
   },
+  "CURRENT_SAVEGAME_VERSION": {
+    "description": "Message when restoring savegame",
+    "message": "Şu anki oyun kayıt sürümü: %s"
+  },
+  "CURRENT_SHIP": {
+    "description": "For tooltip comparing current ship specs to one in the shipyard",
+    "message": "Şu Anki Gemi"
+  },
   "CURRENT_SYSTEM": {
     "description": "For hyperjump planner",
     "message": "Mevcut sistem"
@@ -291,6 +355,14 @@
     "description": "Decrease something.",
     "message": "Azalt"
   },
+  "DELETE": {
+    "description": "",
+    "message": "Sil"
+  },
+  "DELETE_SAVE_CONFIRMATION": {
+    "description": "",
+    "message": "Bu kaydı silmek istediğinizden emin misiniz?"
+  },
   "DELTA_V": {
     "description": "",
     "message": "Delta-v"
@@ -307,13 +379,17 @@
     "description": "Delta-v capacity of a ship with cargo bay fully loaded with propellant",
     "message": "Delta-v (en çok)"
   },
+  "DEMAND": {
+    "description": "Column label for commodity demand at a market.",
+    "message": "Talep"
+  },
   "DEPARTURE_DATE": {
     "description": "Time of departure, used in flight log",
     "message": "Ayrılış tarihi"
   },
-  "DESCENT_TO_GROUND_SPEED": {
-    "description": "",
-    "message": "Yere-alçalma hızı"
+  "DESCRIPTION": {
+    "description": "Start game parameter, e.g. 'This is an easy start from Cydonia'",
+    "message": "Açıklama"
   },
   "DESTROY_ENEMY_SHIP": {
     "description": "",
@@ -332,7 +408,7 @@
     "message": "Ekran görüntüsü modunda (HUD modu kapatıldığında), sistem koordinatları da dahil bütün gösterilen bilgiyi gizle."
   },
   "DISMISS": {
-    "description": "Terminate crew memeber's contract",
+    "description": "Terminate crew member's contract",
     "message": "Gidebilirsin"
   },
   "DISPLAY_HUD_TRAILS": {
@@ -362,6 +438,10 @@
   "DOCKED_AT": {
     "description": "",
     "message": "Kenetli"
+  },
+  "DOCKED_TO_A_BODY_THAT_IS_NOT_A_STATION": {
+    "description": "Message when restoring savegame",
+    "message": "İstasyon olmayan bir cisme kenetli"
   },
   "DOCK_AT_CURRENT_TARGET": {
     "description": "",
@@ -433,7 +513,7 @@
   },
   "ENGINEERING": {
     "description": "Engineering skills of crew",
-    "message": "Mühendislik:"
+    "message": "Mühendislik"
   },
   "ENTRY": {
     "description": "A note/entry/record into the flight log",
@@ -455,6 +535,10 @@
     "description": "",
     "message": "Hata"
   },
+  "ERROR_APPLYING_PATCH": {
+    "description": "Message when restoring savegame",
+    "message": "Düzeltme uygulanırken hata"
+  },
   "ERROR_LANDING_GEAR_DOWN": {
     "description": "",
     "message": "Üstuzay sıçraması yapılamıyor; iniş takımı kapatılmalı!"
@@ -470,6 +554,10 @@
   "EXPERIENCED": {
     "description": "For player reputation",
     "message": "Deneyimli"
+  },
+  "EXPERIMENTAL": {
+    "description": "Indicates feature/option is experimental",
+    "message": "Deneysel"
   },
   "EXPERT": {
     "description": "For player reputation",
@@ -530,6 +618,10 @@
   "FEMALE": {
     "description": "",
     "message": "Kadın"
+  },
+  "FILE_SAVEGAME_VERSION": {
+    "description": "Message when restoring savegame",
+    "message": "Dosyadaki oyun kayıt sürümü: %s"
   },
   "FINAL_TARGET": {
     "description": "Hyperjump planner, referring to star system target",
@@ -594,10 +686,6 @@
   "FORWARD_ACCEL_FULL": {
     "description": "",
     "message": "İleri ivme (dolu)"
-  },
-  "FRACTAL_DETAIL": {
-    "description": "",
-    "message": "Fraktal detay"
   },
   "FREE": {
     "description": "Used in Ship Information view as in Capacity: 10t (5t free)",
@@ -727,6 +815,30 @@
     "description": "Tooltip: Blastoff",
     "message": "Kalkış"
   },
+  "HUD_BUTTON_CRUISE_FORWARD": {
+    "description": "Tooltip for button",
+    "message": "İleri seyir modu"
+  },
+  "HUD_BUTTON_CRUISE_UP": {
+    "description": "Tooltip for button",
+    "message": "Yukarı seyir modu"
+  },
+  "HUD_BUTTON_DISABLE_AUTOPILOT": {
+    "description": "Tooltip for button",
+    "message": "Otopilotu devre dışı bırak"
+  },
+  "HUD_BUTTON_DISABLE_CRUISE": {
+    "description": "Tooltip for button",
+    "message": "Seyir modunu devre dışı bırak"
+  },
+  "HUD_BUTTON_DISABLE_FIXHEADING": {
+    "description": "Tooltip for button",
+    "message": "Sabit yönelim modunu devre dışı bırak"
+  },
+  "HUD_BUTTON_DISABLE_FOLLOW_MODE": {
+    "description": "Tooltip for button",
+    "message": "Takip modunu devre dışı bırak"
+  },
   "HUD_BUTTON_EQUIPMENT": {
     "description": "Tooltip: Equipment",
     "message": "Ekipman"
@@ -807,10 +919,6 @@
     "description": "Tooltip: Rotation damping is on",
     "message": "Dönüş durdurma açık"
   },
-  "HUD_BUTTON_SCANNER": {
-    "description": "Tooltip: Scanner",
-    "message": "Tarayıcı"
-  },
   "HUD_BUTTON_SET_SPEED": {
     "description": "Tooltip: set speed",
     "message": "Hızı ayarla"
@@ -854,6 +962,10 @@
   "HUD_CARGO_MASS": {
     "description": "Cargo Mass",
     "message": "Kargo Kütlesi"
+  },
+  "HUD_CRUISE_SPEED": {
+    "description": "Tooltip for cruise speed indicator",
+    "message": "Seyir hızı"
   },
   "HUD_CURRENT_COMBAT_TARGET": {
     "description": "Tooltip: The current combat target.",
@@ -906,6 +1018,34 @@
   "HUD_DURATION_UNTIL_MANEUVER_BURN": {
     "description": "Tooltip: The duration until the middle of the maneuver burn.",
     "message": "Manevranın ortasına kadar geçecek süre"
+  },
+  "HUD_FOLLOW_ORIENTATION": {
+    "description": "Tooltip for follow mode 'orientation' button",
+    "message": "{targetname}: Yönelimi takip et"
+  },
+  "HUD_FOLLOW_ORIENTATION_NOT_AVAILABLE": {
+    "description": "Tooltip for follow mode 'orientation' button, when it's not available for the current object.",
+    "message": "{targetname}: Yönelim takibi mümkün değil."
+  },
+  "HUD_FOLLOW_ORIENTATION_NOT_AVAILABLE_TOO_FAR": {
+    "description": "Tooltip for follow mode 'orientation' button, when it's not available for the current object, because it's too far.",
+    "message": "{targetname}: Yönelim takibi mümkün değil - çok uzak."
+  },
+  "HUD_FOLLOW_POSITION": {
+    "description": "Tooltip for follow mode 'position' button",
+    "message": "{targetname}: Konumu takip et"
+  },
+  "HUD_FOLLOW_POSITION_NOT_AVAILABLE": {
+    "description": "Tooltip for follow mode 'position' button, when it's not available for the current object.",
+    "message": "{targetname}: Konum takibi mümkün değil."
+  },
+  "HUD_FOLLOW_POSITION_NOT_AVAILABLE_TOO_FAR": {
+    "description": "Tooltip for follow mode 'position' button, when it's not available for the current object, because it's too far.",
+    "message": "{targetname}: Konum takibi mümkün değil - çok uzak."
+  },
+  "HUD_FOLLOW_TARGET": {
+    "description": "Tooltip for followed target's name in reticule",
+    "message": "Hedefi takip et"
   },
   "HUD_FORWARD_GUN_TEMPERATURE": {
     "description": "Tooltip: Forward Gun Temperature.",
@@ -990,6 +1130,10 @@
   "HUD_SHOW_NAV_TARGET": {
     "description": "Tooltip: Show current navigational target.",
     "message": "Şu anki navigasyon hedefini göster"
+  },
+  "HUD_SPEED_LIMITER_ACTIVE": {
+    "description": "Tooltip for the icon in the reticule that appears if the speed limiter is active",
+    "message": "Hız sınırlayıcı aktif"
   },
   "HUD_SPEED_OF_APPROACH_TO_FRAME": {
     "description": "Tooltip: The speed of approach towards the frame of reference.",
@@ -1091,6 +1235,14 @@
     "description": "",
     "message": "Yeteriz para."
   },
+  "INTELLIGENCE": {
+    "description": "Character parameter",
+    "message": "Zeka"
+  },
+  "INTERSTELLAR_TRADE_AVG": {
+    "description": "Label displaying commodity flow at a per-system level",
+    "message": "Yıldızlararası Ticaret"
+  },
   "INVERT_MOUSE_Y": {
     "description": "",
     "message": "Ters Fare Y"
@@ -1118,6 +1270,10 @@
   "JETTISON": {
     "description": "",
     "message": "Fırlat"
+  },
+  "JETTISON_MODE": {
+    "description": "",
+    "message": "Yük Atma Modu"
   },
   "JUMPING": {
     "description": "Flight State",
@@ -1158,6 +1314,10 @@
   "LAUNCH_PERMISSION_GRANTED_WATCH_TRAFFIC": {
     "description": "",
     "message": "İzin verildi. Lütfen ayrılırken trafiğe dikkat edin."
+  },
+  "LAWFULNESS": {
+    "description": "Character parameter",
+    "message": "Yasaya Uyum"
   },
   "LEGAL_STATUS": {
     "description": "",
@@ -1215,6 +1375,18 @@
     "description": "Label tab for showing custom logged events",
     "message": "Özel Günlük"
   },
+  "LOG_EARLIEST_FIRST": {
+    "description": "Show the log entries in chronological order, earliest first",
+    "message": "Eskiden yeniye sırala"
+  },
+  "LOG_EXPORT": {
+    "description": "Export the log",
+    "message": "Dışarı aktar"
+  },
+  "LOG_HTML": {
+    "description": "Export the log as HTML or not",
+    "message": "HTML"
+  },
   "LOG_NEW": {
     "description": "Indicate to make an entry into flight log system",
     "message": "Yeni Girdi"
@@ -1231,6 +1403,10 @@
     "description": "",
     "message": "Düşük"
   },
+  "LUCK": {
+    "description": "Character parameter",
+    "message": "Şans"
+  },
   "LY": {
     "description": "Light year",
     "message": "ıy"
@@ -1239,17 +1415,9 @@
     "description": "For displaying commodity information",
     "message": "Ana İhracat"
   },
-  "MAJOR_EXPORTS_ITEM": {
-    "description": "",
-    "message": "Ana ihracatlar"
-  },
   "MAJOR_IMPORT": {
     "description": "For displaying commodity information",
     "message": "Ana İthalat"
-  },
-  "MAJOR_IMPORTS_ITEM": {
-    "description": "",
-    "message": "Ana ithalatlar"
   },
   "MAKE_NEW_FACE": {
     "description": "",
@@ -1335,17 +1503,9 @@
     "description": "For displaying commodity information",
     "message": "İkincil İhracat"
   },
-  "MINOR_EXPORTS_ITEM": {
-    "description": "",
-    "message": "Yan ihracatlar"
-  },
   "MINOR_IMPORT": {
     "description": "For displaying commodity information",
     "message": "İkincil İthalat"
-  },
-  "MINOR_IMPORTS_ITEM": {
-    "description": "",
-    "message": "Yan ithalatlar"
   },
   "MISSILE_MOUNTS": {
     "description": "",
@@ -1359,9 +1519,21 @@
     "description": "",
     "message": "Görev Detayları"
   },
+  "MODEL": {
+    "description": "3d model of the ship",
+    "message": "Model"
+  },
+  "MONEY": {
+    "description": "",
+    "message": "Para"
+  },
   "MORE_INFO": {
     "description": "",
     "message": "Detay..."
+  },
+  "MORE_THAN_ONE_PLAYERS_SHIP_FOUND_IN_SPACE": {
+    "description": "Message when restoring savegame",
+    "message": "Uzayda birden çok oyuncu gemisi bulundu"
   },
   "MOSTLY_HARMLESS": {
     "description": "",
@@ -1404,8 +1576,8 @@
     "message": "İsim"
   },
   "NAVIGATION": {
-    "description": "",
-    "message": "Navigasyon:"
+    "description": "Crew skill",
+    "message": "Navigasyon"
   },
   "NAVIGATOR": {
     "description": "",
@@ -1414,6 +1586,14 @@
   "NEGOTIATE": {
     "description": "",
     "message": "Uzlaş"
+  },
+  "NEW_GAME": {
+    "description": "Main menu item",
+    "message": "Yeni oyun"
+  },
+  "NEW_PAINTJOB_APPLIED": {
+    "description": "Paintshop popup",
+    "message": "Yeni boya tasarımı geminize uygulandı."
   },
   "NEXT_FACE_FEATURE": {
     "description": "Face feature switch button for FaceGenerator in the PersonalInfo view",
@@ -1447,6 +1627,10 @@
     "description": "",
     "message": "Notlar:"
   },
+  "NOTORIETY": {
+    "description": "Character parameter",
+    "message": "Şöhret"
+  },
   "NOT_ENOUGH_ALLOY_TO_ATTEMPT_A_REPAIR": {
     "description": "",
     "message": "Tamir denemesi için yeterince {alloy} yok"
@@ -1454,6 +1638,14 @@
   "NOT_SUPPORTED_ON_THIS_SHIP": {
     "description": "",
     "message": "{equipment} bu gemi modelini tarafından desteklenmiyor"
+  },
+  "NO_AVAILABLE_DATA": {
+    "description": "Message displaying no stored data available",
+    "message": "Veri mevcut değil"
+  },
+  "NO_CARGO": {
+    "description": "Message displayed when the player has no cargo in their hold.",
+    "message": "KARGO YOK"
   },
   "NO_DRIVE": {
     "description": "Ship jump status",
@@ -1515,14 +1707,6 @@
     "description": "",
     "message": "Yörünge"
   },
-  "ORBITAL_ANALYSIS": {
-    "description": "",
-    "message": "Yörünge Analizi"
-  },
-  "ORBITAL_ANALYSIS_NOTES": {
-    "description": "",
-    "message": "Dairesel yörünge hızı teğet hız için verilmiştir. Gemi {name} eksenine 90° yönünde hareket ediyor olmalıdır.\n\nAlçalma hızı mutlak en az ve yine teğettir. Daha düşük bir hız veya açı {name} yüzeyiyle kesişen bir rotaya neden olacaktır.\n\nKaçış hızı , gemi {name} ile yol üstünde çarpışmadığı sürece, teorik olarak her hangi bir yönde işleyecektir.\n "
-  },
   "ORBIT_APOAPSIS": {
     "description": "Label for the point of an orbit furthest from the orbited body",
     "message": "Yeröte"
@@ -1555,6 +1739,46 @@
     "description": "Player owing money to crew members",
     "message": "Borç"
   },
+  "PAINTSHOP": {
+    "description": "Station tab title",
+    "message": "Boya Atölyesi"
+  },
+  "PAINTSHOP_NOT_AVAILABLE": {
+    "description": "",
+    "message": "Bu uzay limanında bir boya atölyesi mevcut değil."
+  },
+  "PAINTSHOP_WELCOME_0": {
+    "description": "Welcome message to the paintshop.",
+    "message": "Hoşgeldiniz! Geminize zarafet katacağız!"
+  },
+  "PAINTSHOP_WELCOME_1": {
+    "description": "Welcome message to the paintshop.",
+    "message": "Selam! Estetik bir değişiklik mi arıyorsunuz?"
+  },
+  "PAINTSHOP_WELCOME_2": {
+    "description": "Welcome message to the paintshop.",
+    "message": "Geminizin daha hızlı uçmasını sağlayamayız, ama klas bir şekilde uçmasını sağlayabiliriz."
+  },
+  "PAINTSHOP_WELCOME_3": {
+    "description": "Welcome message to the paintshop.",
+    "message": "Hoşgeldin, gezgin. Lütfen acele etme ve yaratıcılığını ortaya koy."
+  },
+  "PAINTSHOP_WELCOME_4": {
+    "description": "Welcome message to the paintshop.",
+    "message": "Galakside en güzel görünmek hiç daha kolay olmamıştı!"
+  },
+  "PASSENGER_CABIN_CAPACITY": {
+    "description": "Entry for ship info",
+    "message": "Yolcu kabini kapasitesi"
+  },
+  "PATH_FOUND_BUT_VERIFICATION_FAILED": {
+    "description": "Message when restoring savegame",
+    "message": "Dosya yolu bulundu ama doğrulama başarısız oldu: %s"
+  },
+  "PATTERN": {
+    "description": "Ship painting pattern.",
+    "message": "Desen"
+  },
   "PAY": {
     "description": "Pay for a transaction of services, e.g. for paying fines, (or repairs)",
     "message": "Öde"
@@ -1576,8 +1800,8 @@
     "message": "Pilot"
   },
   "PILOTING": {
-    "description": "",
-    "message": "Pilotluk:"
+    "description": "Crew skill",
+    "message": "Pilotaj"
   },
   "PILOT_SEAT_IS_NOW_OCCUPIED_BY_NAME": {
     "description": "",
@@ -1594,6 +1818,10 @@
   "PLANET_TEXTURES": {
     "description": "",
     "message": "Gezegen dokuları"
+  },
+  "PLEASE_DESIGN_NEW_PAINTJOB": {
+    "description": "",
+    "message": "Lütfen yeni boya kaplamasını tasarlayın:"
   },
   "PLEASE_REPORT_THIS_ERROR": {
     "description": "Informational text mentioning the error and asking the player to report it.",
@@ -1635,6 +1863,10 @@
     "description": "Drain the fuel tank",
     "message": "Geri pompala"
   },
+  "PURCHASE_PAINTJOB": {
+    "description": "Paintshop button",
+    "message": "Tasarımı Satın Al"
+  },
   "QUALIFICATION_SCORES": {
     "description": "",
     "message": "Test sonuçları"
@@ -1659,9 +1891,37 @@
     "description": "",
     "message": "Derece:"
   },
+  "RAYLEIGH_ACCURATE": {
+    "description": "",
+    "message": "Rayleigh/Mie (gerçekçi, pixel-başına)"
+  },
+  "RAYLEIGH_FAST": {
+    "description": "",
+    "message": "Rayleigh/Mie (hızlı, vertex-başına)"
+  },
+  "REALISTIC_SCATTERING": {
+    "description": "",
+    "message": "Dağılma"
+  },
+  "REALISTIC_SCATTERING_DESC": {
+    "description": "",
+    "message": "Atmosferleri görselleştirirken kullanılacak dağılma modelini seçin. (Rayleigh/Mie düşük performanslı bilgisayarlar için önerilmez)"
+  },
   "REAR_WEAPON": {
     "description": "",
     "message": "Arka silah"
+  },
+  "RECOVER": {
+    "description": "Saveload menu button",
+    "message": "Kurtar"
+  },
+  "RECOVERED_BUT_NOT_VALID": {
+    "description": "Message when restoring savegame",
+    "message": "Kurtarıldı ama geçersiz"
+  },
+  "RECOVER_SAVEGAME": {
+    "description": "",
+    "message": "Oyun kaydını kurtar"
   },
   "REFUEL": {
     "description": "",
@@ -1719,6 +1979,10 @@
     "description": "",
     "message": "Yönelim ve Yakınlaştırmayı Sıfırla"
   },
+  "RESET_PREVIEW": {
+    "description": "Paintshop button",
+    "message": "Önizlemeyi Sıfırla"
+  },
   "RETURN_TO_GAME": {
     "description": "",
     "message": "Oyuna dön"
@@ -1763,6 +2027,14 @@
     "description": "",
     "message": "Kaydet"
   },
+  "SAVE_DELETED_SUCCESSFULLY": {
+    "description": "",
+    "message": "Kayıt başarıyla silindi"
+  },
+  "SCATTERING_OLD": {
+    "description": "",
+    "message": "Eski"
+  },
   "SCOOP_MOUNTS": {
     "description": "How many slots or mounts exist on the ship for fitting SCOOPS (e.g. cargo scoop, fuel scoop, multi-scoop) ",
     "message": "Toplayıcı bağlantıları"
@@ -1774,6 +2046,14 @@
   "SELECT": {
     "description": "",
     "message": "Seç"
+  },
+  "SELECTED_SAVE_DOESNT_EXISTS": {
+    "description": "",
+    "message": "Seçilen kayıt mevcut değil"
+  },
+  "SELECTED_SAVE_IS_NOT_A_VALID_SAVE": {
+    "description": "",
+    "message": "Seçilen kayıt geçerli bir kayıt değil"
   },
   "SELECT_A_FILE_TO_SAVE_TO_OR_ENTER_A_NEW_FILENAME": {
     "description": "",
@@ -1787,6 +2067,10 @@
     "description": "",
     "message": "Yüklenecek oyunu seçin..."
   },
+  "SELECT_START_PROFILE": {
+    "description": "Combo box for selecting the starting position",
+    "message": "Başlangıç profili seç:"
+  },
   "SELL": {
     "description": "Commodities and equipment prices",
     "message": "Sat"
@@ -1796,8 +2080,8 @@
     "message": "Ekipmanı Sat"
   },
   "SENSORS": {
-    "description": "",
-    "message": "Algılayıcılar:"
+    "description": "Crew skill",
+    "message": "Sensörler"
   },
   "SENSORS_AND_DEFENCE": {
     "description": "",
@@ -1814,6 +2098,18 @@
   "SET_RETURN_ROUTE": {
     "description": "",
     "message": "Dönüş yolunu seç"
+  },
+  "SET_TO_45PERCENT_OF_DELTAV": {
+    "description": "For the speed limiter button",
+    "message": "Kalan delta-v'nin %45'ine ayarla"
+  },
+  "SET_TO_CURRENT_VELOCITY": {
+    "description": "For the speed limiter button",
+    "message": "Şu anki hıza ayarla"
+  },
+  "SET_TO_ZERO": {
+    "description": "For the speed limiter button",
+    "message": "Sıfıra ayarla"
   },
   "SHIP": {
     "description": "",
@@ -1843,25 +2139,37 @@
     "description": "",
     "message": "Gemi Pazarı"
   },
-  "SHIP_REPAIRS": {
+  "SHIP_NAME": {
     "description": "",
-    "message": "Gemi Tamiri"
+    "message": "Gemi adı"
+  },
+  "SHIP_PARAMETERS": {
+    "description": "",
+    "message": "Gemi parametreleri"
+  },
+  "SHIP_REPAIRS": {
+    "description": "Station tab name",
+    "message": "Gemi Tamiri & Boya Atölyesi"
   },
   "SHIP_TYPE": {
     "description": "",
     "message": "Gemi Tipi"
   },
-  "SHIP_VIEWING_WAS_SOLD": {
-    "description": "",
-    "message": "Bakmakta oldunuz gemi satıldı."
-  },
   "SIMULATING_UNIVERSE_EVOLUTION_N_BYEARS": {
     "description": "",
     "message": "Evrenin evrimi hesaplanıyor: {age} milyar yıl ;-)"
   },
+  "SOME_PARAMETERS_ARE_NOT_OK": {
+    "description": "Diagnostics at game start",
+    "message": "Bazı parametreler uygun değil:"
+  },
   "SOUND": {
     "description": "",
     "message": "Ses"
+  },
+  "STANDARD_GAME_START_TIME": {
+    "description": "Standard game start time, current moment + 1200 years",
+    "message": "Standart oyun başlama zamanı"
   },
   "START_AT_BARNARDS_STAR": {
     "description": "",
@@ -1870,14 +2178,6 @@
   "START_AT_BARNARDS_STAR_DESC": {
     "description": "",
     "message": "Bu, System Administration Resting hapishane istasyonundan yapılan zor başlangıç."
-  },
-  "START_AT_EARTH": {
-    "description": "",
-    "message": "Dünya'da Başla"
-  },
-  "START_AT_EARTH_DESC": {
-    "description": "",
-    "message": "Bu, Sol sistemindeki Dünya'da bulunan Londra'dan yapılan kolay başlangıç."
   },
   "START_AT_MARS": {
     "description": "",
@@ -1894,6 +2194,10 @@
   "START_AT_NEW_HOPE_DESC": {
     "description": "",
     "message": "Bu, Epsilon Eridani sistemindeki New Hope'ta bulunan Itzaelan'dan yapılan orta zorluktaki başlangıç."
+  },
+  "START_GAME": {
+    "description": "Button",
+    "message": "Oyunu başlat"
   },
   "START_LOG_ENTRY_1": {
     "description": "First custom log message when starting a new game, giving backstory to the character. Importantly we here hint at what actions the player is best to take: buy fuel, get reputation, ask for take off clearance.",
@@ -1947,6 +2251,14 @@
     "description": "",
     "message": "Durum"
   },
+  "SUMMARY": {
+    "description": "Tab item in the start game menu",
+    "message": "Özet"
+  },
+  "SYSTEM_BODY_INDEX_IS_OUT_OF_RANGE": {
+    "description": "Message when restoring savegame",
+    "message": "Sistem cismi indisi sınır dışında"
+  },
   "TECH_CERTIFIED": {
     "description": "Lobby screen shows the tech level (an integer number) of the station",
     "message": "Bu istasyon {tech_level} seviye teknoloji sertifikasına sahip."
@@ -1954,6 +2266,10 @@
   "TECH_CERTIFIED_MILITARY": {
     "description": "Lobby screen shows the tech level of the station",
     "message": "Bu yerleşimde askeri teknoloji belgesi var."
+  },
+  "TECH_LEVEL": {
+    "description": "System view label for technology level",
+    "message": "Teknoloji seviyesi"
   },
   "TEXTURE_COMPRESSION": {
     "description": "",
@@ -1967,6 +2283,10 @@
     "description": "",
     "message": "Güvertede gemiyi uçurabilecek başka hiç kimse yok."
   },
+  "THERE_WERE_ERRORS_IN_RECOVERY": {
+    "description": "Message when restoring savegame",
+    "message": "Kurtarma sırasında hatalar oluştu:"
+  },
   "THE_SHIP_IS_UNDER_STATION_CONTROL_COMMANDER": {
     "description": "",
     "message": "Komutanım, gemi istasyon kontrolünde."
@@ -1978,6 +2298,10 @@
   "THREE_KPC_ARM": {
     "description": "Arm of the Milky Way galaxy",
     "message": "3kpc kolu"
+  },
+  "TOGGLE_CARGO_WINDOW": {
+    "description": "Label for a button toggling the cargo display window.",
+    "message": "Kargo Penceresi"
   },
   "TOGGLE_FULL_COMMS_WINDOW": {
     "description": "on world view / main screen",
@@ -2027,6 +2351,10 @@
     "description": "",
     "message": "Toplam kütle"
   },
+  "TRADING_AT": {
+    "description": "Indicates the current system for inspecting commodities.",
+    "message": "{system} sisteminde:"
+  },
   "TRADING_FROM": {
     "description": "Indicates the source system of a commodity trade.",
     "message": "Alış: {system}:"
@@ -2043,9 +2371,33 @@
     "description": "For player reputation",
     "message": "İtimat edilir"
   },
+  "TURN_OFF": {
+    "description": "",
+    "message": "Kapat"
+  },
   "TYPE": {
     "description": "",
     "message": "Tür"
+  },
+  "UNKNOWN_CUSTOM_LOG_ENTRY_FORMAT": {
+    "description": "Message when restoring savegame",
+    "message": "Bilnimeyen özel kayıt girdisi türü"
+  },
+  "UNKNOWN_FACTION": {
+    "description": "For entry in the flight log",
+    "message": "Bilinmeyen egemenlik"
+  },
+  "UNKNOWN_LOCATION_IN_SECTOR_X": {
+    "description": "For entry in the flight log",
+    "message": "{sector} sektöründe bilinmeyen konum"
+  },
+  "UNKNOWN_STATION_LOG_ENTRY_FORMAT": {
+    "description": "Message when restoring savegame",
+    "message": "Bilinmeyen istasyon kaydı girdisi türü"
+  },
+  "UNKNOWN_SYSTEM_LOG_ENTRY_FORMAT": {
+    "description": "Message when restoring savegame",
+    "message": "Bilinmeyen sistem kaydı girdisi türü"
   },
   "UNLAWFUL_WEAPONS_DISCHARGE": {
     "description": "",
@@ -2062,6 +2414,10 @@
   "UNRELIABLE": {
     "description": "",
     "message": "Güvenilmez"
+  },
+  "UNSUCCESSFULLY_RECOVERED_PARAMETERS_ARE_NOW_UNLOCKED_PLEASE_SET_THEM_MANUALLY": {
+    "description": "Message when restoring savegame",
+    "message": "Başarıyla kurtarılamayan parametreler artık düzenlemeye açık, lütfen değerleri elle giriniz."
   },
   "UP_ACCEL": {
     "description": "",
@@ -2098,6 +2454,14 @@
   "VIDEO_RESOLUTION_DESC": {
     "description": "Tooltip for video mode/resultion setting",
     "message": "Yüksek çözünürlük, ekrana daha fazla ve daha küçük bilgiler gönderir, performansı düşürebilir."
+  },
+  "VISIT_PAINTSHOP": {
+    "description": "Ship Repair tab button.",
+    "message": "Boya Atölyesini Ziyaret Et"
+  },
+  "VISIT_REPAIR_SERVICES": {
+    "description": "Ship Repair tab button.",
+    "message": "Tamir Hizmetlerini Ziyaret Et"
   },
   "VSYNC": {
     "description": "For the checkbox in settings window",

@@ -1,17 +1,14 @@
-// Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef _PI_H
 #define _PI_H
 
-#include "JobQueue.h"
 #include "Random.h"
+#include "MathUtil.h"
 #include "core/GuiApplication.h"
 #include "gameconsts.h"
-#include "libs.h"
 
-#include "SDL_keyboard.h"
-#include <sigc++/sigc++.h>
 #include <map>
 #include <string>
 #include <vector>
@@ -25,9 +22,9 @@ namespace PiGui {
 } //namespace PiGui
 
 class Game;
-
 class GameConfig;
 class Intro;
+class JobSet;
 class LuaConsole;
 class LuaNameGen;
 class LuaTimer;
@@ -98,8 +95,8 @@ public:
 		App() :
 			GuiApplication("Pioneer") {}
 
-		void Startup() override;
-		void Shutdown() override;
+		void OnStartup() override;
+		void OnShutdown() override;
 
 		void PreUpdate() override;
 		void PostUpdate() override;
@@ -107,7 +104,6 @@ public:
 		void RunJobs();
 
 		void HandleRequests();
-		bool HandleEvent(SDL_Event &ev) override;
 
 	private:
 		// msgs/requests that can be posted which the game processes at the end of a game loop in HandleRequests
@@ -121,13 +117,14 @@ public:
 
 		bool m_noGui;
 
-		std::shared_ptr<Lifecycle> m_loader;
-		std::shared_ptr<Lifecycle> m_mainMenu;
-		std::shared_ptr<Lifecycle> m_gameLoop;
+		RefCountedPtr<Lifecycle> m_loader;
+		RefCountedPtr<Lifecycle> m_mainMenu;
+		RefCountedPtr<Lifecycle> m_gameLoop;
 	};
 
 public:
 	static void Init(const std::map<std::string, std::string> &options, bool no_gui = false);
+	static void Uninit();
 
 	static void StartGame(Game *game);
 
@@ -152,13 +149,6 @@ public:
 	static void SetSpeedLinesDisplayed(bool state) { speedLinesDisplayed = state; }
 	static bool AreHudTrailsDisplayed() { return hudTrailsDisplayed; }
 	static void SetHudTrailsDisplayed(bool state) { hudTrailsDisplayed = state; }
-
-	static void SetMouseGrab(bool on);
-	static bool DoingMouseGrab() { return doingMouseGrab; }
-
-	// Get the default speed modifier to apply to movement (scrolling, zooming...), depending on the "shift" keys.
-	// This is a default value only, centralized here to promote uniform user expericience.
-	static float GetMoveSpeedShiftModifier();
 
 	static std::string GetSaveDir();
 	static SceneGraph::Model *FindModel(const std::string &, bool allowPlaceholder = true);
@@ -249,8 +239,6 @@ private:
 	static bool bRefreshBackgroundStars;
 	static float amountOfBackgroundStarsDisplayed;
 	static float starFieldStarSizeFactor;
-
-	static bool doingMouseGrab;
 
 	static bool isRecordingVideo;
 	static FILE *ffmpegFile;

@@ -1,11 +1,11 @@
-// Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "NavLights.h"
 
 #include "FileSystem.h"
 #include "GameSaveError.h"
-#include "Json.h"
+#include "JsonUtils.h"
 #include "core/IniConfig.h"
 #include "graphics/RenderState.h"
 #include "graphics/TextureBuilder.h"
@@ -33,8 +33,14 @@ static vector2f get_color(Uint8 c)
 
 static inline vector2f LoadLightColorUVoffset(const std::string &spec)
 {
-	std::vector<float> v(2);
-	SplitSpec(spec, v);
+	std::vector<float> v;
+	// parse float values in the spec
+	SplitString(spec, ",").to_vector(v, [](std::string_view str) {
+		return std::atof(std::string(str).c_str());
+	});
+
+	// ensure the spec has enough values
+	v.resize(2);
 	return vector2f(v[0], v[1]);
 }
 
@@ -133,7 +139,7 @@ NavLights::NavLights(SceneGraph::Model *model, float period) :
 		} else if (mt->GetName().substr(9, 3) == "pad") {
 			//group by pad number
 			// due to this problem: http://stackoverflow.com/questions/15825254/why-is-scanfhhu-char-overwriting-other-variables-when-they-are-local
-			// where MSVC is still using a C89 compiler the format identifer %hhu is not recognised. Therefore I've switched to Uint32 for group.
+			// where MSVC is still using a C89 compiler the format identifier %hhu is not recognised. Therefore I've switched to Uint32 for group.
 			PiVerify(1 == sscanf(mt->GetName().c_str(), "navlight_pad%u", &group));
 			mask = 0xf8;
 		}

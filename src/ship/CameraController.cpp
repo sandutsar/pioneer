@@ -1,4 +1,4 @@
-// Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "CameraController.h"
@@ -7,6 +7,7 @@
 #include "Frame.h"
 #include "Game.h"
 #include "GameSaveError.h"
+#include "JsonUtils.h"
 #include "MathUtil.h"
 #include "Pi.h"
 #include "Quaternion.h"
@@ -14,7 +15,7 @@
 #include "Space.h"
 #include "collider/CollisionContact.h"
 #include "collider/CollisionSpace.h"
-#include "scenegraph/MatrixTransform.h"
+#include "scenegraph/Tag.h"
 
 CameraController::CameraController(RefCountedPtr<CameraContext> camera, const Ship *ship) :
 	m_camera(camera),
@@ -49,9 +50,15 @@ void CameraController::Update()
 InternalCameraController::InternalCameraController(RefCountedPtr<CameraContext> camera, const Ship *ship) :
 	MoveableCameraController(camera, ship),
 	m_mode(MODE_FRONT),
+	m_rotToX(0),
+	m_rotToY(0),
 	m_rotX(0),
 	m_rotY(0),
-	m_viewOrient(matrix3x3d::Identity())
+	m_origFov(camera->GetFovAng()),
+	m_zoomPct(1),
+	m_zoomPctTo(1),
+	m_viewOrient(matrix3x3d::Identity()),
+	m_smoothing(false)
 {
 	Reset();
 }
@@ -60,8 +67,8 @@ static bool FillCameraPosOrient(const SceneGraph::Model *m, const char *tag, vec
 {
 	matrix3x3d fixOrient(matrix3x3d::Identity());
 
-	const SceneGraph::MatrixTransform *mt = m->FindTagByName(tag);
-	if (!mt) {
+	const SceneGraph::Tag *tagNode = m->FindTagByName(tag);
+	if (!tagNode) {
 		fixOrient = fallbackOrient;
 	} else {
 		// camera points are have +Z pointing out of the ship, X left, so we
@@ -69,7 +76,7 @@ static bool FillCameraPosOrient(const SceneGraph::Model *m, const char *tag, vec
 		// the rest of the ship. this is not a bug, but rather a convenience to
 		// modellers. it makes sense to orient the camera point in the
 		// direction the camera will face
-		trans = mt->GetTransform() * matrix4x4f::RotateYMatrix(M_PI);
+		trans = tagNode->GetGlobalTransform() * matrix4x4f::RotateYMatrix(M_PI);
 	}
 
 	pos = vector3d(trans.GetTranslate());
@@ -85,9 +92,9 @@ void InternalCameraController::Reset()
 	const SceneGraph::Model *m = GetShip()->GetModel();
 
 	matrix4x4f fallbackTransform = matrix4x4f::Translation(vector3f(0.0));
-	const SceneGraph::MatrixTransform *fallback = m->FindTagByName("tag_camera");
+	const SceneGraph::Tag *fallback = m->FindTagByName("tag_camera");
 	if (fallback)
-		fallbackTransform = fallback->GetTransform() * matrix4x4f::RotateYMatrix(M_PI);
+		fallbackTransform = fallback->GetGlobalTransform() * matrix4x4f::RotateYMatrix(M_PI);
 
 	FillCameraPosOrient(m, "tag_camera_front", m_initPos[MODE_FRONT], m_initOrient[MODE_FRONT], fallbackTransform, matrix3x3d::Identity());
 	FillCameraPosOrient(m, "tag_camera_rear", m_initPos[MODE_REAR], m_initOrient[MODE_REAR], fallbackTransform, matrix3x3d::RotateY(M_PI));
@@ -101,11 +108,21 @@ void InternalCameraController::Reset()
 
 void InternalCameraController::Update()
 {
+	if (m_smoothing) {
+		AnimationCurves::Approach(m_rotX, m_rotToX, Pi::GetFrameTime(), 13.f);
+		AnimationCurves::Approach(m_rotY, m_rotToY, Pi::GetFrameTime(), 13.f);
+	} else {
+		m_rotX = m_rotToX;
+		m_rotY = m_rotToY;
+	}
+
 	m_viewOrient =
 		matrix3x3d::RotateY(-m_rotY) *
 		matrix3x3d::RotateX(-m_rotX);
 
 	SetOrient(m_initOrient[m_mode] * m_viewOrient);
+
+	m_camera->SetFovAng(m_origFov * m_zoomPct);
 
 	CameraController::Update();
 }
@@ -114,6 +131,11 @@ void InternalCameraController::getRots(double &rX, double &rY)
 {
 	rX = m_rotX;
 	rY = m_rotY;
+}
+
+void InternalCameraController::SetSmoothingEnabled(bool enabled)
+{
+	m_smoothing = enabled;
 }
 
 void InternalCameraController::SetMode(Mode m)
@@ -133,8 +155,18 @@ void InternalCameraController::SetMode(Mode m)
 
 	m_name = m_names[m_mode];
 
-	m_rotX = 0;
-	m_rotY = 0;
+	m_rotToX = m_rotX = 0;
+	m_rotToY = m_rotY = 0;
+}
+
+void InternalCameraController::ZoomEvent(float amount)
+{
+	m_zoomPctTo = Clamp(m_zoomPctTo + amount * 2.0f * m_zoomPctTo, 0.4f, 1.0f);
+}
+
+void InternalCameraController::ZoomEventUpdate(float frameTime)
+{
+	AnimationCurves::Approach(m_zoomPct, m_zoomPctTo, frameTime, 10.f, 0.1f);
 }
 
 void InternalCameraController::SaveToJson(Json &jsonObj)
@@ -142,8 +174,8 @@ void InternalCameraController::SaveToJson(Json &jsonObj)
 	Json internalCameraObj = Json::object(); // Create JSON object to contain internal camera data.
 
 	internalCameraObj["mode"] = m_mode;
-	internalCameraObj["rotX"] = m_rotX;
-	internalCameraObj["rotY"] = m_rotY;
+	internalCameraObj["rotX"] = m_rotToX;
+	internalCameraObj["rotY"] = m_rotToY;
 
 	jsonObj["internal"] = internalCameraObj; // Add internal camera object to supplied object.
 }
@@ -154,11 +186,16 @@ void InternalCameraController::LoadFromJson(const Json &jsonObj)
 		Json internalCameraObj = jsonObj["internal"];
 		SetMode(internalCameraObj.value<Mode>("mode", MODE_FRONT));
 
-		m_rotX = internalCameraObj.value("rotX", 0.0f);
-		m_rotY = internalCameraObj.value("rotY", 0.0f);
+		m_rotX = m_rotToX = internalCameraObj.value("rotX", 0.0f);
+		m_rotY = m_rotToY = internalCameraObj.value("rotY", 0.0f);
 	} catch (Json::type_error &) {
 		throw SavedGameCorruptException();
 	}
+}
+
+void InternalCameraController::OnDeactivated()
+{
+	m_camera->SetFovAng(m_origFov);
 }
 
 ExternalCameraController::ExternalCameraController(RefCountedPtr<CameraContext> camera, const Ship *ship) :

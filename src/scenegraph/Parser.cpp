@@ -1,10 +1,13 @@
-// Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "Parser.h"
 #include "FileSystem.h"
+#include "MathUtil.h"
 #include "StringF.h"
 #include "StringRange.h"
+#include "profiler/Profiler.h"
+
 #include <sstream>
 
 namespace SceneGraph {
@@ -83,7 +86,7 @@ namespace SceneGraph {
 	{
 		checkString(ss, out, "file name");
 		//add newmodels/some_model/ to path
-		out = FileSystem::JoinPathBelow(m_path, out);
+		out = FileSystem::NormalisePath(FileSystem::JoinPath(m_path, out));
 		return true;
 	}
 

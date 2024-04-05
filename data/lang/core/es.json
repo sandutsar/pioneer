@@ -31,13 +31,21 @@
     "description": "",
     "message": "Carne animal"
   },
+  "AN_AR_ATMOSPHERE": {
+    "description": "",
+    "message": "una atmósfera de argón"
+  },
+  "AN_O2_ATMOSPHERE": {
+    "description": "",
+    "message": "una atmósfera de oxígeno"
+  },
   "APOAPSIS_DISTANCE": {
     "description": "",
     "message": "Distancia de Apoapsis"
   },
   "AR_ATMOSPHERE": {
     "description": "",
-    "message": "\" Atmósfera de Argón\""
+    "message": "atmósfera de argón"
   },
   "ASTEROID": {
     "description": "",
@@ -79,9 +87,37 @@
     "description": "",
     "message": "Inclinación"
   },
+  "A_CH4_ATMOSPHERE": {
+    "description": "",
+    "message": "una atmósfera de metano"
+  },
+  "A_CO2_ATMOSPHERE": {
+    "description": "",
+    "message": "una atmósfera de dióxido de carbono"
+  },
+  "A_CO_ATMOSPHERE": {
+    "description": "",
+    "message": "una atmósfera de monóxido de carbono"
+  },
   "A_FEW_THOUSAND": {
     "description": "regarding population",
     "message": "Solo unos pocos miles"
+  },
+  "A_HE_ATMOSPHERE": {
+    "description": "",
+    "message": "una atmósfera de helio"
+  },
+  "A_H_ATMOSPHERE": {
+    "description": "",
+    "message": "una atmósfera de hidrógeno"
+  },
+  "A_N_ATMOSPHERE": {
+    "description": "",
+    "message": "una atmósfera de nitrógeno"
+  },
+  "A_S_ATMOSPHERE": {
+    "description": "",
+    "message": "una atmósfera de sulfuro"
   },
   "BATTLE_WEAPONS": {
     "description": "",
@@ -169,11 +205,11 @@
   },
   "CH4_ATMOSPHERE": {
     "description": "",
-    "message": "\" Atmósfera de metano\""
+    "message": "atmósfera de metano"
   },
   "CO2_ATMOSPHERE": {
     "description": "",
-    "message": "\" Atmósfera de dióxido de carbono\""
+    "message": "atmósfera de dióxido de carbono"
   },
   "COMMA_HIGHLY_VOLCANIC": {
     "description": "",
@@ -269,7 +305,7 @@
   },
   "CO_ATMOSPHERE": {
     "description": "",
-    "message": "\" Atmósfera de monóxido de carbono\""
+    "message": "atmósfera de monóxido de carbono"
   },
   "CTRL": {
     "description": "Ctrl key on keyboard",
@@ -335,6 +371,22 @@
     "description": "",
     "message": "Mostrar líneas verticales"
   },
+  "DWARF_PLANET_CONTAINING_LIQUID_WATER": {
+    "description": "",
+    "message": "Planeta enano que contiene agua en estado líquido"
+  },
+  "DWARF_PLANET_CONTAINING_SOME_LIQUIDS": {
+    "description": "",
+    "message": "Planeta enano que contiene ciertos líquidos,"
+  },
+  "DWARF_PLANET_MOSTLY_COVERED_IN_ICE": {
+    "description": "",
+    "message": "Planeta enano, mayormente cubierto de hielo"
+  },
+  "DWARF_PLANET_TERRESTRIAL": {
+    "description": "",
+    "message": "Planeta enano"
+  },
   "EARTH_FEDERATION_COLONIAL_RULE": {
     "description": "",
     "message": "Gobierno colonial de la Federación Terrestre"
@@ -358,6 +410,10 @@
   "EQUATORIAL_RADIUS_TO_POLAR_RADIUS_RATIO": {
     "description": "",
     "message": "Relación radio ecuatorial vs radio polar"
+  },
+  "ESCAPE_VELOCITY": {
+    "description": "",
+    "message": "Escape velocity"
   },
   "EXACT_MATCH_X": {
     "description": "",
@@ -439,6 +495,10 @@
     "description": "",
     "message": "No se puede escribir en este juego guardado por un error del sistema."
   },
+  "GAME_SAVE_INVALID_NAME": {
+    "description": "",
+    "message": "This saved game file could not be written because of a invalid name."
+  },
   "GENERAL_VIEW_CONTROLS": {
     "description": "",
     "message": "Vista General"
@@ -497,7 +557,7 @@
   },
   "HE_ATMOSPHERE": {
     "description": "",
-    "message": "\" Atmósfera de helio\""
+    "message": "atmósfera de helio"
   },
   "HIGHLY_VOLCANIC": {
     "description": "",
@@ -561,7 +621,15 @@
   },
   "H_ATMOSPHERE": {
     "description": "",
-    "message": "\" Atmósfera de hidrógeno\""
+    "message": "atmósfera de hidrógeno"
+  },
+  "ICE_DWARF_PLANET": {
+    "description": "",
+    "message": "Planeta enano helado"
+  },
+  "ICE_MOON": {
+    "description": "",
+    "message": "\"luna helada\""
   },
   "ICE_WORLD": {
     "description": "",
@@ -723,6 +791,10 @@
     "description": "",
     "message": "Masa: %{mass} T"
   },
+  "MEAN_DENSITY": {
+    "description": "",
+    "message": "Mean density"
+  },
   "MEDICINES": {
     "description": "",
     "message": "Medicinas"
@@ -847,6 +919,14 @@
     "description": "",
     "message": "Sep"
   },
+  "MOON_CONTAINING_LIQUID_WATER": {
+    "description": "",
+    "message": "\" luna que contiene agua líquida\""
+  },
+  "MOON_WITH_SOME_ICE": {
+    "description": "",
+    "message": "\" luna con algo de hielo\""
+  },
   "NAME_OBJECT": {
     "description": "For an item or object",
     "message": "Artículo"
@@ -870,6 +950,10 @@
   "NERVE_GAS": {
     "description": "",
     "message": "Gas nervioso"
+  },
+  "NONE": {
+    "description": "To indicate the absence of something",
+    "message": "<None>"
   },
   "NOT_FOUND": {
     "description": "searching star system in sector view",
@@ -949,7 +1033,7 @@
   },
   "N_ATMOSPHERE": {
     "description": "",
-    "message": "\" Atmósfera de nitrógeno\""
+    "message": "atmósfera de nitrógeno"
   },
   "N_CELSIUS": {
     "description": "",
@@ -989,11 +1073,15 @@
   },
   "O2_ATMOSPHERE": {
     "description": "",
-    "message": "\" Atmósfera de oxígeno\""
+    "message": "atmósfera de oxígeno"
   },
   "OBJECT_INFO": {
     "description": "Originally for use as a window title and a button tooltip in the system map",
     "message": "Información del Objeto"
+  },
+  "OCEANICMOON": {
+    "description": "",
+    "message": "\" luna oceánica\""
   },
   "OCEANICWORLD": {
     "description": "",
@@ -1143,6 +1231,14 @@
     "description": "",
     "message": "Robots"
   },
+  "ROCKY_MOON": {
+    "description": "",
+    "message": "\" luna rocosa\""
+  },
+  "ROCKY_MOON_CONTAINING_SOME_LIQUIDS": {
+    "description": "",
+    "message": "\" luna rocosa que contiene ciertos líquidos,\""
+  },
   "ROCKY_PLANET": {
     "description": "",
     "message": "\" planeta rocoso\""
@@ -1196,7 +1292,7 @@
     "message": "Basura"
   },
   "SCOOP": {
-    "description": "Is followed by a number, repersenting scoop mounts/slots available to fit cargo scoop and/or fuel scoop",
+    "description": "Is followed by a number, representing scoop mounts/slots available to fit cargo scoop and/or fuel scoop",
     "message": "Colector"
   },
   "SCREENSHOT_FILENAME_TEMPLATE": {
@@ -1258,6 +1354,10 @@
   "SET_LOW_THRUST_POWER_LEVEL_TO_X_PERCENT": {
     "description": "",
     "message": "Nivel de impulsión de baja potencia al %power%%"
+  },
+  "SET_MAXIMUM_SPEED_LIMIT": {
+    "description": "Speed limiter tooltip.",
+    "message": "Establecer el límite de velocidad máxima"
   },
   "SET_NAVTARGET_TO": {
     "description": "",
@@ -1537,7 +1637,7 @@
   },
   "S_ATMOSPHERE": {
     "description": "",
-    "message": "\" Atmósfera de azufre\""
+    "message": "atmósfera de sulfuro"
   },
   "TAKEOFF": {
     "description": "",
@@ -1549,7 +1649,7 @@
   },
   "TENUOUS": {
     "description": "atmosphere thickness",
-    "message": "tenue"
+    "message": "\"una tenue \""
   },
   "TEXTILES": {
     "description": "",
@@ -1557,11 +1657,11 @@
   },
   "THICK": {
     "description": "",
-    "message": "densa"
+    "message": "\"una espesa \""
   },
   "THIN": {
     "description": "",
-    "message": "delgada"
+    "message": "\"una delgada \""
   },
   "THRIVING_OUTDOOR_WORLD": {
     "description": "",
@@ -1650,6 +1750,10 @@
   "UNIT_AU": {
     "description": "Distance unit: an astronomical unit, radius of Earth's orbit",
     "message": "AU"
+  },
+  "UNIT_CUBIC_METERS": {
+    "description": "Volume unit: cubic meter",
+    "message": "m³"
   },
   "UNIT_DAYS": {
     "description": "Duration unit: one 24-hour day",
@@ -1753,7 +1857,7 @@
   },
   "VERY_DENSE": {
     "description": "",
-    "message": "muy densa"
+    "message": "\"una muy densa \""
   },
   "VERY_LARGE_GAS_GIANT": {
     "description": "",
@@ -1791,9 +1895,9 @@
     "description": "",
     "message": "Enana blanca (Remanente estelar)"
   },
-  "WITH_A": {
+  "WITH": {
     "description": "",
-    "message": "\" con una \""
+    "message": "\" con \""
   },
   "WITH_NO_SIGNIFICANT_ATMOSPHERE": {
     "description": "",

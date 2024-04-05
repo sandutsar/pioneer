@@ -1,4 +1,4 @@
--- Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local Lang = require 'Lang'
@@ -55,8 +55,12 @@ local function refresh()
 	bulletinBoard.items = {}
 
 	for ref,ad in pairs(ads or {}) do
-		if searchText == ""
-			or searchText ~= "" and string.find(
+		if not searchText or searchText == ""
+			or string.find(
+				string.lower(ad.title),
+				string.lower(searchText),
+				1, true)
+			or string.find(
 				string.lower(ad.description),
 				string.lower(searchText),
 				1, true)
@@ -150,6 +154,14 @@ bulletinBoard = Table.New("BulletinBoardTable", false, {
 		local ref = item.__ref
 		local ad = SpaceStation.adverts[station][ref]
 
+		-- TODO: if the player is watching the BBS while an ad expires, the ad
+		-- will be grayed-out but not removed until the player clicks on
+		-- something.
+		if not ad then
+			refresh()
+			return
+		end
+
 		if Game.paused then
 			return
 		end
@@ -202,11 +214,11 @@ local function renderBulletinBoard()
 		ui.sameLine()
 
 		ui.child("BulletinBoardSearch", Vector2(0, 0), function()
-			ui.withFont(orbiteer.xlarge, function()
+			ui.withFont(orbiteer.title, function()
 				ui.text(l.SEARCH)
 			end)
 			ui.pushItemWidth(ui.getContentRegion().x)
-			searchText, searchTextEntered = ui.inputText("", searchText, {})
+			searchText, searchTextEntered = ui.inputText("##searchText", searchText, {})
 			if searchTextEntered then
 				refresh()
 			end

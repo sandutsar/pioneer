@@ -31,13 +31,21 @@
     "description": "",
     "message": "Мясо животных"
   },
+  "AN_AR_ATMOSPHERE": {
+    "description": "",
+    "message": "аргоновой атмосферой"
+  },
+  "AN_O2_ATMOSPHERE": {
+    "description": "",
+    "message": "кислородной атмосферой"
+  },
   "APOAPSIS_DISTANCE": {
     "description": "",
     "message": "Расстояние апоапсиды"
   },
   "AR_ATMOSPHERE": {
     "description": "",
-    "message": "\" аргоновой атмосферой\""
+    "message": "аргоновая атмосфера"
   },
   "ASTEROID": {
     "description": "",
@@ -79,9 +87,37 @@
     "description": "",
     "message": "Наклон оси"
   },
+  "A_CH4_ATMOSPHERE": {
+    "description": "",
+    "message": "метановой атмосферой"
+  },
+  "A_CO2_ATMOSPHERE": {
+    "description": "",
+    "message": "углекислотной атмосферой"
+  },
+  "A_CO_ATMOSPHERE": {
+    "description": "",
+    "message": "атмосферой из окиси углерода"
+  },
   "A_FEW_THOUSAND": {
     "description": "regarding population",
     "message": "Только несколько тысяч"
+  },
+  "A_HE_ATMOSPHERE": {
+    "description": "",
+    "message": "гелиевой атмосферой"
+  },
+  "A_H_ATMOSPHERE": {
+    "description": "",
+    "message": "водородной атмосферой"
+  },
+  "A_N_ATMOSPHERE": {
+    "description": "",
+    "message": "азотной атмосферой"
+  },
+  "A_S_ATMOSPHERE": {
+    "description": "",
+    "message": "серной атмосферой"
   },
   "BATTLE_WEAPONS": {
     "description": "",
@@ -125,7 +161,7 @@
   },
   "CAMERA_TOP_VIEW": {
     "description": "",
-    "message": "Верхний экран"
+    "message": "Верхняя камера"
   },
   "CANT_SAVE_DEAD_PLAYER": {
     "description": "",
@@ -169,11 +205,11 @@
   },
   "CH4_ATMOSPHERE": {
     "description": "",
-    "message": "\" метановой атмосферой\""
+    "message": "метановая атмосфера"
   },
   "CO2_ATMOSPHERE": {
     "description": "",
-    "message": "\" углекислотной атмосферой\""
+    "message": "углекислотная атмосфера"
   },
   "COMMA_HIGHLY_VOLCANIC": {
     "description": "",
@@ -269,7 +305,7 @@
   },
   "CO_ATMOSPHERE": {
     "description": "",
-    "message": "\" окись углеродной атмосферой\""
+    "message": "атмосфера из окиси углерода"
   },
   "CTRL": {
     "description": "Ctrl key on keyboard",
@@ -335,6 +371,22 @@
     "description": "",
     "message": "Вертикальные линии"
   },
+  "DWARF_PLANET_CONTAINING_LIQUID_WATER": {
+    "description": "",
+    "message": "Карликовая планета с водой в жидком состоянии"
+  },
+  "DWARF_PLANET_CONTAINING_SOME_LIQUIDS": {
+    "description": "",
+    "message": "Карликовая планета, содержащая некоторые жидкости,"
+  },
+  "DWARF_PLANET_MOSTLY_COVERED_IN_ICE": {
+    "description": "",
+    "message": "Карликовая планета, в основном покрытая льдом"
+  },
+  "DWARF_PLANET_TERRESTRIAL": {
+    "description": "",
+    "message": "Карликовая планета"
+  },
   "EARTH_FEDERATION_COLONIAL_RULE": {
     "description": "",
     "message": "Земная федерация колониального правления"
@@ -358,6 +410,10 @@
   "EQUATORIAL_RADIUS_TO_POLAR_RADIUS_RATIO": {
     "description": "",
     "message": "Соотн. экваториального радиуса к полярному"
+  },
+  "ESCAPE_VELOCITY": {
+    "description": "",
+    "message": "Вторая космическая скорость"
   },
   "EXACT_MATCH_X": {
     "description": "",
@@ -439,6 +495,10 @@
     "description": "",
     "message": "Этот сохраненный файл игры не может быть записан из-за системной ошибки."
   },
+  "GAME_SAVE_INVALID_NAME": {
+    "description": "",
+    "message": "Это сохранение игры не записано из-за неверного имени."
+  },
   "GENERAL_VIEW_CONTROLS": {
     "description": "",
     "message": "Управление камерой"
@@ -465,15 +525,15 @@
   },
   "HEADING_LOCK_ANTINORMAL": {
     "description": "Autopilot direction (perpendicular, down), relative to plane of orbit",
-    "message": "Удерживать {target} против нормали"
+    "message": "Удерживать анти-нормаль к {target}"
   },
   "HEADING_LOCK_BACKWARD": {
     "description": "Autopilot points/holds/faces you retrograde (backwards rel. orbital direction)",
-    "message": "Удерживать {target} против курса"
+    "message": "Удерживать {target} ретроградно"
   },
   "HEADING_LOCK_FORWARD": {
     "description": "Autopilot points/holds/faces you prograde (tangent to the orbit, i.e. forward), http://wiki.kerbalspaceprogram.com/wiki/Maneuver_node",
-    "message": "Удерживать {target} по курсу"
+    "message": "Удерживать {target} проградно"
   },
   "HEADING_LOCK_KILLROT": {
     "description": "",
@@ -481,15 +541,15 @@
   },
   "HEADING_LOCK_NORMAL": {
     "description": "Autopilot direction (perpendicular, up), relative to plane of orbit. ",
-    "message": "Удерживать {target} нормаль"
+    "message": "Удерживать нормаль к {target}"
   },
   "HEADING_LOCK_RADIALLY_INWARD": {
     "description": "Autopilot direction, relative to orbit (face towards planet)",
-    "message": "Удерживать {target} в радиале"
+    "message": "Удерживать {target} радиально внутрь"
   },
   "HEADING_LOCK_RADIALLY_OUTWARD": {
     "description": "Autopilot direction, relative to orbit (face away from palent)",
-    "message": "Удерживать {target} из радиали"
+    "message": "Удерживать {target} радиально наружу"
   },
   "HEAVY_INDUSTRY": {
     "description": "",
@@ -497,7 +557,7 @@
   },
   "HE_ATMOSPHERE": {
     "description": "",
-    "message": "\" гелиевой атмосферой\""
+    "message": "гелиевая атмосфера"
   },
   "HIGHLY_VOLCANIC": {
     "description": "",
@@ -525,7 +585,7 @@
   },
   "HYPERSPACE_ARRIVAL_CLOUD": {
     "description": "",
-    "message": "Гипероблако прибытия"
+    "message": "Облако прибытия из гиперпространства"
   },
   "HYPERSPACE_ARRIVAL_CLOUD_REMNANT": {
     "description": "",
@@ -533,7 +593,7 @@
   },
   "HYPERSPACE_DEPARTURE_CLOUD": {
     "description": "",
-    "message": "Облако гипервыхода"
+    "message": "Облако вылета из гиперпространства"
   },
   "HYPERSPACE_JUMP_ABORT": {
     "description": "Mouse over text for hyperdrive button on ship control panel",
@@ -561,7 +621,15 @@
   },
   "H_ATMOSPHERE": {
     "description": "",
-    "message": "\" водородной атмосферой\""
+    "message": "водородная атмосфера"
+  },
+  "ICE_DWARF_PLANET": {
+    "description": "",
+    "message": "Ледяная карликовая планета"
+  },
+  "ICE_MOON": {
+    "description": "",
+    "message": "\" ледяная луна\""
   },
   "ICE_WORLD": {
     "description": "",
@@ -621,7 +689,7 @@
   },
   "LANDED": {
     "description": "",
-    "message": "На грунте"
+    "message": "Приземлён"
   },
   "LANG_NAME": {
     "description": "The name that native speakers use for this language. This will be used in the language selection screen.",
@@ -705,7 +773,7 @@
   },
   "MANUAL_CONTROL": {
     "description": "",
-    "message": "Пилотаж"
+    "message": "Ручное управление"
   },
   "MANUAL_CONTROL_MODE": {
     "description": "",
@@ -722,6 +790,10 @@
   "MASS_N_TONNES": {
     "description": "",
     "message": "Масса: %{mass}т"
+  },
+  "MEAN_DENSITY": {
+    "description": "",
+    "message": "Средняя плотность"
   },
   "MEDICINES": {
     "description": "",
@@ -741,7 +813,7 @@
   },
   "META": {
     "description": "'Meta' key on keyboard",
-    "message": "Meta"
+    "message": "Мета"
   },
   "METAL_ALLOYS": {
     "description": "",
@@ -847,6 +919,14 @@
     "description": "",
     "message": "Сен"
   },
+  "MOON_CONTAINING_LIQUID_WATER": {
+    "description": "",
+    "message": "\" луна, содержащая жидкую воду\""
+  },
+  "MOON_WITH_SOME_ICE": {
+    "description": "",
+    "message": "\" луна со льдом\""
+  },
   "NAME_OBJECT": {
     "description": "For an item or object",
     "message": "Наименование"
@@ -870,6 +950,10 @@
   "NERVE_GAS": {
     "description": "",
     "message": "Парализующий газ"
+  },
+  "NONE": {
+    "description": "To indicate the absence of something",
+    "message": "<None>"
   },
   "NOT_FOUND": {
     "description": "searching star system in sector view",
@@ -921,7 +1005,7 @@
   },
   "NUMBER_G": {
     "description": "",
-    "message": "%acceleration{f.1} G"
+    "message": "%acceleration{f.1} Грав."
   },
   "NUMBER_GROUP_MIN": {
     "description": "Smallest number to start grouping of digits for. (E.g. if \"10000\" start grouping thousands with 10,000, and not 1,000).",
@@ -941,7 +1025,7 @@
   },
   "NUMBER_LY": {
     "description": "",
-    "message": "%distance{f.2} СвЛ"
+    "message": "%distance{f.2} св.л."
   },
   "NUMBER_TONNES": {
     "description": "",
@@ -949,7 +1033,7 @@
   },
   "N_ATMOSPHERE": {
     "description": "",
-    "message": "\" азотной атмосферой\""
+    "message": "азотная атмосфера"
   },
   "N_CELSIUS": {
     "description": "",
@@ -989,11 +1073,15 @@
   },
   "O2_ATMOSPHERE": {
     "description": "",
-    "message": "\" кислородной атмосферой\""
+    "message": "кислородная атмосфера"
   },
   "OBJECT_INFO": {
     "description": "Originally for use as a window title and a button tooltip in the system map",
     "message": "Информация об объекте"
+  },
+  "OCEANICMOON": {
+    "description": "",
+    "message": "\" океаническая луна\""
   },
   "OCEANICWORLD": {
     "description": "",
@@ -1143,6 +1231,14 @@
     "description": "",
     "message": "Роботы"
   },
+  "ROCKY_MOON": {
+    "description": "",
+    "message": "\" скалистая луна\""
+  },
+  "ROCKY_MOON_CONTAINING_SOME_LIQUIDS": {
+    "description": "",
+    "message": "\" скалистая луна, содержащая какие-то жидкости,\""
+  },
   "ROCKY_PLANET": {
     "description": "",
     "message": "\" скалистая планета\""
@@ -1196,7 +1292,7 @@
     "message": "Мусор"
   },
   "SCOOP": {
-    "description": "Is followed by a number, repersenting scoop mounts/slots available to fit cargo scoop and/or fuel scoop",
+    "description": "Is followed by a number, representing scoop mounts/slots available to fit cargo scoop and/or fuel scoop",
     "message": "Сборник"
   },
   "SCREENSHOT_FILENAME_TEMPLATE": {
@@ -1233,7 +1329,7 @@
   },
   "SELECT_LOW_THRUST_POWER_LEVEL": {
     "description": "",
-    "message": "Зафиксировать уровень тяги"
+    "message": "Выбор уровня тяги"
   },
   "SEMI_MAJOR_AXIS": {
     "description": "",
@@ -1258,6 +1354,10 @@
   "SET_LOW_THRUST_POWER_LEVEL_TO_X_PERCENT": {
     "description": "",
     "message": "Зафиксировать тягу на уровне %power%%."
+  },
+  "SET_MAXIMUM_SPEED_LIMIT": {
+    "description": "Speed limiter tooltip.",
+    "message": "Установить максимальное ограничение скорости"
   },
   "SET_NAVTARGET_TO": {
     "description": "",
@@ -1537,7 +1637,7 @@
   },
   "S_ATMOSPHERE": {
     "description": "",
-    "message": "\" серной атмосферой\""
+    "message": "сернистая атмосфера"
   },
   "TAKEOFF": {
     "description": "",
@@ -1549,7 +1649,7 @@
   },
   "TENUOUS": {
     "description": "atmosphere thickness",
-    "message": "разрежённой"
+    "message": "\"слабый \""
   },
   "TEXTILES": {
     "description": "",
@@ -1557,11 +1657,11 @@
   },
   "THICK": {
     "description": "",
-    "message": "толстой"
+    "message": "\"толстый \""
   },
   "THIN": {
     "description": "",
-    "message": "тонкой"
+    "message": "\"тонкий \""
   },
   "THRIVING_OUTDOOR_WORLD": {
     "description": "",
@@ -1650,6 +1750,10 @@
   "UNIT_AU": {
     "description": "Distance unit: an astronomical unit, radius of Earth's orbit",
     "message": "АЕ"
+  },
+  "UNIT_CUBIC_METERS": {
+    "description": "Volume unit: cubic meter",
+    "message": "m³"
   },
   "UNIT_DAYS": {
     "description": "Duration unit: one 24-hour day",
@@ -1753,7 +1857,7 @@
   },
   "VERY_DENSE": {
     "description": "",
-    "message": "очень плотной"
+    "message": "\"очень плотный \""
   },
   "VERY_LARGE_GAS_GIANT": {
     "description": "",
@@ -1791,9 +1895,9 @@
     "description": "",
     "message": "Звёздный остаток белого карлика"
   },
-  "WITH_A": {
+  "WITH": {
     "description": "",
-    "message": "\" c \""
+    "message": "\" с \""
   },
   "WITH_NO_SIGNIFICANT_ATMOSPHERE": {
     "description": "",

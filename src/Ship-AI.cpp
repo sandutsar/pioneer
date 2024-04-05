@@ -1,4 +1,4 @@
-// Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "EnumStrings.h"
@@ -10,7 +10,6 @@
 #include "ShipAICmd.h"
 #include "Space.h"
 #include "SpaceStation.h"
-#include "libs.h"
 #include "lua/LuaConstants.h"
 #include "lua/LuaEvent.h"
 #include "perlin.h"
@@ -72,6 +71,14 @@ void Ship::AIKill(Ship *target)
 	SetFuelReserve((GetFuel() < 0.5) ? GetFuel() / 2 : 0.25);
 
 	m_curAICmd = new AICmdKill(this, target);
+}
+
+
+bool Ship::IsAIAttacking(const Ship *target) const
+{
+	return m_curAICmd &&
+		((m_curAICmd->GetType() == AICommand::CMD_KILL && (static_cast<AICmdKill *>(m_curAICmd)->GetTarget() == target)) ||
+			(m_curAICmd->GetType() == AICommand::CMD_KAMIKAZE && (static_cast<AICmdKamikaze *>(m_curAICmd)->GetTarget() == target)));
 }
 
 /*

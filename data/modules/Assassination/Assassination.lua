@@ -1,4 +1,4 @@
--- Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local Engine = require 'Engine'
@@ -9,8 +9,10 @@ local Comms = require 'Comms'
 local Timer = require 'Timer'
 local Event = require 'Event'
 local Mission = require 'Mission'
+local MissionUtils = require 'modules.MissionUtils'
 local NameGen = require 'NameGen'
 local Character = require 'Character'
+local Commodities = require 'Commodities'
 local Format = require 'Format'
 local Serializer = require 'Serializer'
 local Equipment = require 'Equipment'
@@ -187,11 +189,13 @@ local makeAdvert = function (station)
 	local nearbystations = nearbysystem:GetStationPaths()
 	local location = nearbystations[Engine.rand:Integer(1,#nearbystations)]
 	local dist = location:DistanceTo(Game.system)
-	local time = Engine.rand:Number(1, 4)
-	local due = Game.time + dist / max_ass_dist * time * 22*60*60*24 + Engine.rand:Number(7*60*60*24, 31*60*60*24)
+	local time = Engine.rand:Number(7*60*60*24, 35*60*60*24)
+	local due = time + MissionUtils.TravelTime(dist, location) * Engine.rand:Number(0.5, 1.5)
+	local timeout = Game.time + due/2
 	local danger = Engine.rand:Integer(1,4)
 	local reward = Engine.rand:Number(2100, 7000) * danger
 	reward = utils.round(reward, 500)
+	due = utils.round(due + Game.time, 3600)
 
 	-- XXX hull mass is a bad way to determine suitability for role
 	--local shipdefs = utils.build_array(utils.filter(function (k,def) return def.tag == 'SHIP' and def.hullMass >= (danger * 17) and def.equipSlotCapacity.ATMOSHIELD > 0 end, pairs(ShipDef)))
@@ -214,6 +218,7 @@ local makeAdvert = function (station)
 		shipregid = Ship.MakeRandomLabel(),
 		station = station,
 		target = target,
+		timeout = timeout,
 	}
 
 	placeAdvert(station, ad)
@@ -292,19 +297,25 @@ local onEnterSystem = function (ship)
 						if mission.ship == nil then
 							return -- TODO
 						end
+
 						mission.ship:SetLabel(mission.shipregid)
+
 						mission.ship:AddEquip(Equipment.misc.atmospheric_shielding)
 						local engine = Equipment.hyperspace['hyperdrive_'..tostring(default_drive)]
 						mission.ship:AddEquip(engine)
 						mission.ship:AddEquip(laserdef)
 						mission.ship:AddEquip(Equipment.misc.shield_generator, mission.danger)
-						mission.ship:AddEquip(Equipment.cargo.hydrogen, count)
+
+						mission.ship:GetComponent('CargoManager'):AddCommodity(Commodities.hydrogen, count)
+
 						if mission.danger > 2 then
 							mission.ship:AddEquip(Equipment.misc.shield_energy_booster)
 						end
+
 						if mission.danger > 3 then
 							mission.ship:AddEquip(Equipment.misc.laser_cooling_booster)
 						end
+
 						_setupHooksForMission(mission)
 						mission.shipstate = 'docked'
 					end
@@ -381,7 +392,7 @@ local onShipUndocked = function (ship, station)
 	for ref,mission in pairs(missions) do
 		if mission.status == 'ACTIVE' and
 		   mission.ship == ship then
-			planets = Space.GetBodies(function (body) return body:isa("Planet") end)
+			planets = Space.GetBodies("Planet")
 			if #planets == 0 then
 				ship:AIFlyTo(station)
 				mission.shipstate = 'outbound'
@@ -438,7 +449,7 @@ end
 
 local onUpdateBB = function (station)
 	for ref,ad in pairs(ads) do
-		if (ad.due < Game.time + 5*60*60*24) then
+		if ad.timeout < Game.time then
 			ad.station:RemoveAdvert(ref)
 		end
 	end

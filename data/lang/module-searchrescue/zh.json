@@ -165,11 +165,11 @@
   },
   "FLAVOUR_1_ADTEXT": {
     "description": "",
-    "message": "Local STC reports ship crash landed on {planet}. Assistance required."
+    "message": "当地STC报告飞船坠毁降落在{planet}上。需要协助。"
   },
   "FLAVOUR_1_ADTITLE": {
     "description": "",
-    "message": "SHIP CRASH LANDED"
+    "message": "飞船失事着陆"
   },
   "FLAVOUR_1_FAILUREMSG": {
     "description": "",
@@ -201,11 +201,11 @@
   },
   "FLAVOUR_2_ADTEXT": {
     "description": "",
-    "message": "{starport} STC received low fuel message from incoming ship. Refueling services requested."
+    "message": "{starport}STC收到来自进港飞船的低燃料信息。要求提供加油服务。"
   },
   "FLAVOUR_2_ADTITLE": {
     "description": "",
-    "message": "SHIP OUT OF FUEL"
+    "message": "飞船燃料耗尽"
   },
   "FLAVOUR_2_FAILUREMSG": {
     "description": "",
@@ -237,11 +237,11 @@
   },
   "FLAVOUR_3_ADTEXT": {
     "description": "",
-    "message": "Ship close to {starport} signalled medical emergency. Urgent hospital transport required."
+    "message": "靠近{starport}的飞船发出医疗紧急情况信号。需要紧急医院运输。"
   },
   "FLAVOUR_3_ADTITLE": {
     "description": "",
-    "message": "MEDICAL EMERGENCY"
+    "message": "医疗急救"
   },
   "FLAVOUR_3_FAILUREMSG": {
     "description": "",
@@ -273,11 +273,11 @@
   },
   "FLAVOUR_4_ADTEXT": {
     "description": "",
-    "message": "Distress signal received: ship is stranded and out of fuel on {planet}."
+    "message": "收到求救信号：飞船搁浅并在{行星}上耗尽燃料。"
   },
   "FLAVOUR_4_ADTITLE": {
     "description": "",
-    "message": "SHIP OUT OF FUEL"
+    "message": "飞船燃料耗尽"
   },
   "FLAVOUR_4_FAILUREMSG": {
     "description": "",
@@ -305,15 +305,15 @@
   },
   "FLAVOUR_4_TYPEOFHELPTEXT": {
     "description": "",
-    "message": "飞行员要求提供{unit}吨{cargo}。"
+    "message": "飞行员需要 {unit} 吨的 {cargo}. {high_gravity}"
   },
   "FLAVOUR_5_ADTEXT": {
     "description": "",
-    "message": "Stranded ship is requesting refuelling operation close to {starport}."
+    "message": "搁浅的飞船正在请求在{starport}附近加油。"
   },
   "FLAVOUR_5_ADTITLE": {
     "description": "",
-    "message": "SHIP OUT OF FUEL"
+    "message": "飞船燃料耗尽"
   },
   "FLAVOUR_5_FAILUREMSG": {
     "description": "",
@@ -345,11 +345,11 @@
   },
   "FLAVOUR_6_ADTEXT": {
     "description": "",
-    "message": "Emergency: corporate vessel unresponsive in the {system} system."
+    "message": "紧急情况：公司飞船在{system}星系中失联。"
   },
   "FLAVOUR_6_ADTITLE": {
     "description": "",
-    "message": "VESSEL UNRESPONSIVE"
+    "message": "船舶无反应"
   },
   "FLAVOUR_6_FAILUREMSG": {
     "description": "",
@@ -381,11 +381,11 @@
   },
   "FLAVOUR_7_ADTEXT": {
     "description": "",
-    "message": "Immediate crew transport to drifting ship in the {system} system requested."
+    "message": "请求立即将船员运送至 {system}星系中漂流飞船。"
   },
   "FLAVOUR_7_ADTITLE": {
     "description": "",
-    "message": "EMERGENCY CREW TRANSPORT"
+    "message": "紧急船员运输"
   },
   "FLAVOUR_7_FAILUREMSG": {
     "description": "",
@@ -426,6 +426,22 @@
   "FULL_PASSENGERS": {
     "description": "",
     "message": "所有船舱都满了。没有空间容纳更多的乘客。"
+  },
+  "HIGHGRAVITY_0": {
+    "description": "",
+    "message": "{planet} 的地表重力达到了 {gravity} g. 请慎重考虑这个信息."
+  },
+  "HIGHGRAVITY_1": {
+    "description": "",
+    "message": "你应该清楚 {planet} 的重力达到了 {gravity} g."
+  },
+  "HIGHGRAVITY_2": {
+    "description": "",
+    "message": "你将在 {gravity} g (重力)的环境中降落和起飞."
+  },
+  "HIGHGRAVITY_3": {
+    "description": "",
+    "message": "{planet} 的重力是 {gravity} g."
   },
   "HOW_FAR": {
     "description": "",

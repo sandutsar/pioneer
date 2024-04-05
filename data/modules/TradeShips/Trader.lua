@@ -1,4 +1,4 @@
--- Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local e = require 'Equipment'
@@ -8,6 +8,7 @@ local Ship = require 'Ship'
 local ShipDef = require 'ShipDef'
 local Space = require 'Space'
 local Timer = require 'Timer'
+local Commodities = require 'Commodities'
 
 local Core = require 'modules.TradeShips.Core'
 
@@ -58,15 +59,18 @@ Trader.addEquip = function (ship)
 end
 
 Trader.addCargo = function (ship, direction)
+	---@type CargoManager
+	local cargoMgr = ship:GetComponent('CargoManager')
+
 	local total = 0
-	local empty_space = math.min(ship.freeCapacity, ship:GetEquipFree("cargo"))
+	local empty_space = cargoMgr:GetFreeSpace()
 	local size_factor = empty_space / 20
 	local ship_cargo = {}
 
 	local cargoTypes = direction == 'import' and Core.params.imports or Core.params.exports
 
 	if #cargoTypes == 1 then
-		total = ship:AddEquip(cargoTypes[1], empty_space)
+		total = cargoMgr:AddCommodity(cargoTypes[1], empty_space)
 		ship_cargo[cargoTypes[1]] = total
 	elseif #cargoTypes > 1 then
 
@@ -88,7 +92,9 @@ Trader.addCargo = function (ship, direction)
 			local num = math.abs(Game.system:GetCommodityBasePriceAlterations(cargo_type.name)) * size_factor
 			num = Engine.rand:Integer(num, num * 2)
 
-			local added = ship:AddEquip(cargo_type, num)
+			local added = math.min(num, empty_space - total)
+			cargoMgr:AddCommodity(cargo_type, added)
+
 			if ship_cargo[cargo_type] == nil then
 				ship_cargo[cargo_type] = added
 			else
@@ -134,9 +140,13 @@ local getSystem = function (ship)
 	for _, next_system in ipairs(systems_in_range) do
 		if #next_system:GetStationPaths() > 0 then
 			local next_prices = 0
-			for cargo, count in pairs(ship:GetCargo()) do
-				next_prices = next_prices + (next_system:GetCommodityBasePriceAlterations(cargo.name) * count)
+			---@type CargoManager
+			local cargoMgr = ship:GetComponent('CargoManager')
+
+			for name, info in pairs(cargoMgr.commodities) do
+				next_prices = next_prices + (next_system:GetCommodityBasePriceAlterations(name) * info.count)
 			end
+
 			if next_prices > best_prices then
 				target_system, best_prices = next_system, next_prices
 			end
@@ -190,16 +200,8 @@ Trader.getSystemAndJump = function (ship)
 	if Core.ships[ship].starport then
 		local body = Space.GetBody(Core.ships[ship].starport.path:GetSystemBody().parent.index)
 		local port = Core.ships[ship].starport
-		-- boost away from the starport before jumping if it is too close
-		if (ship:DistanceTo(port) < 20000) then
-			ship:AIEnterLowOrbit(body)
-		end
 		return jumpToSystem(ship, getSystem(ship))
 	end
-end
-
-Trader.emptySpace = function(ship)
-	return math.min(ship.freeCapacity, ship:GetEquipFree("cargo"))
 end
 
 local function isAtmo(starport)
@@ -210,9 +212,14 @@ local function canAtmo(ship)
 	return ship:CountEquip(e.misc.atmospheric_shielding) ~= 0
 end
 
+local THRUSTER_UP = Engine.GetEnumValue('ShipTypeThruster', 'UP')
+
 Trader.isStarportAcceptableForShip = function(starport, ship)
-	return canAtmo(ship) or not isAtmo(starport)
-	-- TODO add a check to see if the ship has enough engine power to handle gravity
+	if not isAtmo(starport) then return true end
+	if not canAtmo(ship) then return false end
+	local bellyThrust = ship:GetThrusterAcceleration(THRUSTER_UP)
+	local portGravity = starport.path:GetSystemBody().parent.gravity
+	return bellyThrust > portGravity
 end
 
 Trader.getNearestStarport = function(ship, current)
@@ -247,12 +254,39 @@ Trader.addFuel = function (ship)
 	-- the fuel needed for max range is the square of the drive class
 	local count = drive.capabilities.hyperclass ^ 2
 
+	---@type CargoManager
+	local cargoMgr = ship:GetComponent('CargoManager')
+
 	-- account for fuel it already has
-	count = count - ship:CountEquip(e.cargo.hydrogen)
+	count = count - cargoMgr:CountCommodity(Commodities.hydrogen)
 
-	local added = ship:AddEquip(e.cargo.hydrogen, count)
+	-- don't add more fuel than the ship can hold
+	count = math.min(count, cargoMgr:GetFreeSpace())
+	cargoMgr:AddCommodity(Commodities.hydrogen, count)
 
-	return added
+	return count
+end
+
+Trader.removeFuel = function (ship, count)
+	---@type CargoManager
+	local cargoMgr = ship:GetComponent('CargoManager')
+
+	local removed = cargoMgr:RemoveCommodity(Commodities.hydrogen, count)
+
+	return removed
+end
+
+Trader.checkDistBetweenStarport = function (ship)
+	local trader = Core.ships[ship]
+	if not trader then return nil end
+	local distance
+	if trader.starport.type == "STARPORT_ORBITAL" then
+		distance = ship:DistanceTo(trader.starport)
+	else
+		local stationsParent = trader.starport:GetSystemBody().parent.body
+		distance = ship:GetAltitudeRelTo(stationsParent)
+	end
+	return distance >= trader.hyperjumpDist
 end
 
 -- TRADER DEFERRED TASKS
@@ -272,6 +306,36 @@ local trader_task = {}
 -- made to serialize pending job execution
 -- the task function prototype should be:
 -- function(ship)
+
+trader_task.hyperjumpAtDistance = function(ship)
+	-- the player may have left the system
+	local trader = Core.ships[ship]
+	if not trader then return end
+	if trader.status == "outbound" and trader.ts_error ~= "HIT" then
+		-- if trader is not under attack and started to leave station
+		if trader.starport ~= nil then
+			-- if trader has not started to hyperjump
+			if trader.hyperjumpDist == nil then
+				trader.hyperjumpDist = Engine.rand:Integer(20000, 240000)
+			end
+			if Trader.checkDistBetweenStarport(ship) then
+				-- if distance is large enough attempt to hyperjump
+				local status = Trader.getSystemAndJump(ship)
+				if status ~= 'OK' then
+					ship:CancelAI()
+					ship:AIDockWith(trader.starport)
+					trader['status'] = 'inbound'
+					trader.ts_error = 'cnt_jump_aicomp'
+				end
+				trader.hyperjumpDist = nil
+			else
+				Trader.assignTask(ship, Game.time + 10, 'hyperjumpAtDistance')
+			end
+		end
+	else
+		trader.hyperjumpDist = nil
+	end
+end
 
 trader_task.doUndock = function(ship)
 	-- the player may have left the system or the ship may have already undocked

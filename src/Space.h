@@ -1,4 +1,4 @@
-// Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef _SPACE_H
@@ -21,7 +21,7 @@ public:
 	// empty space (eg for hyperspace)
 	Space(Game *game, RefCountedPtr<Galaxy> galaxy, Space *oldSpace = nullptr);
 
-	// initalise with system bodies
+	// initialise with system bodies
 	Space(Game *game, RefCountedPtr<Galaxy> galaxy, const SystemPath &path, Space *oldSpace = nullptr);
 
 	// initialise from save file
@@ -85,6 +85,25 @@ public:
 
 	void DebugDumpFrames(bool details);
 
+	struct BodyDist {
+		BodyDist(Body *_body, double _dist) :
+			body(_body),
+			dist(_dist) {}
+		Body *body;
+		double dist;
+
+		bool operator<(const BodyDist &a) const { return dist < a.dist; }
+
+		friend bool operator<(const BodyDist &a, double d) { return a.dist < d; }
+		friend bool operator<(double d, const BodyDist &a) { return d < a.dist; }
+	};
+
+	//Find bodies within angle to given direction. dir and offset relative to b like in ship coordinates
+	//returns unsorted vector of bodies with their distance from b+offset
+	//It calculates distance from b for all the bodies so it is quite inefficiet,
+	//it is not designed to be called in each game loop!
+	std::vector<BodyDist> BodiesInAngle(const Body *b, const vector3d &offset, const vector3d &dir, double cosOfMaxAngle) const;
+
 private:
 	void GenSectorCache(RefCountedPtr<Galaxy> galaxy, const SystemPath *here);
 	void UpdateStarSystemCache(const SystemPath *here);
@@ -139,19 +158,6 @@ private:
 		BodyNearList GetBodiesMaybeNear(const vector3d &pos, double dist);
 
 	private:
-		struct BodyDist {
-			BodyDist(Body *_body, double _dist) :
-				body(_body),
-				dist(_dist) {}
-			Body *body;
-			double dist;
-
-			bool operator<(const BodyDist &a) const { return dist < a.dist; }
-
-			friend bool operator<(const BodyDist &a, double d) { return a.dist < d; }
-			friend bool operator<(double d, const BodyDist &a) { return d < a.dist; }
-		};
-
 		const Space *m_space;
 		std::vector<BodyDist> m_bodyDist;
 		std::vector<Body *> m_nearBodies;

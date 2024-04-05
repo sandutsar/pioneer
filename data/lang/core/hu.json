@@ -31,13 +31,21 @@
     "description": "",
     "message": "Állati hús"
   },
+  "AN_AR_ATMOSPHERE": {
+    "description": "",
+    "message": "argon légkörrel"
+  },
+  "AN_O2_ATMOSPHERE": {
+    "description": "",
+    "message": "oxigén légkörrel"
+  },
   "APOAPSIS_DISTANCE": {
     "description": "",
     "message": "Apoapszis"
   },
   "AR_ATMOSPHERE": {
     "description": "",
-    "message": "\" argon\""
+    "message": "argon légkörrel"
   },
   "ASTEROID": {
     "description": "",
@@ -79,9 +87,37 @@
     "description": "",
     "message": "Tengelydőlés"
   },
+  "A_CH4_ATMOSPHERE": {
+    "description": "",
+    "message": "metán légkörrel"
+  },
+  "A_CO2_ATMOSPHERE": {
+    "description": "",
+    "message": "széndioxid légkörrel"
+  },
+  "A_CO_ATMOSPHERE": {
+    "description": "",
+    "message": "szénmonoxid légkörrel"
+  },
   "A_FEW_THOUSAND": {
     "description": "regarding population",
     "message": "Csak pár ezer"
+  },
+  "A_HE_ATMOSPHERE": {
+    "description": "",
+    "message": "hélium légkörrel"
+  },
+  "A_H_ATMOSPHERE": {
+    "description": "",
+    "message": "hidrogén légkörrel"
+  },
+  "A_N_ATMOSPHERE": {
+    "description": "",
+    "message": "nitrogén légkörrel"
+  },
+  "A_S_ATMOSPHERE": {
+    "description": "",
+    "message": "kénes légkörrel"
   },
   "BATTLE_WEAPONS": {
     "description": "",
@@ -169,11 +205,11 @@
   },
   "CH4_ATMOSPHERE": {
     "description": "",
-    "message": "\" metán\""
+    "message": "metán légkörrel"
   },
   "CO2_ATMOSPHERE": {
     "description": "",
-    "message": "\" szén-dioxid\""
+    "message": "szénmonoxid légkörrel"
   },
   "COMMA_HIGHLY_VOLCANIC": {
     "description": "",
@@ -269,7 +305,7 @@
   },
   "CO_ATMOSPHERE": {
     "description": "",
-    "message": "\" szén-monoxid\""
+    "message": "szénmonoxid légkörrel"
   },
   "CTRL": {
     "description": "Ctrl key on keyboard",
@@ -335,6 +371,22 @@
     "description": "",
     "message": "Függőleges vonalak rajzolása"
   },
+  "DWARF_PLANET_CONTAINING_LIQUID_WATER": {
+    "description": "",
+    "message": "Folyékony vízzel rendelkező törpebolygó"
+  },
+  "DWARF_PLANET_CONTAINING_SOME_LIQUIDS": {
+    "description": "",
+    "message": "Sziklás kisbolygó felszínén némi folyadékkal, "
+  },
+  "DWARF_PLANET_MOSTLY_COVERED_IN_ICE": {
+    "description": "",
+    "message": "Nagyrészt jéggel borított kisbolygó"
+  },
+  "DWARF_PLANET_TERRESTRIAL": {
+    "description": "",
+    "message": "Kisbolygó"
+  },
   "EARTH_FEDERATION_COLONIAL_RULE": {
     "description": "",
     "message": "Földi szövetség gyarmat"
@@ -358,6 +410,10 @@
   "EQUATORIAL_RADIUS_TO_POLAR_RADIUS_RATIO": {
     "description": "",
     "message": "Egyenlítői- és sarki sugár arány"
+  },
+  "ESCAPE_VELOCITY": {
+    "description": "",
+    "message": "Szökési sebesség"
   },
   "EXACT_MATCH_X": {
     "description": "",
@@ -439,6 +495,10 @@
     "description": "",
     "message": "Ez a mentés nem hajtható végre valamilyen rendszerhiba miatt."
   },
+  "GAME_SAVE_INVALID_NAME": {
+    "description": "",
+    "message": "Érvénytelen név, a file nem menthető."
+  },
   "GENERAL_VIEW_CONTROLS": {
     "description": "",
     "message": "Általános nézet vezérlők"
@@ -497,7 +557,7 @@
   },
   "HE_ATMOSPHERE": {
     "description": "",
-    "message": "\" hélium\""
+    "message": "hélium légkörrel"
   },
   "HIGHLY_VOLCANIC": {
     "description": "",
@@ -561,7 +621,15 @@
   },
   "H_ATMOSPHERE": {
     "description": "",
-    "message": "\" hidrogén\""
+    "message": "hidrogén légkörrel"
+  },
+  "ICE_DWARF_PLANET": {
+    "description": "",
+    "message": "Jeges kisbolygó"
+  },
+  "ICE_MOON": {
+    "description": "",
+    "message": "\" jég hold\""
   },
   "ICE_WORLD": {
     "description": "",
@@ -723,6 +791,10 @@
     "description": "",
     "message": "Tömeg: %{mass}t"
   },
+  "MEAN_DENSITY": {
+    "description": "",
+    "message": "Átlagsűrűség"
+  },
   "MEDICINES": {
     "description": "",
     "message": "Gyógyszerek"
@@ -847,6 +919,14 @@
     "description": "",
     "message": "Szep"
   },
+  "MOON_CONTAINING_LIQUID_WATER": {
+    "description": "",
+    "message": "\" vízzel rendelkező hold\""
+  },
+  "MOON_WITH_SOME_ICE": {
+    "description": "",
+    "message": "\" némi jéggel borított hold\""
+  },
   "NAME_OBJECT": {
     "description": "For an item or object",
     "message": "Név"
@@ -870,6 +950,10 @@
   "NERVE_GAS": {
     "description": "",
     "message": "Ideggáz"
+  },
+  "NONE": {
+    "description": "To indicate the absence of something",
+    "message": "<semmi>"
   },
   "NOT_FOUND": {
     "description": "searching star system in sector view",
@@ -949,7 +1033,7 @@
   },
   "N_ATMOSPHERE": {
     "description": "",
-    "message": "\" nitrogén\""
+    "message": "nitrogén légkörrel"
   },
   "N_CELSIUS": {
     "description": "",
@@ -989,11 +1073,15 @@
   },
   "O2_ATMOSPHERE": {
     "description": "",
-    "message": "\" oxigén\""
+    "message": "oxigén légkörrel"
   },
   "OBJECT_INFO": {
     "description": "Originally for use as a window title and a button tooltip in the system map",
     "message": "Objektum információ"
+  },
+  "OCEANICMOON": {
+    "description": "",
+    "message": "\" óceáni hold\""
   },
   "OCEANICWORLD": {
     "description": "",
@@ -1143,6 +1231,14 @@
     "description": "",
     "message": "Robotok"
   },
+  "ROCKY_MOON": {
+    "description": "",
+    "message": "\" sziklás hold\""
+  },
+  "ROCKY_MOON_CONTAINING_SOME_LIQUIDS": {
+    "description": "",
+    "message": "\" sziklás hold felszínén némi folyadékkal,\""
+  },
   "ROCKY_PLANET": {
     "description": "",
     "message": "\" sziklás bolygó\""
@@ -1196,7 +1292,7 @@
     "message": "Hulladék"
   },
   "SCOOP": {
-    "description": "Is followed by a number, repersenting scoop mounts/slots available to fit cargo scoop and/or fuel scoop",
+    "description": "Is followed by a number, representing scoop mounts/slots available to fit cargo scoop and/or fuel scoop",
     "message": "Szívó"
   },
   "SCREENSHOT_FILENAME_TEMPLATE": {
@@ -1258,6 +1354,10 @@
   "SET_LOW_THRUST_POWER_LEVEL_TO_X_PERCENT": {
     "description": "",
     "message": "Tolóerő korlátozása %power%%-ra."
+  },
+  "SET_MAXIMUM_SPEED_LIMIT": {
+    "description": "Speed limiter tooltip.",
+    "message": "Maximális sebesség korlátozása"
   },
   "SET_NAVTARGET_TO": {
     "description": "",
@@ -1537,7 +1637,7 @@
   },
   "S_ATMOSPHERE": {
     "description": "",
-    "message": "\" kén\""
+    "message": "kénes légkörrel"
   },
   "TAKEOFF": {
     "description": "",
@@ -1549,7 +1649,7 @@
   },
   "TENUOUS": {
     "description": "atmosphere thickness",
-    "message": "ritkás"
+    "message": "\"minimális \""
   },
   "TEXTILES": {
     "description": "",
@@ -1557,11 +1657,11 @@
   },
   "THICK": {
     "description": "",
-    "message": "vastag"
+    "message": "\"vastag \""
   },
   "THIN": {
     "description": "",
-    "message": "vékony"
+    "message": "\"vékony \""
   },
   "THRIVING_OUTDOOR_WORLD": {
     "description": "",
@@ -1650,6 +1750,10 @@
   "UNIT_AU": {
     "description": "Distance unit: an astronomical unit, radius of Earth's orbit",
     "message": "AU"
+  },
+  "UNIT_CUBIC_METERS": {
+    "description": "Volume unit: cubic meter",
+    "message": "m³"
   },
   "UNIT_DAYS": {
     "description": "Duration unit: one 24-hour day",
@@ -1753,7 +1857,7 @@
   },
   "VERY_DENSE": {
     "description": "",
-    "message": "nagyon sürü"
+    "message": "\"nagyon sűrű \""
   },
   "VERY_LARGE_GAS_GIANT": {
     "description": "",
@@ -1791,9 +1895,9 @@
     "description": "",
     "message": "Fehértörpe csillagmaradvány"
   },
-  "WITH_A": {
+  "WITH": {
     "description": "",
-    "message": "\", amelynek légköre: \""
+    "message": "\" \""
   },
   "WITH_NO_SIGNIFICANT_ATMOSPHERE": {
     "description": "",

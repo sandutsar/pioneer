@@ -13,6 +13,7 @@ The Pioneer Developers are:
 * Alexander Noack
 * Andrew Cook
 * Andrew Copland
+* Andrzej Zięba
 * Anton Korzun
 * Antti Salonen
 * Arda Güler
@@ -51,12 +52,15 @@ The Pioneer Developers are:
 * Gaz Davidson
 * Georgi Georgiev
 * Gernot
+* Gisteron
+* Gliese852
 * HeadHunter
 * Jan Olsina
 * jmf
 * Jeremy List
 * John Bartholomew
 * John Jordan
+* Jon Booth
 * Jon Jenkins
 * Joshua Mathews
 * Jost Triller
@@ -73,6 +77,8 @@ The Pioneer Developers are:
 * Maksim Kulikov aka sapog662
 * Marcel Tulloh
 * Marcus de Roos
+* Maxim aka Max5377
+* McPain
 * Michele Botticelli
 * Michele Fanti
 * Miha Vitorovič
@@ -80,6 +86,7 @@ The Pioneer Developers are:
 * Nic
 * Nick Wanstall
 * Oleg Ovcharenko
+* Oskar Wallgren aka zonkmachine
 * Paul Cercueil
 * Paul Mahol
 * Paul Roberts
@@ -95,6 +102,7 @@ The Pioneer Developers are:
 * Rob Williamson
 * Robert Norris
 * Robert Pallier
+* Ron O'Dell aka Keeper1st
 * Roland Mas
 * Sal Borrelli
 * Sean Bailey
@@ -123,7 +131,7 @@ The Pioneer Developers are:
 Licensing
 =========
 
-Copyright © 2008-2022 Pioneer Developers
+Copyright © 2008-2024 Pioneer Developers
 Portions copyright © 2013-2014 Meteoric Games Ltd.
 
 Pioneer's core code and extension modules are licensed under the terms of the
@@ -195,6 +203,14 @@ Pioneer includes the following third-party software:
   doctest - The fastest feature-rich C++11/14/17/20 single-header testing framework
   Copyright (c) 2016-2021 Viktor Kirilov
   Licensed under the MIT license
+
+  nanosockets - Lightweight UDP sockets abstraction for rapid implementation of message-oriented protocols
+  Copyright (c) 2019 Stanislav Denisov
+  Licensed under the MIT license
+
+  Portable File Dialogs
+  Copyright © 2018–2022 Sam Hocevar
+  Licensed under the WTFPLv2 license (http://www.wtfpl.net/)
 
   High Performance C++ Profiler
   https://code.google.com/p/high-performance-cplusplus-profiler/

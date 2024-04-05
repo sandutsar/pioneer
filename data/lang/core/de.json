@@ -31,13 +31,21 @@
     "description": "",
     "message": "Tierfleisch"
   },
+  "AN_AR_ATMOSPHERE": {
+    "description": "",
+    "message": "eine Argon-Atmosphäre"
+  },
+  "AN_O2_ATMOSPHERE": {
+    "description": "",
+    "message": "eine Sauerstoff-Atmosphäre"
+  },
   "APOAPSIS_DISTANCE": {
     "description": "",
     "message": "Apoapsisdistanz"
   },
   "AR_ATMOSPHERE": {
     "description": "",
-    "message": "\" Argonatmosphäre\""
+    "message": "Argon-Athmosphäre"
   },
   "ASTEROID": {
     "description": "",
@@ -79,9 +87,37 @@
     "description": "",
     "message": "Achsenneigung"
   },
+  "A_CH4_ATMOSPHERE": {
+    "description": "",
+    "message": "Methan-Atmosphäre"
+  },
+  "A_CO2_ATMOSPHERE": {
+    "description": "",
+    "message": "eine Kohlenstoffdioxid-Atmosphäre"
+  },
+  "A_CO_ATMOSPHERE": {
+    "description": "",
+    "message": "eine Kohlenstoffmonoxid-Atmosphäre"
+  },
   "A_FEW_THOUSAND": {
     "description": "regarding population",
     "message": "Nur einige Tausend"
+  },
+  "A_HE_ATMOSPHERE": {
+    "description": "",
+    "message": "eine Helium-Atmosphäre"
+  },
+  "A_H_ATMOSPHERE": {
+    "description": "",
+    "message": "eine Wasserstoff-Atmosphäre"
+  },
+  "A_N_ATMOSPHERE": {
+    "description": "",
+    "message": "eine Stickstoff-Atmosphäre"
+  },
+  "A_S_ATMOSPHERE": {
+    "description": "",
+    "message": "eine schwefelige Atmosphäre"
   },
   "BATTLE_WEAPONS": {
     "description": "",
@@ -169,11 +205,11 @@
   },
   "CH4_ATMOSPHERE": {
     "description": "",
-    "message": "\" Methanatmosphäre\""
+    "message": "Methan-Atmosphäre"
   },
   "CO2_ATMOSPHERE": {
     "description": "",
-    "message": "\" Kohlendioxidatmosphäre\""
+    "message": "Kohlenstoffdioxid-Atmosphäre"
   },
   "COMMA_HIGHLY_VOLCANIC": {
     "description": "",
@@ -269,7 +305,7 @@
   },
   "CO_ATMOSPHERE": {
     "description": "",
-    "message": "\" Kohlenmonoxidatmosphäre\""
+    "message": "Kohlenstoffmonoxid-Atmosphäre"
   },
   "CTRL": {
     "description": "Ctrl key on keyboard",
@@ -335,6 +371,22 @@
     "description": "",
     "message": "Vertikale Linien ziehen"
   },
+  "DWARF_PLANET_CONTAINING_LIQUID_WATER": {
+    "description": "",
+    "message": "Zwergplanet mit flüssigem Wasser"
+  },
+  "DWARF_PLANET_CONTAINING_SOME_LIQUIDS": {
+    "description": "",
+    "message": "Zwergplanet mit flüssigen Stoffen,"
+  },
+  "DWARF_PLANET_MOSTLY_COVERED_IN_ICE": {
+    "description": "",
+    "message": "Zwergplanet, Oberfläche vorwiegend aus Eis"
+  },
+  "DWARF_PLANET_TERRESTRIAL": {
+    "description": "",
+    "message": "Zwergplanet"
+  },
   "EARTH_FEDERATION_COLONIAL_RULE": {
     "description": "",
     "message": "Kolonialherrschaft durch die Erd-Föderation"
@@ -358,6 +410,10 @@
   "EQUATORIAL_RADIUS_TO_POLAR_RADIUS_RATIO": {
     "description": "",
     "message": "Verhältnis Äquator zu Pol"
+  },
+  "ESCAPE_VELOCITY": {
+    "description": "",
+    "message": "Escape velocity"
   },
   "EXACT_MATCH_X": {
     "description": "",
@@ -439,6 +495,10 @@
     "description": "",
     "message": "Die Spieldatei konnte aufgrund eines Systemfehlers nicht geöffnet werden."
   },
+  "GAME_SAVE_INVALID_NAME": {
+    "description": "",
+    "message": "This saved game file could not be written because of a invalid name."
+  },
   "GENERAL_VIEW_CONTROLS": {
     "description": "",
     "message": "Allgemeine Ansichtssteuerung"
@@ -497,7 +557,7 @@
   },
   "HE_ATMOSPHERE": {
     "description": "",
-    "message": "\" Heliumatmosphäre\""
+    "message": "Helium-Atmosphäre"
   },
   "HIGHLY_VOLCANIC": {
     "description": "",
@@ -561,7 +621,15 @@
   },
   "H_ATMOSPHERE": {
     "description": "",
-    "message": "\" Wasserstoffatmosphäre\""
+    "message": "Wasserstoff-Atmosphäre"
+  },
+  "ICE_DWARF_PLANET": {
+    "description": "",
+    "message": "Eisiger Zwergplanet"
+  },
+  "ICE_MOON": {
+    "description": "",
+    "message": "\" Eismond\""
   },
   "ICE_WORLD": {
     "description": "",
@@ -723,6 +791,10 @@
     "description": "",
     "message": "Masse: %{mass}t"
   },
+  "MEAN_DENSITY": {
+    "description": "",
+    "message": "Mean density"
+  },
   "MEDICINES": {
     "description": "",
     "message": "Pharmazeutika"
@@ -847,6 +919,14 @@
     "description": "",
     "message": "Sep"
   },
+  "MOON_CONTAINING_LIQUID_WATER": {
+    "description": "",
+    "message": "\" Mond mit flüssigem Wasser\""
+  },
+  "MOON_WITH_SOME_ICE": {
+    "description": "",
+    "message": "\" Mond mit geringer Eisbedeckung\""
+  },
   "NAME_OBJECT": {
     "description": "For an item or object",
     "message": "Name"
@@ -870,6 +950,10 @@
   "NERVE_GAS": {
     "description": "",
     "message": "Nervengas"
+  },
+  "NONE": {
+    "description": "To indicate the absence of something",
+    "message": "<None>"
   },
   "NOT_FOUND": {
     "description": "searching star system in sector view",
@@ -949,7 +1033,7 @@
   },
   "N_ATMOSPHERE": {
     "description": "",
-    "message": "\" Stickstoffatmosphäre\""
+    "message": "Stickstoff-Atmosphäre"
   },
   "N_CELSIUS": {
     "description": "",
@@ -989,11 +1073,15 @@
   },
   "O2_ATMOSPHERE": {
     "description": "",
-    "message": "\" Sauerstoffatmosphäre\""
+    "message": "Sauerstoff-Atmosphäre"
   },
   "OBJECT_INFO": {
     "description": "Originally for use as a window title and a button tooltip in the system map",
     "message": "Objektinformation"
+  },
+  "OCEANICMOON": {
+    "description": "",
+    "message": "\" Ozeanmond\""
   },
   "OCEANICWORLD": {
     "description": "",
@@ -1143,6 +1231,14 @@
     "description": "",
     "message": "Roboter"
   },
+  "ROCKY_MOON": {
+    "description": "",
+    "message": "\" felsiger Mond\""
+  },
+  "ROCKY_MOON_CONTAINING_SOME_LIQUIDS": {
+    "description": "",
+    "message": "\" felsiger Mond mit flüssigen Stoffen,\""
+  },
   "ROCKY_PLANET": {
     "description": "",
     "message": "\" felsiger Planet\""
@@ -1196,7 +1292,7 @@
     "message": "Abfälle"
   },
   "SCOOP": {
-    "description": "Is followed by a number, repersenting scoop mounts/slots available to fit cargo scoop and/or fuel scoop",
+    "description": "Is followed by a number, representing scoop mounts/slots available to fit cargo scoop and/or fuel scoop",
     "message": "Schöpfer"
   },
   "SCREENSHOT_FILENAME_TEMPLATE": {
@@ -1258,6 +1354,10 @@
   "SET_LOW_THRUST_POWER_LEVEL_TO_X_PERCENT": {
     "description": "",
     "message": "Niedrigschubenergiepegel auf %power%% setzen"
+  },
+  "SET_MAXIMUM_SPEED_LIMIT": {
+    "description": "Speed limiter tooltip.",
+    "message": "Setze Höchstgeschwindigkeit"
   },
   "SET_NAVTARGET_TO": {
     "description": "",
@@ -1537,7 +1637,7 @@
   },
   "S_ATMOSPHERE": {
     "description": "",
-    "message": "\" Schwefelatmosphäre\""
+    "message": "Schwefelige Atmosphäre"
   },
   "TAKEOFF": {
     "description": "",
@@ -1549,7 +1649,7 @@
   },
   "TENUOUS": {
     "description": "atmosphere thickness",
-    "message": "sehr dünnen"
+    "message": "\"eine geringfügige \""
   },
   "TEXTILES": {
     "description": "",
@@ -1557,11 +1657,11 @@
   },
   "THICK": {
     "description": "",
-    "message": "dichten"
+    "message": "\"eine dichte \""
   },
   "THIN": {
     "description": "",
-    "message": "dünnen"
+    "message": "\"eine dünne \""
   },
   "THRIVING_OUTDOOR_WORLD": {
     "description": "",
@@ -1650,6 +1750,10 @@
   "UNIT_AU": {
     "description": "Distance unit: an astronomical unit, radius of Earth's orbit",
     "message": "AE"
+  },
+  "UNIT_CUBIC_METERS": {
+    "description": "Volume unit: cubic meter",
+    "message": "m³"
   },
   "UNIT_DAYS": {
     "description": "Duration unit: one 24-hour day",
@@ -1753,7 +1857,7 @@
   },
   "VERY_DENSE": {
     "description": "",
-    "message": "sehr dichten"
+    "message": "\"eine sehr dichte \""
   },
   "VERY_LARGE_GAS_GIANT": {
     "description": "",
@@ -1791,9 +1895,9 @@
     "description": "",
     "message": "Weißer Zwerg (Sternrest)"
   },
-  "WITH_A": {
+  "WITH": {
     "description": "",
-    "message": "\" mit einer \""
+    "message": "\" mit \""
   },
   "WITH_NO_SIGNIFICANT_ATMOSPHERE": {
     "description": "",

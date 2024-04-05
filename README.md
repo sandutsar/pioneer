@@ -1,5 +1,4 @@
 [![Build](https://github.com/pioneerspacesim/pioneer/workflows/Build%20Pioneer/badge.svg)](https://github.com/pioneerspacesim/pioneer/actions)
-[![Build status](https://ci.appveyor.com/api/projects/status/b2n2fe1vv3wr6n56/branch/master?svg=true)](https://ci.appveyor.com/project/pioneerspacesim/pioneer/branch/master)
 [![License GPLv3](https://img.shields.io/badge/license-GPL_v3-green.svg)](http://www.gnu.org/licenses/gpl-3.0.html)
 [![#pioneer on Libera.Chat](https://img.shields.io/badge/LiberaChat-%23pioneer-brightgreen.svg)](https://kiwiirc.com/client/irc.libera.chat/pioneer)
 [![Github All Releases](https://img.shields.io/github/downloads/pioneerspacesim/pioneer/latest/total)]()
@@ -28,53 +27,56 @@ Come by #pioneer at irc.libera.chat and say hi to the team:
   https://kiwiirc.com/client/irc.libera.chat/pioneer
 
 Bugs? Please log an issue:
-  http://pioneerspacesim.net/issues
+  https://github.com/pioneerspacesim/pioneer/issues
 
 Follow Pioneer on Twitter:
   https://twitter.com/pioneerspacesim/
 
 Pioneer wiki
-  http://pioneerwiki.com/wiki/Pioneer_Wiki
+  https://wiki.pioneerspacesim.net
 
 Join the player's forum:
   http://spacesimcentral.com/community/pioneer/
 
 Join the development forum:
-  http://pioneerspacesim.net/forum
+  http://forum.pioneerspacesim.net
 
 
 ## Manual
 
 Manual can be found at:
-  http://pioneerwiki.com/wiki/Manual
+  https://wiki.pioneerspacesim.net/wiki/Manual
 
 Basic flight:
-  https://pioneerwiki.com/wiki/Basic_flight
+  https://wiki.pioneerspacesim.net/wiki/Basic_flight
 
 Keyboard and mouse control is found at:
-  http://pioneerwiki.com/wiki/Keyboard_and_mouse_controls
+  https://wiki.pioneerspacesim.net/wiki/Keyboard_and_mouse_controls
 
 
 ## FAQ
 
 For frequently asked questions, please see
-  http://pioneerwiki.com/wiki/FAQ
+  https://wiki.pioneerspacesim.net/wiki/FAQ
 
 
 ## BUG Reporting
 
-Please see the section of the FAQ pertaining to bugs, crashs and reporting other issues: [Bug Reporting FAQs](http://pioneerwiki.com/wiki/FAQ#How.2Fwhere_do_I_report_my_bug.2Fcrash).
+Please see the section of the FAQ pertaining to bugs, crashes and reporting other issues: [Bug Reporting FAQs](https://wiki.pioneerspacesim.net/wiki/FAQ#How.2Fwhere_do_I_report_my_bug.2Fcrash).
 
 Please do your best to fill out the issue template as completely as possible, especially when you're reporting a crash bug or a graphical issue. Having system information including graphics drivers and the method you used to install Pioneer helps immensely to diagnose and fix these kinds of issues.
 
 ## Contributing
 
 If you are hungry to contribute, more information can be found here:
-  http://pioneerwiki.com/wiki/How_you_can_contribute
+  https://wiki.pioneerspacesim.net/wiki/How_you_can_contribute
 
 If you have a contribution you want to share, and want to learn how to make a
 pull request, see:
-  http://pioneerwiki.com/wiki/Using_git_and_GitHub
+  https://dev.pioneerspacesim.net/contribute/git-and-github
+
+Pioneer development documentation
+  https://dev.pioneerspacesim.net/
 
 ## Localization
 

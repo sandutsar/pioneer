@@ -1,8 +1,8 @@
-// Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "versioningInfo.h"
-#include "libs.h"
+
 #include "utils.h"
 // open asset importer
 #include <assimp/version.h>
@@ -15,12 +15,14 @@
 #endif
 
 #include <GL/glew.h>
+#include <SDL.h>
+#include <SDL_image.h>
 
 void OutputVersioningInfo()
 {
 	SDL_version ver;
 	SDL_GetVersion(&ver);
-	Output("\n\n--------------------\n");
+	Output("--------------------\n");
 	Output("SDL Version (build) %d.%d.%d\n", SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL);
 	Output("SDL Version (dynamic) %d.%d.%d\n", ver.major, ver.minor, ver.patch);
 	const bool sameSDLVer = (SDL_MAJOR_VERSION == ver.major && SDL_MINOR_VERSION == ver.minor && SDL_PATCHLEVEL == ver.patch);
@@ -37,6 +39,8 @@ void OutputVersioningInfo()
 	Output("LibCurl Version: %s", LIBCURL_VERSION);
 #endif
 
-	Output("GLEW dynamic version: %s\n", glewGetString(GLEW_VERSION));
-	Output("--------------------\n\n");
+	// glewGetString returns unsigned, fmt uses signed
+	Output("GLEW dynamic version: %s\n", reinterpret_cast<const char *>(glewGetString(GLEW_VERSION)));
+	Output("--------------------\n");
+	Output("\n");
 }

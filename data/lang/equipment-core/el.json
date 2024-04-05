@@ -61,7 +61,7 @@
   },
   "DAMAGE_PER_SHOT": {
     "description": "Tooltip explaining weapon damage per shot",
-    "message": "Damage Per Shot"
+    "message": "Ποσό ζημιάς ανά βολή"
   },
   "DRIVE_CLASS1": {
     "description": "",
@@ -151,17 +151,21 @@
     "description": "",
     "message": "Ένα ηλεκτρονικό σύστημα αντιπυραυλικής άμυνας, ικανό να καταστρέψει ορισμένους πυραύλους."
   },
+  "ECM_HOVER_MESSAGE": {
+    "description": "",
+    "message": "Ενεργοποίηση ηλεκτρονικών αντίμετρων"
+  },
   "EMPTY_SLOT": {
     "description": "Text indicating an empty equipment slot.",
-    "message": "EMPTY"
+    "message": "ΚΕΝΟ"
   },
   "EQUIPMENT_INTEGRITY": {
     "description": "Tooltip explaining remaining equipment integrity",
-    "message": "Equipment Integrity"
+    "message": "Κατάσταση εξοπλισμού"
   },
   "EQUIPMENT_WEIGHT": {
     "description": "Tooltip explaining equipment weight",
-    "message": "Equipment Weight"
+    "message": "Βάρος εξοπλισμού"
   },
   "FUEL_SCOOP": {
     "description": "",
@@ -217,7 +221,7 @@
   },
   "MISSILES": {
     "description": "Category name of missile-related equipment",
-    "message": "Missiles"
+    "message": "Πύραυλοι"
   },
   "MISSILE_GUIDED": {
     "description": "",
@@ -243,6 +247,22 @@
     "description": "",
     "message": "Παρόλο που είναι λιγότερο αποτελεσματικός από έναν συλλέκτη καυσίμου, επιτρέπει την συλλογή τόσο φορτίου όσο και καυσίμου"
   },
+  "ORBIT_SCANNER": {
+    "description": "A ship equipment that records data of terrain, for cartography mapping/geological survey. Note: Scout Mission module reference and distinguishes between 'orbital' and 'surface' scanner types, the former scans planet from orbit, the latter from low altitude.",
+    "message": "Από-τροχιάς σαρωτής XKM-650"
+  },
+  "ORBIT_SCANNER_DESCRIPTION": {
+    "description": "tooltip",
+    "message": "Σαρώνει την επιφάνεια ενός πλανήτη με σκοπό τη συλλογή επιστημονικών δεδομένων."
+  },
+  "ORBIT_SCANNER_GOOD": {
+    "description": "A sensor used to scan planets from high altitude / orbit + model number (that's minimum km altitude)",
+    "message": "Από-τροχιάς σαρωτής XKM-1750"
+  },
+  "ORBIT_SCANNER_GOOD_DESCRIPTION": {
+    "description": "tooltip",
+    "message": "Scans planet from orbit, for scientific data, with high resolution and wide aperture lens"
+  },
   "OUT_OF_SCANRANGE": {
     "description": "",
     "message": "Υπέρβαση της μέγιστης εμβέλειας σάρωσης:"
@@ -251,17 +271,9 @@
     "description": "",
     "message": "Καμπίνα επιβάτη"
   },
-  "PLANETSCANNER": {
-    "description": "Scans the nearest body for resources",
-    "message": "Σάρωση διαστημικού σώματος"
-  },
-  "PLANETSCANNER_DESCRIPTION": {
-    "description": "",
-    "message": "Σάρωση του πλησιέστερου διαστημικού σώματος για πόρους."
-  },
   "PROPULSION": {
     "description": "Category name of propulsion-related equipment",
-    "message": "Propulsion"
+    "message": "Προώθηση"
   },
   "PULSECANNON_10MW": {
     "description": "",
@@ -309,15 +321,23 @@
   },
   "SCOOPS": {
     "description": "Category name of scoop-related equipment",
-    "message": "Scoops"
+    "message": "Συλλέκτες"
   },
   "SENSORS": {
     "description": "Category name of sensor-related equipment",
-    "message": "Sensors"
+    "message": "Αισθητήρες"
+  },
+  "SENSOR_MIN_ALTITUDE": {
+    "description": "",
+    "message": "Ελάχιστο ύψος λειτουργίας αισθητήρα."
+  },
+  "SENSOR_RESOLUTION": {
+    "description": "Resolution of e.g. optical sensor",
+    "message": "Διακριτική ικανότητα αισθητήρα"
   },
   "SHIELDS": {
     "description": "Category name of shield-related equipment",
-    "message": "Shields"
+    "message": "Ασπίδες"
   },
   "SHIELD_ENERGY_BOOSTER": {
     "description": "",
@@ -337,7 +357,7 @@
   },
   "SHOTS_PER_MINUTE": {
     "description": "Tooltip explaining weapon fire rate / RPM counter",
-    "message": "Firing Rate / Minute"
+    "message": "Αριθμός βολών / λεπτό"
   },
   "SMALL_PLASMA_ACCEL": {
     "description": "",
@@ -346,6 +366,22 @@
   "STARTING_SCAN": {
     "description": "",
     "message": "Εκκίνηση σάρωσης, η απόσταση στόχου είναι"
+  },
+  "SURFACE_SCANNER": {
+    "description": "A ship equipment that records data of terrain, for cartography mapping/geological survey. Note: Scout Mission module reference and distinguishes between 'orbital' and 'surface' scanner types, the former scans planet from orbit, the latter from low altitude. Model manufacturer name is meant to sound like a cheap brand.",
+    "message": "Σαρωτής επιφανείας Nadir-150"
+  },
+  "SURFACE_SCANNER_DESCRIPTION": {
+    "description": "tooltip",
+    "message": "Καταγραφέας για χαρτογραφικές και γεωλογικές έρευνες."
+  },
+  "SURFACE_SCANNER_GOOD": {
+    "description": "A ship equipment that records data of terrain, for cartography mapping/geological survey. Note: Scout Mission module reference and distinguishes between 'orbital' and 'surface' scanner types. Model manufacturer name is meant to be associated with high quality.",
+    "message": "Σαρωτής επιφανείας Xeiss-250"
+  },
+  "SURFACE_SCANNER_GOOD_DESCRIPTION": {
+    "description": "tooltip",
+    "message": "Καταγραφέας υψηλής διακριτικής ικανότητας, για χαρτογραφικές και γεωλογικές έρευνες."
   },
   "TARGET_SCANNER": {
     "description": "ship equipment showing target information/stats",
@@ -381,11 +417,11 @@
   },
   "TOTAL_MODULE_CAPACITY": {
     "description": "Tooltip explaining module capacity of specific slot",
-    "message": "Total Capacity"
+    "message": "Ολική χωρητικότητα"
   },
   "TOTAL_MODULE_WEIGHT": {
     "description": "Tooltip explaining total equipped weight of specific slot",
-    "message": "Total Weight"
+    "message": "Ολικό βάρος"
   },
   "TRADE_COMPUTER": {
     "description": "Ship equipment computing profitable commodities to trade between two systems",

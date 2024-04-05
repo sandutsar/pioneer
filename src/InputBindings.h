@@ -1,14 +1,16 @@
-// Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #pragma once
 
 #include "DeleteEmitter.h"
+
 #include <SDL_events.h>
 #include <SDL_keycode.h>
 #include <sigc++/sigc++.h>
+
 #include <cstdint>
-#include <iostream>
+#include <iosfwd>
 #include <string_view>
 
 namespace InputBindings {
@@ -47,7 +49,7 @@ namespace InputBindings {
 		KeyBinding(SDL_Keycode k) :
 			type(Type::KeyboardKey), keycode(k) {}
 
-		static KeyBinding JoystickButton(uint8_t joystickID, uint8_t button)
+		static KeyBinding JoystickButton(uint16_t joystickID, uint8_t button)
 		{
 			KeyBinding t;
 			t.type = Type::JoystickButton;
@@ -55,7 +57,7 @@ namespace InputBindings {
 			return t;
 		}
 
-		static KeyBinding JoystickHat(uint8_t joystickID, uint8_t hat, uint8_t direction)
+		static KeyBinding JoystickHat(uint16_t joystickID, uint8_t hat, uint8_t direction)
 		{
 			KeyBinding t;
 			t.type = Type::JoystickHat;
@@ -85,7 +87,7 @@ namespace InputBindings {
 	};
 
 	struct JoyAxis {
-		uint8_t joystickId;
+		uint16_t joystickId;
 		uint8_t axis;
 		int8_t direction; // if 0, the axis is disabled
 
@@ -128,7 +130,7 @@ namespace InputBindings {
 		// Groups chords by number of modifiers in descending order
 		bool operator<(const KeyChord &rhs) const
 		{
-			return (modifier2.Enabled() && !rhs.modifier2.Enabled()) || (modifier1.Enabled() && !rhs.modifier2.Enabled());
+			return (modifier2.Enabled() && !rhs.modifier2.Enabled()) || (modifier1.Enabled() && !rhs.modifier1.Enabled());
 		}
 
 		bool m_active = false;
@@ -142,6 +144,9 @@ namespace InputBindings {
 	struct Action : public DeleteEmitter {
 		KeyChord binding;
 		KeyChord binding2;
+		bool m_active = false;
+		sigc::signal<void> onPressed;
+		sigc::signal<void> onReleased;
 
 		Action() = default;
 		Action(KeyChord b1, KeyChord b2 = {}) :
@@ -155,11 +160,6 @@ namespace InputBindings {
 		bool IsActive() { return m_active; }
 		bool Enabled() { return binding.Enabled() || binding2.Enabled(); }
 
-		bool m_active = false;
-
-		sigc::signal<void> onPressed;
-		sigc::signal<void> onReleased;
-
 		// serialization
 		friend std::string_view &operator>>(std::string_view &, Action &);
 		friend std::ostream &operator<<(std::ostream &, const Action &);
@@ -169,6 +169,9 @@ namespace InputBindings {
 		JoyAxis axis;
 		KeyChord positive;
 		KeyChord negative;
+		float m_value;
+		float m_manualValue;
+		sigc::signal<void, float> onAxisValue;
 
 		Axis() = default;
 		Axis(JoyAxis a, KeyChord p = {}, KeyChord n = {}) :
@@ -186,13 +189,12 @@ namespace InputBindings {
 		// NOTE: sigc::signals cannot be copied, this function is for convenience to copy bindings only
 		Axis &operator=(const Axis &rhs);
 
-		bool IsActive() { return m_value != 0.0 || positive.IsActive() || negative.IsActive(); }
+		bool IsActive() { return m_value != 0.0; }
 		float GetValue() { return m_value; }
+		// if we want to set the value of the axis, for example from the UI slider
+		// must be remembered separately, because m_value is overwritten by data from the joystick
+		void SetValue(float value) { m_manualValue = value; }
 		bool Enabled() { return axis.Enabled() || positive.Enabled() || negative.Enabled(); }
-
-		float m_value;
-
-		sigc::signal<void, float> onAxisValue;
 
 		// serialization
 		friend std::string_view &operator>>(std::string_view &, Axis &);

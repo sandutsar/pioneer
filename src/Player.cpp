@@ -1,4 +1,4 @@
-// Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "Player.h"
@@ -18,55 +18,34 @@
 #include "SystemView.h" // for the transfer planner
 #include "WorldView.h"
 #include "lua/LuaObject.h"
+#include "lua/LuaTable.h"
 #include "ship/PlayerShipController.h"
+#include "ship/ShipController.h"
 #include "sound/Sound.h"
 
 //Some player specific sounds
 static Sound::Event s_soundUndercarriage;
 static Sound::Event s_soundHyperdrive;
 
-static int onEquipChangeListener(lua_State *l)
-{
-	Player *p = LuaObject<Player>::GetFromLua(lua_upvalueindex(1));
-	p->onChangeEquipment.emit();
-	return 0;
-}
-
-static void registerEquipChangeListener(Player *player)
-{
-	lua_State *l = Lua::manager->GetLuaState();
-	LUA_DEBUG_START(l);
-
-	LuaObject<Player>::PushToLua(player);
-	lua_pushcclosure(l, onEquipChangeListener, 1);
-	LuaRef lr(Lua::manager->GetLuaState(), -1);
-	ScopedTable(player->GetEquipSet()).CallMethod("AddListener", lr);
-	lua_pop(l, 1);
-
-	LUA_DEBUG_END(l, 0);
-}
-
 Player::Player(const ShipType::Id &shipId) :
 	Ship(shipId)
 {
 	SetController(new PlayerShipController());
 	InitCockpit();
-	GetFixedGuns()->SetShouldUseLeadCalc(true);
-	registerEquipChangeListener(this);
+	m_fixedGuns->SetShouldUseLeadCalc(true);
+	m_atmosAccel = vector3d(0.0f, 0.0f, 0.0f);
 }
 
 Player::Player(const Json &jsonObj, Space *space) :
 	Ship(jsonObj, space)
 {
 	InitCockpit();
-	GetFixedGuns()->SetShouldUseLeadCalc(true);
-	registerEquipChangeListener(this);
+	m_fixedGuns->SetShouldUseLeadCalc(true);
 }
 
 void Player::SetShipType(const ShipType::Id &shipId)
 {
 	Ship::SetShipType(shipId);
-	registerEquipChangeListener(this);
 	InitCockpit();
 }
 
@@ -77,7 +56,7 @@ void Player::SaveToJson(Json &jsonObj, Space *space)
 
 void Player::InitCockpit()
 {
-	m_cockpit.release();
+	delete m_cockpit.release();
 	if (!Pi::config->Int("EnableCockpit"))
 		return;
 
@@ -98,7 +77,7 @@ void Player::InitCockpit()
 			cockpitModelName = "default_cockpit";
 	}
 	if (!cockpitModelName.empty())
-		m_cockpit.reset(new ShipCockpit(cockpitModelName));
+		m_cockpit.reset(new ShipCockpit(cockpitModelName, this));
 
 	OnCockpitActivated();
 }
@@ -143,6 +122,7 @@ bool Player::SetWheelState(bool down)
 	bool did = Ship::SetWheelState(down);
 	if (did) {
 		s_soundUndercarriage.Play(down ? "UC_out" : "UC_in", 1.0f, 1.0f, 0);
+		GetPlayerController()->SetCruiseDirection(down ? PlayerShipController::CRUISE_UP : PlayerShipController::CRUISE_FWD);
 	}
 	return did;
 }
@@ -201,8 +181,14 @@ void Player::NotifyRemoved(const Body *const removedBody)
 			SetNavTarget(static_cast<const Ship *>(removedBody)->GetHyperspaceCloud());
 	}
 
-	if (GetSetSpeedTarget() == removedBody)
-		SetSetSpeedTarget(0);
+	if (GetFollowTarget() == removedBody) {
+		SetFollowTarget(0);
+		// turn on manual mode, otherwise the ship will start to drop speed to 0
+		// relative to the frame
+		if (m_controller->GetFlightControlState() == CONTROL_FIXSPEED) {
+			m_controller->SetFlightControlState(CONTROL_MANUAL);
+		}
+	}
 
 	Ship::NotifyRemoved(removedBody);
 }
@@ -213,7 +199,7 @@ void Player::OnEnterHyperspace()
 	s_soundHyperdrive.Play(m_hyperspace.sounds.jump_sound.c_str());
 	SetNavTarget(0);
 	SetCombatTarget(0);
-	SetSetSpeedTarget(0);
+	SetFollowTarget(0);
 
 	m_controller->SetFlightControlState(CONTROL_MANUAL); //could set CONTROL_HYPERDRIVE
 	ClearThrusterState();
@@ -243,14 +229,14 @@ Body *Player::GetNavTarget() const
 	return static_cast<PlayerShipController *>(m_controller)->GetNavTarget();
 }
 
-Body *Player::GetSetSpeedTarget() const
+Body *Player::GetFollowTarget() const
 {
-	return static_cast<PlayerShipController *>(m_controller)->GetSetSpeedTarget();
+	return static_cast<PlayerShipController *>(m_controller)->GetFollowTarget();
 }
 
-void Player::SetCombatTarget(Body *const target, bool setSpeedTo)
+void Player::SetCombatTarget(Body *const target, bool setFollowTo)
 {
-	static_cast<PlayerShipController *>(m_controller)->SetCombatTarget(target, setSpeedTo);
+	static_cast<PlayerShipController *>(m_controller)->SetCombatTarget(target, setFollowTo);
 }
 
 void Player::SetNavTarget(Body *const target)
@@ -258,14 +244,14 @@ void Player::SetNavTarget(Body *const target)
 	static_cast<PlayerShipController *>(m_controller)->SetNavTarget(target);
 }
 
-void Player::SetSetSpeedTarget(Body *const target)
+void Player::SetFollowTarget(Body *const target)
 {
-	static_cast<PlayerShipController *>(m_controller)->SetSetSpeedTarget(target);
+	static_cast<PlayerShipController *>(m_controller)->SetFollowTarget(target);
 }
 
-void Player::ChangeSetSpeed(double delta)
+void Player::ChangeCruiseSpeed(double delta)
 {
-	static_cast<PlayerShipController *>(m_controller)->ChangeSetSpeed(delta);
+	static_cast<PlayerShipController *>(m_controller)->ChangeCruiseSpeed(delta);
 }
 
 //temporary targeting stuff ends
@@ -297,8 +283,31 @@ void Player::StaticUpdate(const float timeStep)
 	Ship::StaticUpdate(timeStep);
 
 	for (size_t i = 0; i < GUNMOUNT_MAX; i++)
-		if (GetFixedGuns()->IsGunMounted(i))
-			GetFixedGuns()->UpdateLead(timeStep, i, this, GetCombatTarget());
+		if (m_fixedGuns->IsGunMounted(i))
+			m_fixedGuns->UpdateLead(timeStep, i, this, GetCombatTarget());
+
+	// now insert the latest value
+	vector3d current_atmosAccel = GetAtmosForce() * (1.0 / GetMass());
+	m_atmosJerk = (current_atmosAccel - m_atmosAccel) * Pi::game->GetInvTimeAccelRate();
+	bool playCreak = false;
+
+	// play creaking sfx if the acceleration along the Y axis (up/down directions) is higher than 1g
+	// and the rate of change of acceleration is more than 2.5 m s-3
+	if ((abs(m_atmosAccel.Dot(Player::m_interpOrient.VectorY()))) > 10 && abs(m_atmosJerk.Dot(Player::m_interpOrient.VectorY())) > 2.5) {
+		playCreak = true;
+	}
+
+	if (playCreak) {
+		if (!m_creakSound.IsPlaying()) {
+			float creakVol = fmin(float((m_atmosJerk.Length() - 50) * 0.05f), 0.3f);
+			m_creakSound.Play("metal_creaking", creakVol, creakVol, Sound::OP_REPEAT);
+			m_creakSound.VolumeAnimate(creakVol, creakVol, 0.3f, 0.3f);
+		}
+	} else if (m_creakSound.IsPlaying()) {
+		m_creakSound.VolumeAnimate(0.0f, 0.0f, 1.5f, 1.5f);
+		m_creakSound.SetOp(Sound::OP_STOP_AT_TARGET_VOLUME);
+	}
+	m_atmosAccel = current_atmosAccel;
 
 	// XXX even when not on screen. hacky, but really cockpit shouldn't be here
 	// anyway so this will do for now
@@ -333,4 +342,29 @@ vector3d Player::GetManeuverVelocity() const
 		}
 	}
 	return vector3d(0, 0, 0);
+}
+
+void Player::DoFixspeedTakeoff(SpaceStation *from)
+{
+	auto con = GetPlayerController();
+	con->SetCruiseDirection(PlayerShipController::CRUISE_UP);
+	SetFlightState(Ship::FLYING);
+	GetPlayerController()->SetFlightControlState(CONTROL_FIXSPEED);
+	double curSpeed = con->GetCruiseSpeed();
+	double wantSpeed = 2; // m/s
+	con->ChangeCruiseSpeed(wantSpeed - curSpeed);
+
+	// special preparations for launch in a rotating orbital
+	if (from && !from->IsGroundStation()) {
+		SetFollowTarget(from);
+		con->SetFollowMode(PlayerShipController::FOLLOW_ORI);
+		auto pPos = GetPosition();
+		SetAngVelocity(from->GetAngVelocity());
+
+		// some actions to avoid collision with the pad at start with a margin
+		SetPosition(GetPosition() + GetOrient().VectorY() * 0.01);
+		auto tangent = from->GetAngVelocity().Cross(pPos);
+		auto radial = GetOrient().VectorY() * 0.05;
+		SetVelocity(tangent + radial);
+	}
 }

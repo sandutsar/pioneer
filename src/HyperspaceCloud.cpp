@@ -1,11 +1,11 @@
-// Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "HyperspaceCloud.h"
 
 #include "Game.h"
 #include "GameSaveError.h"
-#include "Json.h"
+#include "JsonUtils.h"
 #include "Lang.h"
 #include "Pi.h"
 #include "Player.h"
@@ -116,7 +116,7 @@ void HyperspaceCloud::TimeStepUpdate(const float timeStep)
 		Pi::game->GetSpace()->AddBody(m_ship);
 
 		if (Pi::player->GetNavTarget() == this && !Pi::player->GetCombatTarget())
-			Pi::player->SetCombatTarget(m_ship, Pi::player->GetSetSpeedTarget() == this);
+			Pi::player->SetCombatTarget(m_ship, Pi::player->GetFollowTarget() == this);
 
 		m_ship->EnterSystem();
 

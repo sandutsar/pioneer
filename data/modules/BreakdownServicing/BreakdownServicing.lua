@@ -1,4 +1,4 @@
--- Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local Engine = require 'Engine'
@@ -7,12 +7,11 @@ local Game = require 'Game'
 local Comms = require 'Comms'
 local Event = require 'Event'
 local Rand = require 'Rand'
-local NameGen = require 'NameGen'
 local Format = require 'Format'
 local Serializer = require 'Serializer'
-local Equipment = require 'Equipment'
 local Character = require 'Character'
 local utils = require 'utils'
+local Commodities = require 'Commodities'
 
 local l = Lang.GetResource("module-breakdownservicing")
 local lui = Lang.GetResource("ui-core")
@@ -115,6 +114,7 @@ local onChat = function (form, ref, option)
 	local pricesuggestion = string.interp(ad.price, {
 		drive = hyperdrive and hyperdrive:GetName() or lui.NONE,
 		price = Format.Money(price),
+		lasttime = lastServiceMessage(hyperdrive),
 	})
 
 	if not hyperdrive then
@@ -135,9 +135,7 @@ local onChat = function (form, ref, option)
 		form:SetFace(ad.mechanic)
 		-- Replace token with details of last service (which might have
 		-- been seconds ago)
-		form:SetMessage(string.interp(message, {
-			lasttime = lastServiceMessage(hyperdrive),
-		}))
+		form:SetMessage(message)
 		if not hyperdrive then
 			-- er, do nothing, I suppose.
 		elseif Game.player:GetMoney() < price then
@@ -287,13 +285,16 @@ local onEnterSystem = function (ship)
 		else
 			-- Destroy the engine
 			local engine = ship:GetEquip('engine',1)
-			if engine.fuel == Equipment.cargo.military_fuel then
+
+			if engine.fuel.name == 'military_fuel' then
 				pigui.playSfx("Hyperdrive_Breakdown_Military", 1.0, 1.0)
 			else
 				pigui.playSfx("Hyperdrive_Breakdown", 1.0, 1.0)
 			end
+
 			ship:RemoveEquip(engine)
-			ship:AddEquip(Equipment.cargo.rubbish, engine.capabilities.mass)
+			ship:GetComponent('CargoManager'):AddCommodity(Commodities.rubbish, engine.capabilities.mass)
+
 			Comms.Message(l.THE_SHIPS_HYPERDRIVE_HAS_BEEN_DESTROYED_BY_A_MALFUNCTION)
 		end
 	end

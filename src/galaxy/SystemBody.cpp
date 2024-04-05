@@ -1,4 +1,4 @@
-// Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "SystemBody.h"
@@ -6,18 +6,14 @@
 #include "AtmosphereParameters.h"
 #include "EnumStrings.h"
 #include "Game.h"
+#include "JsonUtils.h"
 #include "Lang.h"
-#include "Pi.h"
-#include "enum_table.h"
 #include "utils.h"
 
-SystemBody::SystemBody(const SystemPath &path, StarSystem *system) :
-	m_parent(nullptr),
-	m_path(path),
+SystemBodyData::SystemBodyData() :
+	m_type(SystemBodyType::TYPE_GRAVPOINT),
 	m_seed(0),
 	m_aspectRatio(1, 1),
-	m_orbMin(0),
-	m_orbMax(0),
 	m_rotationalPhaseAtStart(0),
 	m_semiMajorAxis(0),
 	m_eccentricity(0),
@@ -25,12 +21,228 @@ SystemBody::SystemBody(const SystemPath &path, StarSystem *system) :
 	m_axialTilt(0),
 	m_inclination(0),
 	m_averageTemp(0),
-	m_type(TYPE_GRAVPOINT),
-	m_isCustomBody(false),
-	m_heightMapFractal(0),
-	m_atmosDensity(0.0),
-	m_system(system)
+	m_heightMapFractal(0)
 {
+}
+
+void SystemBodyData::SaveToJson(Json &out)
+{
+	out["seed"] = m_seed;
+	out["name"] = m_name;
+	out["type"] = EnumStrings::GetString("BodyType", m_type);
+
+	out["radius"] = m_radius;
+	out["aspectRatio"] = m_aspectRatio;
+	out["mass"] = m_mass;
+	out["rotationPeriod"] = m_rotationPeriod;
+	out["rotationPhase"] = m_rotationalPhaseAtStart;
+	out["humanActivity"] = m_humanActivity;
+	out["semiMajorAxis"] = m_semiMajorAxis;
+	out["eccentricity"] = m_eccentricity;
+	out["orbitalOffset"] = m_orbitalOffset;
+	out["orbitalPhase"] = m_orbitalPhaseAtStart;
+	out["axialTilt"] = m_axialTilt;
+	out["inclination"] = m_inclination;
+	out["argOfPeriapsis"] = m_argOfPeriapsis;
+	out["averageTemp"] = m_averageTemp;
+
+	out["metallicity"] = m_metallicity;
+	out["volcanicity"] = m_volcanicity;
+	out["volatileLiquid"] = m_volatileLiquid;
+	out["volatileIces"] = m_volatileIces;
+	out["atmosDensity"] = m_volatileGas;
+	out["atmosOxidizing"] = m_atmosOxidizing;
+	out["atmosColor"] = m_atmosColor;
+	out["life"] = m_life;
+
+	out["population"] = m_population;
+	out["agricultural"] = m_agricultural;
+
+	bool hasRings = m_rings.maxRadius != 0;
+	out["hasRings"] = hasRings;
+
+	if (hasRings) {
+		out["ringsMinRadius"] = m_rings.minRadius;
+		out["ringsMaxRadius"] = m_rings.maxRadius;
+		out["ringsBaseColor"] = m_rings.baseColor;
+	}
+
+	if (!m_spaceStationType.empty())
+		out["spaceStationType"] = m_spaceStationType;
+
+	if (!m_heightMapFilename.empty()) {
+		out["heightMapFilename"] = m_heightMapFilename;
+		out["heightMapFractal"] = m_heightMapFractal;
+	}
+}
+
+void SystemBodyData::LoadFromJson(const Json &obj)
+{
+	m_seed = obj.value<uint32_t>("seed", 0);
+	m_name = obj.value<std::string>("name", "");
+
+	int type = EnumStrings::GetValue("BodyType", obj.value<std::string>("type", "GRAVPOINT").c_str());
+	m_type = SystemBodyType::BodyType(type);
+
+	m_radius = obj.value<fixed>("radius", 0);
+	m_aspectRatio = obj.value<fixed>("aspectRatio", 0);
+	m_mass = obj.value<fixed>("mass", 0);
+	m_rotationPeriod = obj.value<fixed>("rotationPeriod", 0);
+	m_rotationalPhaseAtStart = obj.value<fixed>("rotationPhase", 0);
+	m_humanActivity = obj.value<fixed>("humanActivity", 0);
+	m_semiMajorAxis = obj.value<fixed>("semiMajorAxis", 0);
+	m_eccentricity = obj.value<fixed>("eccentricity", 0);
+	m_orbitalOffset = obj.value<fixed>("orbitalOffset", 0);
+	m_orbitalPhaseAtStart = obj.value<fixed>("orbitalPhase", 0);
+	m_axialTilt = obj.value<fixed>("axialTilt", 0);
+	m_inclination = obj.value<fixed>("inclination", 0);
+	m_argOfPeriapsis = obj.value<fixed>("argOfPeriapsis", 0);
+	m_averageTemp = obj.value<uint32_t>("averageTemp", 0);
+
+	m_metallicity = obj.value<fixed>("metallicity", 0);
+	m_volcanicity = obj.value<fixed>("volcanicity", 0);
+	m_volatileLiquid = obj.value<fixed>("volatileLiquid", 0);
+	m_volatileIces = obj.value<fixed>("volatileIces", 0);
+	m_volatileGas = obj.value<fixed>("atmosDensity", 0);
+	m_atmosOxidizing = obj.value<fixed>("atmosOxidizing", 0);
+	m_atmosColor = obj.value<Color>("atmosColor", 0);
+	m_life = obj.value<fixed>("life", 0);
+
+	m_population = obj.value<fixed>("population", 0);
+	m_agricultural = obj.value<fixed>("agricultural", 0);
+
+	if (obj.value<bool>("hasRings", false)) {
+		m_rings.minRadius = obj.value<fixed>("ringsMinRadius", 0);
+		m_rings.maxRadius = obj.value<fixed>("ringsMaxRadius", 0);
+		m_rings.baseColor = obj.value<Color>("ringsBaseColor", {});
+	}
+
+	// NOTE: the following parameters should be replaced with entries
+	// in a PropertyMap owned by the system body
+	m_spaceStationType = obj.value<std::string>("spaceStationType", "");
+
+	// HACK: this is to support the current / legacy heightmap fractal system
+	// Should be replaced with PropertyMap entries and validation moved to Terrain.cpp
+	m_heightMapFilename = obj.value<std::string>("heightMapFilename", "");
+	m_heightMapFractal = obj.value<uint32_t>("heightMapFractal", 0);
+
+	m_heightMapFractal = std::min(m_heightMapFractal, uint32_t(1));
+}
+
+SystemBody::SystemBody(const SystemPath &path, StarSystem *system) :
+	m_parent(nullptr),
+	m_system(system),
+	m_path(path),
+	m_orbMin(0),
+	m_orbMax(0)
+{
+}
+
+void SystemBody::SetOrbitFromParameters()
+{
+	// Cannot orbit if no parent to orbit around
+	if (!m_parent) {
+		m_orbit = {};
+		m_orbMin = 0;
+		m_orbMax = 0;
+
+		return;
+	}
+
+	if (m_parent->GetType() == SystemBody::TYPE_GRAVPOINT) // generalize Kepler's law to multiple stars
+		m_orbit.SetShapeAroundBarycentre(m_semiMajorAxis.ToDouble() * AU, m_parent->GetMass(), GetMass(), m_eccentricity.ToDouble());
+	else
+		m_orbit.SetShapeAroundPrimary(m_semiMajorAxis.ToDouble() * AU, m_parent->GetMass(), m_eccentricity.ToDouble());
+
+	m_orbit.SetPhase(m_orbitalPhaseAtStart.ToDouble());
+
+	if (GetType() == SystemBody::TYPE_STARPORT_SURFACE) {
+		double longitude = m_orbitalOffset.ToDouble();
+		double latitude = m_inclination.ToDouble();
+
+		m_orbit.SetPlane(matrix3x3d::RotateY(longitude) * matrix3x3d::RotateX(-0.5 * M_PI + latitude));
+	} else {
+		// NOTE: rotate -Y == counter-clockwise parameterization of longitude of ascending node
+		m_orbit.SetPlane(
+			matrix3x3d::RotateY(-m_orbitalOffset.ToDouble()) *
+			matrix3x3d::RotateX(-0.5 * M_PI + m_inclination.ToDouble()) *
+			matrix3x3d::RotateZ(m_argOfPeriapsis.ToDouble()));
+	}
+
+	// perihelion and aphelion (in AUs)
+	m_orbMin = m_semiMajorAxis - m_eccentricity * m_semiMajorAxis;
+	m_orbMax = 2 * m_semiMajorAxis - m_orbMin;
+}
+
+// TODO: a more detailed atmospheric simulation should replace this
+double GetSpecificHeat(SystemBody::BodySuperType superType)
+{
+	if (superType == SystemBody::SUPERTYPE_GAS_GIANT)
+		return 12950.0; // constant pressure specific heat, for a combination of hydrogen and helium
+	else
+		return 1000.5; // constant pressure specific heat, for the combination of gasses that make up air
+}
+
+// TODO: a more detailed atmospheric simulation should replace this
+double GetMolarMass(SystemBody::BodySuperType superType)
+{
+	if (superType == SystemBody::SUPERTYPE_GAS_GIANT)
+		return 0.0023139903; // molar mass, for a combination of hydrogen and helium
+	else
+		// XXX using earth's molar mass of air...
+		return 0.02897;
+}
+
+double SystemBody::GetAtmPressure(double altitude) const
+{
+	const double gasMolarMass = GetMolarMass(GetSuperType());
+	const double surfaceGravity_g = CalcSurfaceGravity();
+	const double specificHeat = GetSpecificHeat(GetSuperType());
+	const double lapseRate_L = surfaceGravity_g / specificHeat; // deg/m
+	const double surfaceTemperature_T0 = GetAverageTemp();	//K
+
+	return m_atmosPressure * pow((1 - lapseRate_L * altitude / surfaceTemperature_T0),
+		(specificHeat * gasMolarMass / GAS_CONSTANT_R)); // in ATM since p0 was in ATM
+}
+
+double SystemBody::GetAtmDensity(double altitude, double pressure) const
+{
+	double gasMolarMass = GetMolarMass(GetSuperType());
+	double aerialTemp = GetAtmAverageTemp(altitude);
+
+	return (pressure / (PA_2_ATMOS * GAS_CONSTANT_R * aerialTemp)) * gasMolarMass;
+}
+
+double SystemBody::GetAtmAverageTemp(double altitude) const
+{
+	// temperature at height
+	const double lapseRate_L = CalcSurfaceGravity() / GetSpecificHeat(GetSuperType()); // deg/m
+	return double(GetAverageTemp()) - lapseRate_L * altitude;
+}
+
+void SystemBody::SetAtmFromParameters()
+{
+	double gasMolarMass = GetMolarMass(GetSuperType());
+
+	double surfaceDensity = GetAtmSurfaceDensity() / gasMolarMass; // kg / m^3, convert to moles/m^3
+	double surfaceTemperature_T0 = GetAverageTemp(); //K
+
+	// surface pressure
+	//P = density*R*T=(n/V)*R*T
+	m_atmosPressure = PA_2_ATMOS * ((surfaceDensity) * GAS_CONSTANT_R * surfaceTemperature_T0); // in atmospheres
+
+	double surfaceGravity_g = CalcSurfaceGravity();
+	const double lapseRate_L = surfaceGravity_g / GetSpecificHeat(GetSuperType()); // deg/m
+
+	if (m_atmosPressure < 0.002)
+		m_atmosRadius = 0; // no meaningful radius for atmosphere
+	else {
+		//*outPressure = p0*(1-l*h/T0)^(g*M/(R*L);
+		// want height for pressure 0.001 atm:
+		// h = (1 - exp(RL/gM * log(P/p0))) * T0 / l
+		double RLdivgM = (GAS_CONSTANT_R * lapseRate_L) / (surfaceGravity_g * GetMolarMass(GetSuperType()));
+		m_atmosRadius = (1.0 - exp(RLdivgM * log(0.001 / m_atmosPressure))) * surfaceTemperature_T0 / lapseRate_L;
+	}
 }
 
 bool SystemBody::HasAtmosphere() const
@@ -48,6 +260,53 @@ bool SystemBody::IsScoopable() const
 		m_atmosOxidizing <= fixed(55, 100))
 		return true;
 	return false;
+}
+
+// this is a reduced version of original Rayleigh scattering function used to compute density once per planet
+// (at least it meant not to be once per frame) given:
+// planet radius, height of atmosphere (not its radius), length of perpendicular between ray and planet center, lapse rate at which density fades out by rate of e
+// this function is used in GetCoefficients
+// all input units are in km
+double SystemBody::ComputeDensity(const double radius, const double atmosphereHeight, const double h, const double scaleHeight) const
+{
+	int numSamples = 16;
+	double totalHeight = radius + atmosphereHeight;
+	double minHeight = radius + h;
+	double tmax = sqrt(totalHeight * totalHeight - minHeight * minHeight); // maximum t
+	double tmin = -tmax;
+	double length = tmax - tmin;
+	double step = length / numSamples;
+
+	double density = 0.0;
+	for (int i = 0; i < numSamples; ++i) {
+		double t = tmin + step * (i + 0.5);
+		double h = sqrt(minHeight * minHeight + t * t) - radius;
+		density += step * exp(-h / scaleHeight);
+	}
+
+	return density;
+}
+
+// these coefficients are to be passed into shaders, meant to accelerate scattering computation per-pixel
+// instead of sampling each one (which I suspect is VERY SLOW)
+// all input units are in km
+vector3f SystemBody::GetCoefficients(const double radius, const double atmHeight, const double scaleHeight) const
+{
+	float k, b, c;
+
+	// compute full out-scattering densities at 0 and 1 km heights
+	// k = density at 0 km
+	// b = log(density0km / density1km) - log is used to multiply it by actual height
+	k = ComputeDensity(radius, atmHeight, 0.f, scaleHeight);
+	b = log(k / ComputeDensity(radius, atmHeight, 1.f, scaleHeight));
+
+	// compute c - erf coefficient, which adjusts slope of erf near t=0 to match actual in-scattering
+	float erf1_minus_erf0 = 0.421463;
+	float sHeight = sqrt(radius * radius + 1.f) - radius;
+	float c1 = exp(-sHeight / scaleHeight);
+	float c2 = k * erf1_minus_erf0;
+	c = c1 / c2;
+	return vector3f(k, b, c);
 }
 
 // Calculate parameters used in the atmospheric model for shaders
@@ -107,6 +366,12 @@ AtmosphereParameters SystemBody::CalcAtmosphereParams() const
 	params.atmosRadius = 1.0f + static_cast<float>(10.0f * atmosScaleHeight) / GetRadius();
 
 	params.planetRadius = static_cast<float>(radiusPlanet_in_m);
+
+	const float radiusPlanet_in_km = radiusPlanet_in_m / 1000;
+	const float atmosHeight_in_km = radiusPlanet_in_km * (params.atmosRadius - 1);
+	params.rayleighCoefficients = GetCoefficients(radiusPlanet_in_km, atmosHeight_in_km, atmosScaleHeight);
+	params.mieCoefficients = GetCoefficients(radiusPlanet_in_km, atmosHeight_in_km, atmosScaleHeight / 6.66); // 7994 / 1200 = 6.61
+	params.scaleHeight = vector2f(atmosScaleHeight, atmosScaleHeight / 6.66);
 
 	return params;
 }
@@ -214,19 +479,47 @@ std::string SystemBody::GetAstroDescription() const
 			return Lang::MEDIUM_GAS_GIANT;
 		else
 			return Lang::SMALL_GAS_GIANT;
-	case TYPE_PLANET_ASTEROID: return Lang::ASTEROID;
+	case TYPE_PLANET_ASTEROID:
 	case TYPE_PLANET_TERRESTRIAL: {
 		std::string s;
+
+		// Is it a moon? or a dwarf planet?
+		bool dwarfplanet = false;
+		bool moon = false;
+		if (m_parent && (m_parent->GetType() == TYPE_PLANET_TERRESTRIAL || m_parent->GetType() == TYPE_PLANET_GAS_GIANT))
+			moon = true;
+
+		// Is it an asteroid or a tiny moon?
+		if (m_type == TYPE_PLANET_ASTEROID) {
+			if (moon) {
+				s += Lang::TINY;
+				s += Lang::ROCKY_MOON;
+				return s;
+			}
+			else return Lang::ASTEROID;
+		}
+
 		if (m_mass > fixed(2, 1))
 			s = Lang::MASSIVE;
 		else if (m_mass > fixed(3, 2))
 			s = Lang::LARGE;
-		else if (m_mass < fixed(1, 10))
-			s = Lang::TINY;
-		else if (m_mass < fixed(1, 5))
-			s = Lang::SMALL;
-		else
+		else if (m_mass > fixed(1, 2))
 			s = Lang::MEDIUM;
+		else if (m_mass > fixed(12,1000))		// ~Weight of the moon (By definition here to be
+			s = Lang::SMALL;					// the upper limit of a Dwarf planet
+		else if (m_mass > fixed(1, 12000)) {	// ~Larger than the weight of Salacia (0.7% moon mass)
+			if (moon) {							// which is considered not a dwarf planet
+				s = Lang::TINY;
+			} else {
+				dwarfplanet = true;
+			}
+		} else {
+			if (moon) {
+				s = Lang::TINY;
+			} else {
+				return Lang::ASTEROID;
+			}
+		}
 
 		if (m_volcanicity > fixed(7, 10)) {
 			if (s.size())
@@ -240,13 +533,31 @@ std::string SystemBody::GetAstroDescription() const
 
 		if (m_volatileIces + m_volatileLiquid > fixed(4, 5)) {
 			if (m_volatileIces > m_volatileLiquid) {
-				s += (m_averageTemp < 273) ? Lang::ICE_WORLD : Lang::ROCKY_PLANET;
+				if (moon) {
+					s += (m_averageTemp < 273) ? Lang::ICE_MOON: Lang::ROCKY_MOON;
+				} else if (dwarfplanet) {
+					s += (m_averageTemp < 273) ? Lang::ICE_DWARF_PLANET : Lang::DWARF_PLANET_TERRESTRIAL;
+				} else {
+					s += (m_averageTemp < 273) ? Lang::ICE_WORLD : Lang::ROCKY_PLANET;
+				}
 			} else {
-				s += (m_averageTemp < 273) ? Lang::ICE_WORLD : Lang::OCEANICWORLD;
+				if (moon) {
+					s += (m_averageTemp < 273) ? Lang::ICE_MOON : Lang::OCEANICMOON;
+				} else if (dwarfplanet) {
+					s += (m_averageTemp < 273) ? Lang::DWARF_PLANET_MOSTLY_COVERED_IN_ICE : Lang::DWARF_PLANET_CONTAINING_LIQUID_WATER;
+				} else {
+					s += (m_averageTemp < 273) ? Lang::ICE_WORLD : Lang::OCEANICWORLD;
+				}
 			}
 			// what is a waterworld with temperature above 100C? possible?
+		} else if (m_volatileLiquid > fixed(2, 5) && moon) {
+			s += (m_averageTemp > 273) ? Lang::MOON_CONTAINING_LIQUID_WATER : Lang::MOON_WITH_SOME_ICE;
 		} else if (m_volatileLiquid > fixed(2, 5)) {
 			s += (m_averageTemp > 273) ? Lang::PLANET_CONTAINING_LIQUID_WATER : Lang::PLANET_WITH_SOME_ICE;
+		} else if (moon) {
+			s += (m_volatileLiquid > fixed(1, 5)) ? Lang::ROCKY_MOON_CONTAINING_SOME_LIQUIDS : Lang::ROCKY_MOON;
+		} else if (dwarfplanet) {
+			s += (m_volatileLiquid > fixed(1, 5)) ? Lang::DWARF_PLANET_CONTAINING_SOME_LIQUIDS : Lang::DWARF_PLANET_TERRESTRIAL;
 		} else {
 			s += (m_volatileLiquid > fixed(1, 5)) ? Lang::ROCKY_PLANET_CONTAINING_COME_LIQUIDS : Lang::ROCKY_PLANET;
 		}
@@ -254,36 +565,64 @@ std::string SystemBody::GetAstroDescription() const
 		if (m_volatileGas < fixed(1, 100)) {
 			s += Lang::WITH_NO_SIGNIFICANT_ATMOSPHERE;
 		} else {
+			bool article = false;
 			std::string thickness;
 			if (m_volatileGas < fixed(1, 10))
 				thickness = Lang::TENUOUS;
 			else if (m_volatileGas < fixed(1, 5))
 				thickness = Lang::THIN;
 			else if (m_volatileGas < fixed(2, 1)) // normal atmosphere
-			{
-			} else if (m_volatileGas < fixed(4, 1))
+				article = true;
+			else if (m_volatileGas < fixed(20, 1))
 				thickness = Lang::THICK;
 			else
 				thickness = Lang::VERY_DENSE;
 
 			if (m_atmosOxidizing > fixed(95, 100)) {
-				s += Lang::WITH_A + thickness + Lang::O2_ATMOSPHERE;
+				if  (article) {
+					s += Lang::WITH + thickness + Lang::AN_O2_ATMOSPHERE;
+				} else
+					s += Lang::WITH + thickness + Lang::O2_ATMOSPHERE;
 			} else if (m_atmosOxidizing > fixed(7, 10)) {
-				s += Lang::WITH_A + thickness + Lang::CO2_ATMOSPHERE;
+				if  (article) {
+					s += Lang::WITH + thickness + Lang::A_CO2_ATMOSPHERE;
+				} else
+					s += Lang::WITH + thickness + Lang::CO2_ATMOSPHERE;
 			} else if (m_atmosOxidizing > fixed(65, 100)) {
-				s += Lang::WITH_A + thickness + Lang::CO_ATMOSPHERE;
+				if  (article) {
+					s += Lang::WITH + thickness + Lang::A_CO_ATMOSPHERE;
+				} else
+					s += Lang::WITH + thickness + Lang::CO_ATMOSPHERE;
 			} else if (m_atmosOxidizing > fixed(55, 100)) {
-				s += Lang::WITH_A + thickness + Lang::CH4_ATMOSPHERE;
+				if  (article) {
+					s += Lang::WITH + thickness + Lang::A_CH4_ATMOSPHERE;
+				} else
+					s += Lang::WITH + thickness + Lang::CH4_ATMOSPHERE;
 			} else if (m_atmosOxidizing > fixed(3, 10)) {
-				s += Lang::WITH_A + thickness + Lang::H_ATMOSPHERE; // IsScoopable depends on these if/then/else values fixed(3,10) -> fixed(55,100) == hydrogen
+				if  (article) {
+					s += Lang::WITH + thickness + Lang::A_H_ATMOSPHERE; // IsScoopable depends on these if/then/} else values fixed(3,10) -> fixed(55,100) == hydrogen
+				} else
+					s += Lang::WITH + thickness + Lang::H_ATMOSPHERE;
 			} else if (m_atmosOxidizing > fixed(2, 10)) {
-				s += Lang::WITH_A + thickness + Lang::HE_ATMOSPHERE;
+				if  (article) {
+					s += Lang::WITH + thickness + Lang::A_HE_ATMOSPHERE;
+				} else
+					s += Lang::WITH + thickness + Lang::HE_ATMOSPHERE;
 			} else if (m_atmosOxidizing > fixed(15, 100)) {
-				s += Lang::WITH_A + thickness + Lang::AR_ATMOSPHERE;
+				if  (article) {
+					s += Lang::WITH + thickness + Lang::AN_AR_ATMOSPHERE;
+				} else
+					s += Lang::WITH + thickness + Lang::AR_ATMOSPHERE;
 			} else if (m_atmosOxidizing > fixed(1, 10)) {
-				s += Lang::WITH_A + thickness + Lang::S_ATMOSPHERE;
+				if  (article) {
+					s += Lang::WITH + thickness + Lang::A_S_ATMOSPHERE;
+				} else
+					s += Lang::WITH + thickness + Lang::S_ATMOSPHERE;
 			} else {
-				s += Lang::WITH_A + thickness + Lang::N_ATMOSPHERE;
+				if  (article) {
+					s += Lang::WITH + thickness + Lang::A_N_ATMOSPHERE;
+				} else
+					s += Lang::WITH + thickness + Lang::N_ATMOSPHERE;
 			}
 		}
 
@@ -296,6 +635,8 @@ std::string SystemBody::GetAstroDescription() const
 		} else {
 			s += ".";
 		}
+
+		s[0] = std::toupper(s[0]);
 
 		return s;
 	}
@@ -518,7 +859,27 @@ double SystemBody::CalcSurfaceGravity() const
 {
 	double r = GetRadius();
 	if (r > 0.0) {
-		return G * GetMass() / pow(r, 2);
+		return G * GetMass() / (r * r);
+	} else {
+		return 0.0;
+	}
+}
+
+double SystemBody::CalcEscapeVelocity() const
+{
+	double r = GetRadius();
+	if (r > 0.0) {
+		return pow((2 * CalcSurfaceGravity() * r) , 0.5);
+	} else {
+		return 0.0;
+	}
+}
+
+double SystemBody::CalcMeanDensity() const
+{
+	double r = GetRadius();
+	if (r > 0.0) {
+		return GetMass()  / (4.0 / 3.0 * M_PI * pow(r, 3)); // Density = Mass / Volume
 	} else {
 		return 0.0;
 	}
@@ -535,8 +896,8 @@ void SystemBody::Dump(FILE *file, const char *indent) const
 		m_orbit.GetOrbitalPhaseAtStart());
 	fprintf(file, "%s\torbit a=%.6f, e=%.6f, orbMin=%.6f, orbMax=%.6f\n", indent, m_semiMajorAxis.ToDouble(), m_eccentricity.ToDouble(),
 		m_orbMin.ToDouble(), m_orbMax.ToDouble());
-	fprintf(file, "%s\t\toffset=%.6f, phase=%.6f, inclination=%.6f\n", indent, m_orbitalOffset.ToDouble(), m_orbitalPhaseAtStart.ToDouble(),
-		m_inclination.ToDouble());
+	fprintf(file, "%s\t\toffset=%.6f, phase=%.6f, inclination=%.6f, argument=%.6f\n", indent, m_orbitalOffset.ToDouble(), m_orbitalPhaseAtStart.ToDouble(),
+		m_inclination.ToDouble(), m_argOfPeriapsis.ToDouble());
 	if (m_type != TYPE_GRAVPOINT) {
 		fprintf(file, "%s\tseed %u\n", indent, m_seed);
 		fprintf(file, "%s\tradius %.6f, aspect %.6f\n", indent, m_radius.ToDouble(), m_aspectRatio.ToDouble());
@@ -548,7 +909,7 @@ void SystemBody::Dump(FILE *file, const char *indent) const
 			m_volatileLiquid.ToDouble() * 100.0, m_volatileIces.ToDouble() * 100.0);
 		fprintf(file, "%s\tlife %.2f\n", indent, m_life.ToDouble() * 100.0);
 		fprintf(file, "%s\tatmosphere oxidizing=%.2f, color=(%hhu,%hhu,%hhu,%hhu), density=%.6f\n", indent,
-			m_atmosOxidizing.ToDouble() * 100.0, m_atmosColor.r, m_atmosColor.g, m_atmosColor.b, m_atmosColor.a, m_atmosDensity);
+			m_atmosOxidizing.ToDouble() * 100.0, m_atmosColor.r, m_atmosColor.g, m_atmosColor.b, m_atmosColor.a, m_volatileGas.ToDouble());
 		fprintf(file, "%s\trings minRadius=%.2f, maxRadius=%.2f, color=(%hhu,%hhu,%hhu,%hhu)\n", indent, m_rings.minRadius.ToDouble() * 100.0,
 			m_rings.maxRadius.ToDouble() * 100.0, m_rings.baseColor.r, m_rings.baseColor.g, m_rings.baseColor.b, m_rings.baseColor.a);
 		fprintf(file, "%s\thuman activity %.2f, population %.0f, agricultural %.2f\n", indent, m_humanActivity.ToDouble() * 100.0,
@@ -566,16 +927,17 @@ void SystemBody::Dump(FILE *file, const char *indent) const
 	fprintf(file, "%s}\n", indent);
 }
 
-void SystemBody::ClearParentAndChildPointers()
+void SystemBody::Orphan()
 {
 	PROFILE_SCOPED()
 	for (std::vector<SystemBody *>::iterator i = m_children.begin(); i != m_children.end(); ++i)
-		(*i)->ClearParentAndChildPointers();
+		(*i)->Orphan();
 	m_parent = 0;
+	m_system = 0;
 	m_children.clear();
 }
 
-SystemBody *SystemBody::GetNearestJumpable()
+SystemBody *SystemBody::GetNearestJumpable(double atTime)
 {
 	PROFILE_SCOPED()
 	if (IsJumpable()) return this;
@@ -599,7 +961,7 @@ SystemBody *SystemBody::GetNearestJumpable()
 			// if the body has a zero orbit or it is a surface port - we assume that
 			// it is at the same point with the parent, just don't touch pos
 			if (!is_zero_general(s->GetOrbit().GetSemiMajorAxis()) && s->GetType() != SystemBody::TYPE_STARPORT_SURFACE)
-				pos += s->GetOrbit().OrbitalPosAtTime(Pi::game->GetTime());
+				pos += s->GetOrbit().OrbitalPosAtTime(atTime);
 			if (s->IsJumpable())
 				jumpables.emplace_back(s, pos);
 			else if (s == this) // the current body is definitely not jumpable, otherwise we would not be here

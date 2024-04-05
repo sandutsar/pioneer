@@ -1,4 +1,4 @@
-// Copyright © 2008-2022 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2024 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef _GEOPATCH_H
@@ -35,6 +35,7 @@ class GeoSphere;
 class BasePatchJob;
 class SQuadSplitResult;
 class SSingleSplitResult;
+struct SSplitResultData;
 
 class GeoPatch {
 public:
@@ -85,6 +86,7 @@ public:
 	void RequestSinglePatch();
 	void ReceiveHeightmaps(SQuadSplitResult *psr);
 	void ReceiveHeightmap(const SSingleSplitResult *psr);
+	void ReceiveHeightResult(const SSplitResultData &data);
 	void ReceiveJobHandle(Job::Handle job);
 
 	inline bool HasHeightData() const { return (m_heights.get() != nullptr); }
